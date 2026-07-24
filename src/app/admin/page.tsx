@@ -46,114 +46,34 @@ import {
 } from 'lucide-react';
 import { formatPrice, formatDuration, getWhatsAppLink } from '@/lib/utils';
 
-// Mock Bookings Data for Admin
-const initialBookings = [
-  {
-    id: 'BK-1089',
-    clientName: 'Nia Jackson',
-    clientPhone: '+1 (973) 555-0192',
-    clientEmail: 'nia.j@example.com',
-    serviceName: 'VIP Luxury Braiding Experience [100% Human Hair]',
-    date: '2026-07-22',
-    time: '09:00 AM',
-    price: 600,
-    depositPaid: 150,
-    status: 'Confirmed',
-    notes: 'Requested natural brown mix #4/#27. Allergic to tea tree oil.',
-  },
-  {
-    id: 'BK-1088',
-    clientName: 'Maya Thorne',
-    clientPhone: '+1 (201) 555-0144',
-    clientEmail: 'm.thorne@example.com',
-    serviceName: 'Knotless Braids {Medium}',
-    date: '2026-07-22',
-    time: '02:30 PM',
-    price: 240,
-    depositPaid: 60,
-    status: 'Pending Prep',
-    notes: 'Selecting wash & blow dry add-on.',
-  },
-  {
-    id: 'BK-1087',
-    clientName: 'Elena Rostova',
-    clientPhone: '+1 (862) 555-0188',
-    clientEmail: 'elena.r@example.com',
-    serviceName: 'Fulani Knotless Braids {Medium}',
-    date: '2026-07-23',
-    time: '10:00 AM',
-    price: 285,
-    depositPaid: 75,
-    status: 'Confirmed',
-    notes: 'Wants heart braid design on left temple.',
-  },
-  {
-    id: 'BK-1086',
-    clientName: 'Jasmine Williams',
-    clientPhone: '+1 (973) 555-0211',
-    clientEmail: 'jas.w@example.com',
-    serviceName: 'Passion Twists {Medium}',
-    date: '2026-07-21',
-    time: '01:00 PM',
-    price: 230,
-    depositPaid: 50,
-    status: 'Completed',
-    notes: 'Paid remainder via Cash App.',
-  },
-  {
-    id: 'BK-1085',
-    clientName: 'Chloe Taylor',
-    clientPhone: '+1 (551) 555-0399',
-    clientEmail: 'chloe.t@example.com',
-    serviceName: '2 Feed-in Braids',
-    date: '2026-07-21',
-    time: '11:00 AM',
-    price: 60,
-    depositPaid: 25,
-    status: 'Completed',
-    notes: 'Quick touch-up session.',
-  },
-];
+// Live Bookings Collection (Starts empty & ready for live clients)
+const initialBookings: Array<{
+  id: string;
+  clientName: string;
+  clientPhone: string;
+  clientEmail: string;
+  serviceName: string;
+  date: string;
+  time: string;
+  price: number;
+  depositPaid: number;
+  status: string;
+  notes: string;
+}> = [];
 
-// Mock Pop-Up Vendor Applications Data
-const initialApplications = [
-  {
-    id: 'APP-901',
-    brandName: 'Botanical Crown Oils',
-    applicantName: 'Aaliyah Reed',
-    email: 'aaliyah@botanicalcrown.com',
-    phone: '+1 (973) 555-8821',
-    productCategory: 'Hair & Scalp Oils',
-    description: 'Handcrafted organic rosemary and lavender scalp serums packaged in glass droppers.',
-    instagram: '@botanicalcrown',
-    dateSubmitted: '2026-07-18',
-    status: 'Pending',
-  },
-  {
-    id: 'APP-902',
-    brandName: 'Silk & Glow Studio',
-    applicantName: 'Samantha Vance',
-    email: 'sam@silkglow.co',
-    phone: '+1 (201) 555-3329',
-    productCategory: 'Silk Accessories & Bonnets',
-    description: '100% Mulberry silk reversible bonnets, pillowcases, and scrunchies.',
-    instagram: '@silkglowstudio',
-    dateSubmitted: '2026-07-19',
-    status: 'Approved',
-  },
-  {
-    id: 'APP-903',
-    brandName: 'Essence Jewelry Co',
-    applicantName: 'Kiana Miller',
-    email: 'kiana@essencejewels.com',
-    phone: '+1 (862) 555-7742',
-    productCategory: 'Handmade Braid Cuffs & Jewelry',
-    description: 'Brass, gold-plated, and cowrie shell hair cuffs designed specifically for braided crowns.',
-    instagram: '@essencejewels',
-    dateSubmitted: '2026-07-20',
-    status: 'Pending',
-  },
-];
+// Live Pop-Up Vendor Applications Collection (Starts empty & ready for live submissions)
+const initialApplications: Array<{
+  id: string;
+  brandName: string;
+  applicantName: string;
+  email: string;
+  phone: string;
+  productCategory: string;
+  description: string;
+  instagram: string;
+  dateSubmitted: string;
+  status: string;
+}> = [];
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('overview');

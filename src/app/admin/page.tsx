@@ -43,7 +43,8 @@ import {
   HardDrive,
   CreditCard,
   Link2,
-  BookOpen
+  BookOpen,
+  Lock
 } from 'lucide-react';
 import { formatPrice, formatDuration, getWhatsAppLink } from '@/lib/utils';
 

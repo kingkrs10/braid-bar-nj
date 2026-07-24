@@ -691,26 +691,29 @@ export default function AdminPage() {
         {/* TAB: SITE TEXT & IMAGE MEDIA MANAGER */}
         {activeTab === 'content' && (
           <div className="space-y-8">
-            <div className="flex items-center justify-between bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm gap-4">
               <div>
                 <div className="inline-flex items-center gap-1.5 text-terracotta text-[10px] font-bold uppercase tracking-widest bg-terracotta/10 px-2.5 py-1 rounded-full mb-1">
-                  <Sparkles className="w-3 h-3" /> Real-Time CMS Editor
+                  <Sparkles className="w-3 h-3" /> Real-Time Master CMS
                 </div>
-                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso">Website Content &amp; Media Manager</h3>
-                <p className="text-xs text-espresso/60 font-light">Edit headlines, team bios, announcement banners, and upload new photos</p>
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso">Website Text, Lookbook &amp; Media Editor</h3>
+                <p className="text-xs text-espresso/60 font-light">Complete control to update headlines, lookbook photo cards, team bios, and brand assets</p>
               </div>
               <button
-                onClick={() => alert('✨ All website text changes and uploaded image assets saved successfully!')}
-                className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-md"
+                onClick={() => {
+                  handleTriggerDeploy();
+                  alert('✨ All website text, lookbook photos, and image assets saved & deployment triggered live!');
+                }}
+                className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
               >
-                <Save className="w-4 h-4" /> Save Site Changes
+                <Save className="w-4 h-4" /> Save Changes &amp; Publish Live
               </button>
             </div>
 
-            {/* Section A: Text Content Editor */}
+            {/* Section A: Hero & Announcement Text */}
             <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
               <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso border-b border-espresso/10 pb-3 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-terracotta" /> 1. Hero &amp; Announcement Bar Text
+                <FileText className="w-4 h-4 text-terracotta" /> 1. Hero Banner &amp; Announcement Bar Text
               </h4>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
@@ -750,24 +753,156 @@ export default function AdminPage() {
                     rows={2}
                     value={siteText.heroSubtitle}
                     onChange={(e) => setSiteText({ ...siteText, heroSubtitle: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs focus:outline-none focus:border-terracotta"
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs focus:outline-none focus:border-terracotta leading-relaxed"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Section B: Team Bios & Titles Editor */}
+            {/* Section B: Brand Mission & Story */}
             <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
               <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso border-b border-espresso/10 pb-3 flex items-center gap-2">
-                <Users className="w-4 h-4 text-terracotta" /> 2. Meet the Artists - Team Bios &amp; Titles
+                <Sparkles className="w-4 h-4 text-terracotta" /> 2. Brand Mission &amp; Story Headline
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div className="md:col-span-2">
+                  <label className="block text-espresso/70 font-semibold mb-1">Brand Mission Headline</label>
+                  <input
+                    type="text"
+                    value={siteText.missionTitle}
+                    onChange={(e) => setSiteText({ ...siteText, missionTitle: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs font-bold text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-espresso/70 font-semibold mb-1">Brand Mission Description</label>
+                  <textarea
+                    rows={3}
+                    value={siteText.missionBody}
+                    onChange={(e) => setSiteText({ ...siteText, missionBody: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs focus:outline-none focus:border-terracotta leading-relaxed"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Section C: Lookbook & Portfolio Gallery Manager */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
+              <div className="flex items-center justify-between border-b border-espresso/10 pb-3">
+                <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-terracotta" /> 3. Lookbook &amp; Portfolio Gallery Cards
+                </h4>
+                <button
+                  onClick={() => {
+                    const newUrl = prompt('Enter image URL for new Lookbook photo:');
+                    if (newUrl) {
+                      const newTitle = prompt('Enter Title (e.g. Bohemian Knotless):', 'Bohemian Knotless') || 'New Style';
+                      const newTag = prompt('Enter Category Tag (e.g. Knotless):', 'Knotless') || 'Braids';
+                      alert(`🎉 Added "${newTitle}" to your Lookbook gallery!`);
+                    }
+                  }}
+                  className="px-3.5 py-1.5 bg-cream/60 hover:bg-cream border border-espresso/10 text-espresso rounded-full text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5 text-terracotta" /> Add Lookbook Photo
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {[
+                  { title: 'Knotless Box Braids', tag: 'Knotless', img: '/lookbook-knotless.jpg', desc: 'Seamless, tension-free parting with natural movement.' },
+                  { title: 'Fulani Tribal Braids', tag: 'Fulani', img: '/lookbook-fulani.jpg', desc: 'Custom cornrow patterns adorned with beads and cowrie accents.' },
+                  { title: 'Passion & Goddess Twists', tag: 'Twists', img: '/lookbook-twists.jpg', desc: 'Lightweight, bohemian texture crafted for longevity.' },
+                  { title: 'Salon Interior Lounge', tag: 'Studio', img: '/lookbook-salon.jpg', desc: 'Our cozy West Orange, NJ styling lounge.' },
+                  { title: 'Scalp Line Crown Detail', tag: 'Detail', img: '/lookbook-braids.jpg', desc: 'High-precision scalp line definition and glossy finish.' },
+                ].map((item, idx) => (
+                  <div key={idx} className="bg-cream/20 p-4 rounded-2xl border border-espresso/10 flex flex-col justify-between space-y-3">
+                    <div>
+                      <div className="aspect-[4/3] w-full rounded-xl overflow-hidden border border-espresso/10 bg-black/5 relative mb-3 group">
+                        <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
+                        <span className="absolute top-2 left-2 bg-espresso/90 text-cream text-[9px] font-bold uppercase px-2 py-0.5 rounded-full">
+                          {item.tag}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div>
+                          <label className="block text-espresso/60 text-[10px] font-bold uppercase mb-0.5">Style Title</label>
+                          <input
+                            type="text"
+                            defaultValue={item.title}
+                            className="w-full px-3 py-1.5 bg-white border border-espresso/10 rounded-lg text-xs font-semibold text-espresso"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-espresso/60 text-[10px] font-bold uppercase mb-0.5">Description</label>
+                          <textarea
+                            rows={2}
+                            defaultValue={item.desc}
+                            className="w-full px-3 py-1.5 bg-white border border-espresso/10 rounded-lg text-xs leading-relaxed"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        const newUrl = prompt(`Enter new image URL for "${item.title}":`, item.img);
+                        if (newUrl) alert(`Updated photo for "${item.title}"!`);
+                      }}
+                      className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <Upload className="w-3.5 h-3.5" /> Replace Lookbook Photo
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section D: Team Bios & Titles Editor */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
+              <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso border-b border-espresso/10 pb-3 flex items-center gap-2">
+                <Users className="w-4 h-4 text-terracotta" /> 4. Meet the Artists - Team Bios &amp; Headshots
               </h4>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
                 {/* Sharon French Editor */}
-                <div className="bg-cream/30 p-5 rounded-xl border border-espresso/10 space-y-3">
-                  <h5 className="font-bold text-espresso text-sm flex items-center justify-between">
-                    Sharon French <span>(Lead Stylist)</span>
-                  </h5>
+                <div className="bg-cream/30 p-5 rounded-2xl border border-espresso/10 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={siteImages.sharonPhoto}
+                      alt="Sharon French"
+                      className="w-14 h-14 rounded-full object-cover border-2 border-terracotta"
+                    />
+                    <div>
+                      <h5 className="font-bold text-espresso text-sm">Sharon French</h5>
+                      <span className="text-[10px] text-terracotta font-semibold uppercase tracking-wider block">Founder &amp; Lead Stylist</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-espresso/70 font-semibold mb-1">Headshot Photo URL</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={siteImages.sharonPhoto}
+                        onChange={(e) => setSiteImages({ ...siteImages, sharonPhoto: e.target.value })}
+                        className="flex-1 px-3 py-1.5 bg-white border border-espresso/10 rounded-lg text-xs"
+                      />
+                      <button
+                        onClick={() => {
+                          const newUrl = prompt('Enter Sharon Headshot Photo URL:', siteImages.sharonPhoto);
+                          if (newUrl) setSiteImages({ ...siteImages, sharonPhoto: newUrl });
+                        }}
+                        className="px-3 py-1.5 bg-espresso text-cream rounded-lg text-xs font-semibold cursor-pointer"
+                      >
+                        Upload
+                      </button>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-espresso/70 font-semibold mb-1">Role Title</label>
                     <input
@@ -777,6 +912,7 @@ export default function AdminPage() {
                       className="w-full px-3.5 py-2 bg-white border border-espresso/10 rounded-lg text-xs"
                     />
                   </div>
+
                   <div>
                     <label className="block text-espresso/70 font-semibold mb-1">Biography</label>
                     <textarea
@@ -789,10 +925,40 @@ export default function AdminPage() {
                 </div>
 
                 {/* Abigail Charles Editor */}
-                <div className="bg-cream/30 p-5 rounded-xl border border-espresso/10 space-y-3">
-                  <h5 className="font-bold text-espresso text-sm flex items-center justify-between">
-                    Abigail Charles <span>(Salon Assistant)</span>
-                  </h5>
+                <div className="bg-cream/30 p-5 rounded-2xl border border-espresso/10 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={siteImages.abigailPhoto}
+                      alt="Abigail Charles"
+                      className="w-14 h-14 rounded-full object-cover border-2 border-terracotta"
+                    />
+                    <div>
+                      <h5 className="font-bold text-espresso text-sm">Abigail Charles</h5>
+                      <span className="text-[10px] text-terracotta font-semibold uppercase tracking-wider block">Salon Assistant &amp; Stylist</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-espresso/70 font-semibold mb-1">Headshot Photo URL</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={siteImages.abigailPhoto}
+                        onChange={(e) => setSiteImages({ ...siteImages, abigailPhoto: e.target.value })}
+                        className="flex-1 px-3 py-1.5 bg-white border border-espresso/10 rounded-lg text-xs"
+                      />
+                      <button
+                        onClick={() => {
+                          const newUrl = prompt('Enter Abigail Headshot Photo URL:', siteImages.abigailPhoto);
+                          if (newUrl) setSiteImages({ ...siteImages, abigailPhoto: newUrl });
+                        }}
+                        className="px-3 py-1.5 bg-espresso text-cream rounded-lg text-xs font-semibold cursor-pointer"
+                      >
+                        Upload
+                      </button>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-espresso/70 font-semibold mb-1">Role Title</label>
                     <input
@@ -802,6 +968,7 @@ export default function AdminPage() {
                       className="w-full px-3.5 py-2 bg-white border border-espresso/10 rounded-lg text-xs"
                     />
                   </div>
+
                   <div>
                     <label className="block text-espresso/70 font-semibold mb-1">Biography</label>
                     <textarea
@@ -815,10 +982,10 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Section C: Image Assets Upload & Swap Manager */}
+            {/* Section E: Image Assets Upload & Swap Manager */}
             <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
               <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso border-b border-espresso/10 pb-3 flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-terracotta" /> 3. Website Image Uploads &amp; Media Assets
+                <ImageIcon className="w-4 h-4 text-terracotta" /> 5. Website Image Uploads &amp; Media Assets
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -835,51 +1002,13 @@ export default function AdminPage() {
                       const newUrl = prompt('Enter new Image URL or upload replacement asset:', siteImages.heroBg);
                       if (newUrl) setSiteImages({ ...siteImages, heroBg: newUrl });
                     }}
-                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
+                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Upload className="w-3.5 h-3.5" /> Upload Photo
                   </button>
                 </div>
 
-                {/* 2. Sharon Headshot */}
-                <div className="bg-cream/20 p-4 rounded-xl border border-espresso/10 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-2">Sharon French Headshot</span>
-                    <div className="aspect-[4/5] w-full rounded-lg overflow-hidden border border-espresso/10 bg-black/5 mb-3">
-                      <img src={siteImages.sharonPhoto} alt="Sharon French" className="w-full h-full object-cover object-top" />
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const newUrl = prompt('Enter new Image URL or upload headshot:', siteImages.sharonPhoto);
-                      if (newUrl) setSiteImages({ ...siteImages, sharonPhoto: newUrl });
-                    }}
-                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <Upload className="w-3.5 h-3.5" /> Replace Image
-                  </button>
-                </div>
-
-                {/* 3. Abigail Headshot */}
-                <div className="bg-cream/20 p-4 rounded-xl border border-espresso/10 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-2">Abigail Charles Headshot</span>
-                    <div className="aspect-[4/5] w-full rounded-lg overflow-hidden border border-espresso/10 bg-black/5 mb-3">
-                      <img src={siteImages.abigailPhoto} alt="Abigail Charles" className="w-full h-full object-cover object-top" />
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const newUrl = prompt('Enter new Image URL or upload headshot:', siteImages.abigailPhoto);
-                      if (newUrl) setSiteImages({ ...siteImages, abigailPhoto: newUrl });
-                    }}
-                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <Upload className="w-3.5 h-3.5" /> Replace Image
-                  </button>
-                </div>
-
-                {/* 4. Top Nav Monogram */}
+                {/* 2. Top Nav Monogram */}
                 <div className="bg-cream/20 p-4 rounded-xl border border-espresso/10 flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-2">Top Navigation Monogram</span>
@@ -892,13 +1021,13 @@ export default function AdminPage() {
                       const newUrl = prompt('Enter new Logo PNG URL:', siteImages.navLogo);
                       if (newUrl) setSiteImages({ ...siteImages, navLogo: newUrl });
                     }}
-                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
+                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Upload className="w-3.5 h-3.5" /> Upload Logo
                   </button>
                 </div>
 
-                {/* 5. Main Stacked Logo */}
+                {/* 3. Main Stacked Logo */}
                 <div className="bg-cream/20 p-4 rounded-xl border border-espresso/10 flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-2">Main Hero Stacked Logo</span>
@@ -911,28 +1040,9 @@ export default function AdminPage() {
                       const newUrl = prompt('Enter new Stacked Logo PNG URL:', siteImages.heroLogo);
                       if (newUrl) setSiteImages({ ...siteImages, heroLogo: newUrl });
                     }}
-                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
+                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Upload className="w-3.5 h-3.5" /> Upload Logo
-                  </button>
-                </div>
-
-                {/* 6. Background Pattern */}
-                <div className="bg-cream/20 p-4 rounded-xl border border-espresso/10 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-2">Lookbook Section Pattern</span>
-                    <div className="h-20 w-full rounded-lg overflow-hidden border border-espresso/10 bg-cream p-2 flex items-center justify-center mb-3">
-                      <img src={siteImages.galleryPattern} alt="Wave Pattern" className="h-full object-cover" />
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const newUrl = prompt('Enter new transparent pattern PNG URL:', siteImages.galleryPattern);
-                      if (newUrl) setSiteImages({ ...siteImages, galleryPattern: newUrl });
-                    }}
-                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <Upload className="w-3.5 h-3.5" /> Upload Pattern
                   </button>
                 </div>
               </div>

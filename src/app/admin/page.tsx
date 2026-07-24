@@ -42,7 +42,8 @@ import {
   Key,
   HardDrive,
   CreditCard,
-  Link2
+  Link2,
+  BookOpen
 } from 'lucide-react';
 import { formatPrice, formatDuration, getWhatsAppLink } from '@/lib/utils';
 
@@ -418,6 +419,163 @@ export default function AdminPage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: OWNER OPERATING MANUAL & FIELD GUIDE */}
+        {activeTab === 'manual' && (
+          <div className="space-y-8">
+            {/* Header Banner */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 text-terracotta text-[10px] font-bold uppercase tracking-widest bg-terracotta/10 px-2.5 py-1 rounded-full mb-1">
+                  <BookOpen className="w-3 h-3" /> Salon Owner Reference Manual
+                </div>
+                <h3 className="font-[family-name:var(--font-display)] text-2xl font-bold text-espresso">Owner Operating Manual &amp; Platform Guide</h3>
+                <p className="text-xs text-espresso/60 font-light">Complete step-by-step instructions for Sharon French to manage appointments, pricing, photos, and site publishing.</p>
+              </div>
+
+              <a
+                href="https://braidbarnj.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-espresso hover:bg-terracotta text-cream px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm"
+              >
+                <ExternalLink className="w-4 h-4" /> View Live Site (braidbarnj.com)
+              </a>
+            </div>
+
+            {/* Quick Navigation Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Module 1: Daily Appointments */}
+              <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-4 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                    Module 01
+                  </span>
+                  <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
+                    <Calendar className="w-4.5 h-4.5 text-terracotta" /> Appointments &amp; Client Comms
+                  </h4>
+                  <p className="text-xs text-espresso/70 font-light leading-relaxed">
+                    How incoming appointments work, client deposit tracking, status badges, and 1-click WhatsApp messaging.
+                  </p>
+                </div>
+                <ul className="text-xs space-y-2 text-espresso/80 pt-2 border-t border-espresso/5 font-medium">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Clients select date &amp; time at <strong>braidbarnj.com/book</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>25% deposit is collected automatically</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Click <strong>"WhatsApp Remind"</strong> to message client appointment details</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Module 2: Pricing & Services */}
+              <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-4 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                    Module 02
+                  </span>
+                  <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
+                    <Scissors className="w-4.5 h-4.5 text-terracotta" /> Service Catalog &amp; Prices
+                  </h4>
+                  <p className="text-xs text-espresso/70 font-light leading-relaxed">
+                    How to adjust salon investment rates ($400 VIP, $325 Fulani, $240 Knotless) and service durations.
+                  </p>
+                </div>
+                <ul className="text-xs space-y-2 text-espresso/80 pt-2 border-t border-espresso/5 font-medium">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Go to <strong>Service Catalog</strong> tab in sidebar</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Click <strong>"Edit Price"</strong> next to any style</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Price &amp; deposit update across website instantly</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Module 3: CMS & Photo Uploads */}
+              <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-4 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                    Module 03
+                  </span>
+                  <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
+                    <ImageIcon className="w-4.5 h-4.5 text-terracotta" /> Lookbooks, Photos &amp; Text
+                  </h4>
+                  <p className="text-xs text-espresso/70 font-light leading-relaxed">
+                    How to update headlines, team headshots, and publish new hair photo cards to your lookbook.
+                  </p>
+                </div>
+                <ul className="text-xs space-y-2 text-espresso/80 pt-2 border-t border-espresso/5 font-medium">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Go to <strong>Site Text &amp; Images</strong> tab</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Click <strong>"Replace Photo"</strong> or <strong>"Add Lookbook Photo"</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Click <strong>"Save Changes &amp; Publish Live"</strong></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Detailed Step-by-Step Sections */}
+            <div className="bg-white p-8 rounded-2xl border border-espresso/10 shadow-sm space-y-8">
+              <h4 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso border-b border-espresso/10 pb-4">
+                Detailed Operating Instructions &amp; Best Practices
+              </h4>
+
+              <div className="space-y-6 text-xs leading-relaxed text-espresso/80">
+                <div className="bg-cream/30 p-5 rounded-xl border border-espresso/10 space-y-2">
+                  <h5 className="font-bold text-espresso text-sm flex items-center gap-2">
+                    <Rocket className="w-4 h-4 text-terracotta" /> How Live Site Publishing Works (GitHub + Vercel)
+                  </h5>
+                  <p>
+                    Your website code lives in a secure private GitHub repository (<code>github.com/kingkrs10/braid-bar-nj</code>) and is hosted globally on Vercel connected to your GoDaddy domain (<code>braidbarnj.com</code>). 
+                    Whenever you edit text, change prices, or upload photos in this portal and click <strong>Save Changes &amp; Publish Live</strong>, Vercel automatically builds and publishes your new site in about 30 seconds with full green SSL security.
+                  </p>
+                </div>
+
+                <div className="bg-cream/30 p-5 rounded-xl border border-espresso/10 space-y-2">
+                  <h5 className="font-bold text-espresso text-sm flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" /> Payment &amp; Deposit Workflow (Stripe, Cash App Pay, Zelle)
+                  </h5>
+                  <p>
+                    Clients pay a 25% deposit at booking to lock in their appointment. In your <strong>Data &amp; Subscriptions</strong> tab, you can view your connected payment processors:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1 text-espresso/70">
+                    <li><strong>Stripe / Apple Pay / Credit Cards</strong>: 2.9% + $0.30 fee per transaction. Direct payout to your bank account in 1–2 business days.</li>
+                    <li><strong>Square / Cash App Pay</strong>: 2.6% + $0.10 fee. Instant transfer available.</li>
+                    <li><strong>Zelle Direct Transfer</strong>: 0.00% FREE. Clients send remaining balance directly to salon Zelle phone (+1 973 972-9864).</li>
+                  </ul>
+                </div>
+
+                <div className="bg-cream/30 p-5 rounded-xl border border-espresso/10 space-y-2">
+                  <h5 className="font-bold text-espresso text-sm flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-terracotta" /> GoDaddy Domain &amp; Automated Email Receipts
+                  </h5>
+                  <p>
+                    Your domain <code>braidbarnj.com</code> is registered on GoDaddy. Your DNS records point to <code>76.76.21.21</code> (Vercel) and Mailgun MX records. Automated booking confirmation emails are dispatched instantly from <code>appointments@braidbarnj.com</code> whenever a client reserves a appointment.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

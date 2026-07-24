@@ -15,7 +15,8 @@ import {
   FileText,
   Image as ImageIcon,
   Rocket,
-  Database
+  Database,
+  BookOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -34,6 +35,7 @@ export default function AdminSidebar({
 }: AdminSidebarProps) {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'manual', label: 'Owner Manual', icon: BookOpen },
     { id: 'appointments', label: 'Appointments', icon: Calendar, badge: upcomingBookingsCount },
     { id: 'services', label: 'Service Catalog', icon: Scissors },
     { id: 'content', label: 'Site Text & Images', icon: FileText },

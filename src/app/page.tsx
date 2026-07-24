@@ -60,8 +60,10 @@ export default function HomePage() {
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('bb_site_live');
-      // If not set or 'false', display Coming Soon Page
-      setIsSiteLive(saved === 'true');
+      const isOwnerAuthed = sessionStorage.getItem('bb_owner_authed') === 'true';
+      const hasPreviewQuery = window.location.search.includes('preview=true');
+      // If owner is logged into /admin OR has ?preview=true OR site is live: bypass Coming Soon!
+      setIsSiteLive(saved === 'true' || isOwnerAuthed || hasPreviewQuery);
       setIsCheckingLiveMode(false);
     }
   }, []);

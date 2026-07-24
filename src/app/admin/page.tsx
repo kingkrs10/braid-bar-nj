@@ -395,11 +395,11 @@ export default function AdminPage() {
               <MessageSquare className="w-3.5 h-3.5" /> WhatsApp Dispatch
             </a>
             <Link
-              href="/"
+              href="/?preview=true"
               target="_blank"
               className="inline-flex items-center gap-2 bg-espresso hover:bg-terracotta text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm"
             >
-              <ExternalLink className="w-3.5 h-3.5" /> Preview Live Site
+              <ExternalLink className="w-3.5 h-3.5" /> Preview Full Site (Owner View)
             </Link>
           </div>
         </div>

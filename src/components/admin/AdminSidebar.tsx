@@ -112,13 +112,13 @@ export default function AdminSidebar({
       {/* Footer Quick Links & Logout */}
       <div className="p-4 border-t border-cream/10 space-y-2">
         <Link
-          href="/"
+          href="/?preview=true"
           target="_blank"
           className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-cream/5 hover:bg-cream/10 text-cream/80 hover:text-cream transition-all text-xs font-medium"
         >
           <span className="flex items-center gap-2">
             <ExternalLink className="w-3.5 h-3.5 text-accent-gold" />
-            View Live Site
+            Preview Full Site (Owner View)
           </span>
           <span className="text-[9px] text-cream/40">↗</span>
         </Link>

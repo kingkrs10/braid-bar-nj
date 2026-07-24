@@ -15,7 +15,9 @@ export default function BookPage() {
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('bb_site_live');
-      setIsSiteLive(saved === 'true');
+      const isOwnerAuthed = sessionStorage.getItem('bb_owner_authed') === 'true';
+      const hasPreviewQuery = window.location.search.includes('preview=true');
+      setIsSiteLive(saved === 'true' || isOwnerAuthed || hasPreviewQuery);
       setIsCheckingLiveMode(false);
     }
   }, []);

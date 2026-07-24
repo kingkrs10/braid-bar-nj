@@ -462,7 +462,7 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* KPI Cards Grid */}
+            {/* KPI Cards Grid (Dynamic Live Data) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Monthly Revenue */}
               <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm flex flex-col justify-between">
@@ -473,9 +473,11 @@ export default function AdminPage() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <h3 className="text-3xl font-bold font-[family-name:var(--font-display)] text-espresso">$14,250</h3>
+                  <h3 className="text-3xl font-bold font-[family-name:var(--font-display)] text-espresso">
+                    {formatPrice(bookings.reduce((sum, b) => sum + (b.status !== 'Cancelled' ? b.price : 0), 0))}
+                  </h3>
                   <p className="text-[11px] text-emerald-700 font-medium mt-1 flex items-center gap-1">
-                    <TrendingUp className="w-3 h-3" /> +18.4% vs last month
+                    <TrendingUp className="w-3 h-3" /> Live calculated revenue
                   </p>
                 </div>
               </div>
@@ -489,8 +491,12 @@ export default function AdminPage() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <h3 className="text-3xl font-bold font-[family-name:var(--font-display)] text-espresso">48</h3>
-                  <p className="text-[11px] text-espresso/60 font-light mt-1">12 upcoming this week</p>
+                  <h3 className="text-3xl font-bold font-[family-name:var(--font-display)] text-espresso">
+                    {bookings.length}
+                  </h3>
+                  <p className="text-[11px] text-espresso/60 font-light mt-1">
+                    {bookings.filter(b => b.status === 'Confirmed' || b.status === 'Pending Prep').length} upcoming
+                  </p>
                 </div>
               </div>
 
@@ -503,8 +509,10 @@ export default function AdminPage() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <h3 className="text-3xl font-bold font-[family-name:var(--font-display)] text-espresso">128</h3>
-                  <p className="text-[11px] text-amber-700 font-medium mt-1">+9 new members signed up</p>
+                  <h3 className="text-3xl font-bold font-[family-name:var(--font-display)] text-espresso">
+                    {new Set(bookings.map(b => b.clientEmail)).size}
+                  </h3>
+                  <p className="text-[11px] text-amber-700 font-medium mt-1">Active client base</p>
                 </div>
               </div>
 

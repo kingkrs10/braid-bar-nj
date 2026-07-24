@@ -25,13 +25,15 @@ interface AdminSidebarProps {
   setActiveTab: (tab: string) => void;
   pendingApplicationsCount?: number;
   upcomingBookingsCount?: number;
+  onLogout?: () => void;
 }
 
 export default function AdminSidebar({
   activeTab,
   setActiveTab,
   pendingApplicationsCount = 5,
-  upcomingBookingsCount = 12
+  upcomingBookingsCount = 12,
+  onLogout
 }: AdminSidebarProps) {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -60,45 +62,32 @@ export default function AdminSidebar({
             <h1 className="font-[family-name:var(--font-display)] text-lg font-bold tracking-wider text-cream">
               BRAID BAR
             </h1>
-            <span className="text-[9px] uppercase tracking-[0.25em] text-accent-gold font-bold flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3 text-emerald-400" /> Owner Portal
+            <span className="text-[9px] uppercase tracking-widest text-accent-gold block font-semibold">
+              Owner Management
             </span>
           </div>
         </div>
 
-        {/* Logged in User Badge */}
-        <div className="mt-2 bg-cream/5 border border-cream/10 rounded-xl p-3 flex items-center gap-3">
-          <img
-            src="/images/branding/profile-sharon-lead.png"
-            alt="Sharon French"
-            className="w-9 h-9 rounded-full object-cover border border-clay-rose/40"
-          />
-          <div className="overflow-hidden">
-            <h2 className="text-xs font-bold text-cream truncate">Sharon French</h2>
-            <p className="text-[10px] text-cream/60 truncate font-light">Owner &amp; Lead Stylist</p>
-          </div>
+        <div className="flex items-center gap-2 pt-2 border-t border-cream/10 text-[11px] text-cream/70">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+          <span className="truncate">Sharon French (Owner)</span>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
-        <div className="px-3 py-2 text-[9px] uppercase tracking-[0.25em] text-cream/40 font-bold">
-          Management
-        </div>
-
+      {/* Navigation Items */}
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
-
           return (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               className={cn(
-                'w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-all text-xs font-medium cursor-pointer',
+                'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all cursor-pointer',
                 isActive
-                  ? 'bg-terracotta text-cream shadow-md font-semibold'
-                  : 'text-cream/70 hover:text-cream hover:bg-cream/5'
+                  ? 'bg-terracotta text-cream shadow-sm font-semibold'
+                  : 'text-cream/70 hover:bg-cream/10 hover:text-cream'
               )}
             >
               <div className="flex items-center gap-3">
@@ -134,13 +123,15 @@ export default function AdminSidebar({
           <span className="text-[9px] text-cream/40">↗</span>
         </Link>
 
-        <Link
-          href="/"
-          className="flex items-center gap-2 px-3.5 py-2 text-xs text-rose-300 hover:text-rose-200 transition-colors w-full font-light"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          <span>Exit Dashboard</span>
-        </Link>
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="flex items-center gap-2 px-3.5 py-2 text-xs text-rose-300 hover:text-rose-200 transition-colors w-full font-medium cursor-pointer"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>🔒 Lock Admin Portal (Code: 592)</span>
+          </button>
+        )}
       </div>
     </aside>
   );

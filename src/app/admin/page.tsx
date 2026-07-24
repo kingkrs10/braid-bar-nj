@@ -210,6 +210,38 @@ export default function AdminPage() {
     }
   };
 
+  // Owner Passcode Authentication State (Access Code: 592)
+  const OWNER_PASSCODE = '592';
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('bb_owner_authed') === 'true';
+    }
+    return false;
+  });
+  const [passcodeInput, setPasscodeInput] = useState('');
+  const [passcodeError, setPasscodeError] = useState(false);
+
+  const handleVerifyPasscode = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passcodeInput.trim() === OWNER_PASSCODE) {
+      setIsAuthenticated(true);
+      setPasscodeError(false);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('bb_owner_authed', 'true');
+      }
+    } else {
+      setPasscodeError(true);
+    }
+  };
+
+  const handleLogoutAdmin = () => {
+    setIsAuthenticated(false);
+    setPasscodeInput('');
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('bb_owner_authed');
+    }
+  };
+
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -241,6 +273,79 @@ export default function AdminPage() {
     return matchesSearch && matchesStatus;
   });
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-cream text-espresso flex items-center justify-center p-4 select-none font-[family-name:var(--font-body)] relative overflow-hidden">
+        {/* Background Pattern */}
+        <div 
+          className="absolute inset-0 opacity-15 pointer-events-none bg-repeat"
+          style={{ backgroundImage: "url('/images/branding/pattern-semicircle-lighttan.png')", backgroundSize: '160px' }}
+        />
+
+        <div className="relative z-10 w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl border border-espresso/15 shadow-2xl space-y-6 text-center">
+          {/* Logo & Header */}
+          <div className="flex flex-col items-center space-y-3">
+            <img
+              src="/images/branding/logo-monogram-bb.png"
+              alt="Braid Bar Monogram Logo"
+              className="h-16 w-auto object-contain filter drop-shadow-sm"
+            />
+            <div className="inline-flex items-center gap-1.5 bg-terracotta/10 text-terracotta px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
+              <Lock className="w-3.5 h-3.5" /> Restricted Owner Authorization
+            </div>
+            <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold text-espresso">
+              Owner Security Lock
+            </h2>
+            <p className="text-xs text-espresso/60 font-light leading-relaxed">
+              Please enter your 3-digit salon owner security passcode to access your administrative dashboard.
+            </p>
+          </div>
+
+          {/* Passcode Form */}
+          <form onSubmit={handleVerifyPasscode} className="space-y-4">
+            <div className="space-y-2">
+              <input
+                type="password"
+                maxLength={4}
+                autoFocus
+                placeholder="Passcode (592)"
+                value={passcodeInput}
+                onChange={(e) => {
+                  setPasscodeInput(e.target.value);
+                  setPasscodeError(false);
+                }}
+                className={`w-full text-center tracking-[0.5em] text-2xl font-bold py-3.5 px-4 bg-cream/30 border rounded-2xl outline-none transition-all ${
+                  passcodeError 
+                    ? 'border-red-500 bg-red-50 text-red-900' 
+                    : 'border-espresso/20 focus:border-terracotta focus:bg-white text-espresso'
+                }`}
+              />
+              {passcodeError && (
+                <p className="text-xs text-red-600 font-semibold">
+                  ⚠️ Incorrect security passcode. Please try again.
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-espresso hover:bg-terracotta text-cream font-bold rounded-2xl text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
+            >
+              Unlock Owner Dashboard <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+
+          {/* Footer Back link */}
+          <div className="pt-2 border-t border-espresso/10">
+            <Link href="/" className="text-xs text-espresso/50 hover:text-terracotta transition-colors font-medium">
+              ← Return to Braid Bar NJ Website
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-[#FAF8F5] text-espresso font-[family-name:var(--font-body)]">
       {/* Sidebar Navigation */}
@@ -249,6 +354,7 @@ export default function AdminPage() {
         setActiveTab={setActiveTab}
         pendingApplicationsCount={applications.filter((a) => a.status === 'Pending').length}
         upcomingBookingsCount={bookings.filter((b) => b.status === 'Confirmed' || b.status === 'Pending Prep').length}
+        onLogout={handleLogoutAdmin}
       />
 
       {/* Main Content Area */}

@@ -99,6 +99,23 @@ export async function POST(request: NextRequest) {
     if (!bookedSlots[date]) bookedSlots[date] = [];
     bookedSlots[date].push(time);
 
+    // --- Trigger Email Service Dispatch ---
+    try {
+      const { sendBookingEmail } = require('@/lib/email');
+      sendBookingEmail({
+        customerName,
+        customerEmail,
+        serviceName,
+        date,
+        time,
+        deposit: depositStr,
+        total: totalStr,
+        bookingId: booking.id,
+      }).catch((err: any) => console.warn('[API Booking] Email dispatch warning:', err));
+    } catch (err) {
+      console.warn('[API Booking] Email module error:', err);
+    }
+
     // --- Trigger standalone open-wa worker API ---
     try {
       const WHATSAPP_WORKER_PORT = process.env.WHATSAPP_WORKER_PORT || 5001;

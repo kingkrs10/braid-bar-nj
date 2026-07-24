@@ -1,26 +1,198 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ==============================================
+   The Braid Bar NJ — 90's Vogue Design System
+   Inspired by premium magazine layouts & 
+   the physical salon's warm clay, orange & tile floor.
+   ============================================== */
 
+/* --- Custom Theme Tokens --- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Brand Colors (Vogue 90's & Monogram Palette) */
+  --color-espresso: #1E1210;            /* Deep warm-black */
+  --color-espresso-light: #3D2D2A;
+  --color-espresso-dark: #120A09;
+  --color-terracotta: #A37571;          /* Mauve/rose from left 'b' of monogram */
+  --color-terracotta-light: #B78B87;
+  --color-clay-rose: #E4AF9E;           /* Warm peach-pink from right 'b' of monogram */
+  --color-clay-rose-light: #F0C4B4;     /* Soft peach from stem of monogram */
+  --color-cream: #FAF2EA;               /* Cozy nude backdrop of logo */
+  --color-cream-dark: #ECD7C6;
+  --color-warm-white: #FCF9F6;
+  
+  /* Accent Color */
+  --color-accent-gold: #E4AF9E;
+  --color-accent-gold-dark: #A37571;
+
+  /* Typography */
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-funky: "Playfair Display", Georgia, serif;
+
+  /* Spacing Scale */
+  --spacing-section: 6rem;
+  --spacing-section-mobile: 3rem;
+
+  /* Easing */
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* --- Root Variables --- */
+:root {
+  --background: #FAF2EA;
+  --foreground: #1E1210;
+}
+
+/* --- Base Styles --- */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
 }
+
+/* --- Typography Defaults --- */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
+h2 { font-size: clamp(2rem, 4vw, 3.5rem); }
+h3 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+h4 { font-size: clamp(1.25rem, 2vw, 1.75rem); }
+
+/* --- Smooth Section Transitions --- */
+.section-fade {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-smooth);
+}
+
+.section-fade.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Scrollbar Styling (Minimalist Vogue) --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF2EA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D97D24;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #000000;
+}
+
+/* --- Selection Color --- */
+::selection {
+  background: #C07D73;
+  color: #FFFFFF;
+}
+
+/* --- Focus Styles --- */
+:focus-visible {
+  outline: 2px solid var(--color-terracotta);
+  outline-offset: 2px;
+}
+
+/* --- Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================
+   90's VOGUE PATTERNS, SHAPES & BORDERS
+   ============================================= */
+
+/* Black-and-white half-circle tiled floor pattern (from salon photo) */
+.bg-vogue-floor {
+  background-color: #FAF2EA;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%231E1210' fill-opacity='0.04'%3E%3Cpath fill-rule='evenodd' d='M0 0c10.97 0 20.895 4.448 28.054 11.635A39.86 39.86 0 0 0 40 8c4.27 0 8.373.67 11.946 1.905A39.957 39.957 0 0 0 80 0v80c-10.97 0-20.895-4.448-28.054-11.635A39.86 39.86 0 0 0 40 72c-4.27 0-8.373-.67-11.946-1.905A39.957 39.957 0 0 0 0 80V0zm40 40c0-11.046-8.954-20-20-20S0 28.954 0 40s8.954 20 20 20 20-8.954 20-20zm40 0c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20z'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* Wavy organic pattern matching the salon accent wallpaper column */
+.bg-salon-wallpaper {
+  background-color: #FAF2EA;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M0 10c5 0 5 10 10 10s5-10 10-10 5 10 10 10 5-10 10-10 5 10 10 10 5-10 10-10v5c-5 0-5-10-10-10s-5 10-10 10-5-10-10-10-5 10-10 10-5-10-10-10-5 10-10 10H0v-5zm0 20c5 0 5 10 10 10s5-10 10-10 5 10 10 10 5-10 10-10 5 10 10 10 5-10 10-10v5c-5 0-5-10-10-10s-5 10-10 10-5-10-10-10-5 10-10 10-5-10-10-10-5 10-10 10H0v-5z' fill='%23A37571' fill-opacity='0.08'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* Arch Frame */
+.arch-frame {
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+  overflow: hidden;
+}
+
+/* Oval Frame */
+.oval-frame {
+  border-radius: 50% / 40%;
+  overflow: hidden;
+}
+
+/* Editorial line indicators */
+.editorial-line-v {
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.editorial-line-h {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Text marquee scroll */
+@keyframes marquee-plain {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-plain {
+  animation: marquee-plain 35s linear infinite;
+}
+
+/* No-scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Ambient Orb Float Keyframes */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+

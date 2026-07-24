@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Braid Bar NJ — Lookbook 2025</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: letter;
+      margin: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --espresso: #3C2415;
+      --espresso-light: #5A3A28;
+      --gold: #C9A96E;
+      --gold-light: #D4BC8B;
+      --gold-dark: #A88B52;
+      --terracotta: #C67B5C;
+      --cream: #F5F0E8;
+      --warm-white: #FAF8F5;
+      --charcoal: #2D2D2D;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--espresso);
+      background: var(--warm-white);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* =============================================
+       PAGE LAYOUT
+       ============================================= */
+    .page {
+      width: 8.5in;
+      height: 11in;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+      background: var(--warm-white);
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    /* =============================================
+       PAGE 1: COVER
+       ============================================= */
+    .cover-page {
+      background: var(--espresso);
+      color: var(--cream);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cover-image-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.75;
+    }
+
+    .cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(60, 36, 21, 0.2) 0%,
+        rgba(60, 36, 21, 0.6) 60%,
+        rgba(60, 36, 21, 0.95) 100%
+      );
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 3in 0.8in 1in;
+    }
+
+    .cover-tag {
+      font-family: var(--font-body);
+      font-size: 9pt;
+      text-transform: uppercase;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .cover-title {
+      font-family: var(--font-display);
+      font-size: 52pt;
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .cover-title span {
+      color: var(--gold);
+    }
+
+    .cover-tagline {
+      font-family: var(--font-display);
+      font-size: 18pt;
+      font-style: italic;
+      color: var(--gold-light);
+      margin-bottom: 32px;
+      font-weight: 400;
+    }
+
+    .cover-details {
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: rgba(245, 240, 232, 0.6);
+      display: flex;
+      gap: 24px;
+    }
+
+    .cover-details span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gold-dot {
+      width: 4px;
+      height: 4px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* =============================================
+       PAGE 2: ABOUT / BRAND
+       ============================================= */
+    .about-page {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 11in;
+    }
+
+    .about-image-col {
+      overflow: hidden;
+    }
+
+    .about-image-col img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .about-content-col {
+      padding: 1in 0.7in;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--warm-white);
+    }
+
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 7pt;
+      text-transform: uppercase;
+      letter-spacing: 0.4em;
+      color: var(--gold-dark);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 28pt;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      color: var(--espresso);
+    }
+
+    .about-text {
+      font-size: 10pt;
+      line-height: 1.7;
+      color: #555;
+      margin-bottom: 28px;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(60, 36, 21, 0.08);
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 24pt;
+      font-weight: 700;
+      color: var(--espresso);
+    }
+
+    .stat-label {
+      font-size: 7pt;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--gold-dark);
+      font-weight: 600;
+    }
+
+    .divider-gold {
+      width: 40px;
+      height: 2px;
+      background: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    /* =============================================
+       PAGE 3: SERVICE MENU
+       ============================================= */
+    .services-page {
+      padding: 0.7in 0.8in;
+      background: var(--warm-white);
+    }
+
+    .services-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .service-card {
+      background: white;
+      border: 1px solid rgba(60, 36, 21, 0.06);
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .service-category {
+      font-size: 6pt;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--terracotta);
+      font-weight: 700;
+    }
+
+    .service-name {
+      font-family: var(--font-display);
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--espresso);
+      line-height: 1.3;
+    }
+
+    .service-desc {
+      font-size: 7.5pt;
+      color: #777;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .service-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid rgba(60, 36, 21, 0.04);
+      margin-top: 6px;
+    }
+
+    .service-price {
+      font-family: var(--font-display);
+      font-size: 14pt;
+      font-weight: 700;
+      color: var(--espresso);
+    }
+
+    .service-price-label {
+      font-size: 6pt;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #aaa;
+      font-weight: 600;
+    }
+
+    .service-duration {
+      font-size: 7pt;
+      color: #999;
+      font-weight: 500;
+    }
+
+    /* =============================================
+       PAGE 4: SIGNATURE STYLES GALLERY
+       ============================================= */
+    .gallery-page {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 0;
+      height: 11in;
+    }
+
+    .gallery-cell {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px;
+      background: linear-gradient(to top, rgba(60, 36, 21, 0.85), transparent);
+      color: var(--cream);
+    }
+
+    .gallery-label h3 {
+      font-family: var(--font-display);
+      font-size: 16pt;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .gallery-label p {
+      font-size: 8pt;
+      opacity: 0.75;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .gallery-cell.text-cell {
+      background: var(--espresso);
+      color: var(--cream);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px;
+    }
+
+    .gallery-cell.text-cell .quote {
+      font-family: var(--font-display);
+      font-size: 22pt;
+      font-style: italic;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 20px;
+    }
+
+    .gallery-cell.text-cell .attribution {
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* =============================================
+       PAGE 5: SERVICES CONTINUED + BOOKING
+       ============================================= */
+    .services-page-2 {
+      padding: 0.7in 0.8in;
+      background: var(--warm-white);
+    }
+
+    /* =============================================
+       PAGE 6: CONTACT / BACK COVER
+       ============================================= */
+    .contact-page {
+      background: var(--espresso);
+      color: var(--cream);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 1.5in;
+    }
+
+    .contact-logo {
+      font-family: var(--font-display);
+      font-size: 38pt;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .contact-logo span {
+      color: var(--gold);
+    }
+
+    .contact-tagline {
+      font-family: var(--font-display);
+      font-size: 14pt;
+      font-style: italic;
+      color: var(--gold-light);
+      margin-bottom: 48px;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      text-align: left;
+      margin-bottom: 48px;
+      width: 100%;
+      max-width: 5in;
+    }
+
+    .contact-block h4 {
+      font-family: var(--font-display);
+      font-size: 12pt;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .contact-block p {
+      font-size: 9pt;
+      line-height: 1.8;
+      color: rgba(245, 240, 232, 0.75);
+    }
+
+    .contact-cta {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--espresso);
+      font-family: var(--font-body);
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      padding: 14px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+
+    .contact-social {
+      display: flex;
+      gap: 24px;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: rgba(245, 240, 232, 0.5);
+    }
+
+    .contact-social a {
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+
+    .contact-footer {
+      margin-top: auto;
+      padding-top: 40px;
+      font-size: 7pt;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: rgba(245, 240, 232, 0.3);
+    }
+
+    /* =============================================
+       PRINT STYLES
+       ============================================= */
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      .page {
+        page-break-after: always;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       PAGE 1: COVER
+       ============================================= -->
+  <div class="page cover-page">
+    <div class="cover-image-container">
+      <img class="cover-image" src="lookbook-cover.jpg" alt="The Braid Bar NJ Cover">
+      <div class="cover-overlay">
+        <p class="cover-tag"><span class="gold-dot"></span> &nbsp; Lookbook — 2025</p>
+        <h1 class="cover-title">The Braid Bar <span>NJ</span></h1>
+        <p class="cover-tagline">&ldquo;Knot just braids, it&rsquo;s a vibe.&rdquo;</p>
+        <div class="cover-details">
+          <span><span class="gold-dot"></span> West Orange, New Jersey</span>
+          <span><span class="gold-dot"></span> 558 Valley Road</span>
+          <span><span class="gold-dot"></span> @braidbarnj</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       PAGE 2: ABOUT / BRAND STORY
+       ============================================= -->
+  <div class="page about-page">
+    <div class="about-image-col">
+      <img src="lookbook-braids.jpg" alt="Knotless Braids Detail">
+    </div>
+    <div class="about-content-col">
+      <p class="section-label">Our Story</p>
+      <div class="divider-gold"></div>
+      <h2 class="section-title">Upscale Protective Styling, Rooted in Love</h2>
+      <p class="about-text">
+        Hey y'all, hey! I'm Sharon French, a self-taught braider with over 20 years of experience.
+        Owner of Apple Butter Boutique and the Braid Bar, a style haven located in the valley
+        district of West Orange, New Jersey.
+      </p>
+      <p class="about-text">
+        At The Braid Bar, every appointment is an experience — from the moment you walk in to
+        the moment you leave feeling like your most confident self. We specialize in knotless braids,
+        feed-in cornrows, crochet styles, locs, and VIP luxury braiding experiences using both
+        premium synthetic and 100% human hair.
+      </p>
+      <p class="about-text">
+        Our mission is simple: protect your crown while making you feel like royalty.
+      </p>
+      <div class="stat-row">
+        <div class="stat-item">
+          <span class="stat-number">20+</span>
+          <span class="stat-label">Years Experience</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">35+</span>
+          <span class="stat-label">Signature Styles</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5★</span>
+          <span class="stat-label">Client Rating</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       PAGE 3: SERVICE MENU (Featured Services)
+       ============================================= -->
+  <div class="page services-page">
+    <div class="services-header">
+      <p class="section-label">The Catalog</p>
+      <h2 class="section-title" style="margin-bottom: 6px;">Our Services Menu</h2>
+      <p style="font-size: 8.5pt; color: #999; max-width: 350px; margin: 0 auto; line-height: 1.5;">
+        From VIP luxury experiences to custom feed-ins, crochets, and starter locs.
+        Every style crafted with care.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <span class="service-category">VIP Services</span>
+        <span class="service-name">VIP Luxury Braiding Experience [Pre-Washed Kanekalon]</span>
+        <span class="service-desc">Private elevated braiding experience with luxury shampoo, deep condition, scalp massage, custom color blend, and complimentary meals.</span>
+        <div class="service-meta">
+          <div>
+            <span class="service-price-label">Starting at</span>
+            <span class="service-price">$400</span>
+          </div>
+          <span class="service-duration">6–8 hours</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <span class="service-category">VIP Services</span>
+        <span class="service-name">VIP Luxury Experience [100% Human Hair]</span>
+        <span class="service-desc">Premium 100% human hair knotless braids with private session, signature treatments, and take-home essentials.</span>
+        <div class="service-meta">
+          <div>
+            <span class="service-price-label">Starting at</span>
+            <span class="service-price">$600</span>
+          </div>
+          <span class="service-duration">6–10 hours</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <span class="service-category">Knotless Braids</span>
+        <span class="service-name">Knotless Braids {Medium}</span>
+        <span class="service-desc">Lightweight, pain-free braids. Forgiving on the scalp and safe on your edges. All textures welcome.</span>
+        <div class="service-meta">
+          <div>
+            <span class="service-price-label">Starting at</span>
+            <span class="service-price">$235</span>
+          </div>
+          <span class="service-duration">5.5 hours</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <span class="service-category">Knotless Braids</span>
+        <span class="service-name">Knotless Braids {SMedium}</span>
+        <span class="service-desc">A breath of fresh air, a far cry from traditional box braids. Clean grid parting with 5 front, 3 back rows.</span>
+        <div class="service-meta">
+          <div>
+            <span class="service-price-label">Starting at</span>
+            <span class="service-price">$250</span>
+          </div>
+          <span class="service-duration">7 hours</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <span class="service-category">Human Hair Knotless</span>
+        <span class="service-name">100% Human Hair Knotless</span>
+        <span class="service-desc">Premium human hair braids. 5 front, 3 back rows with 2-3 curls on each braid. Lightweight and pain free.</span>
+        <div class="service-meta">
+          <div>
+            <span class="service-price-label">Starting at</span>
+            <span class="service-price">$350</span>
+          </div>
+          <span class="service-duration">6.5 hours</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <span class="service-category">Human Hair Knotless</span>
+        <span class="service-name">VOLUME 100% Human Hair Boho Knotless</span>
+        <span class="service-desc">Maximum volume with 6 front, 3 back rows and 5-6 curls on each braid. A showstopping protective style.</span>
+        <div class="service-meta">
+          <div>
+            <span class="service-price-label">Starting at</span>
+            <span class="service-price">$450</span>
+          </div>
+          <span class="service-duration">10 hours</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <span class="service-category">Fulani Braids</span>
+        <span class="service-name">Fulani Knotless Braids {Small}</span>
+        <span class="service-desc">Knotless braids in the back, cornrows in the front. Creative design available as add-on.</span>
+        <div class="service-meta">
+          <div>
+            <span class="service-price-label">Starting at</span>
+            <span class="service-price">$325</span>
+          </div>
+          <span class="service-duration">7 hours</span>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <span class="service-category">Feed-Ins</span>
+        <span class="service-name">2–5 Feed-in Braids</span>
+        <span class="service-desc">Perfect protective style for natural hair. Options for extended length, creative designs, goddess styling.</span>
+        <div class="service-meta">
+          <div>
+            <span class="service-price-label">Starting at</span>
+            <span class="service-price">$60</span>
+          </div>
+          <span class="service-duration">1–2 hours</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       PAGE 4: VISUAL GALLERY
+       ============================================= -->
+  <div class="page gallery-page">
+    <div class="gallery-cell">
+      <img src="lookbook-fulani.jpg" alt="Fulani Braids">
+      <div class="gallery-label">
+        <h3>Fulani Braids</h3>
+        <p>Cornrows × Knotless × Beads</p>
+      </div>
+    </div>
+
+    <div class="gallery-cell text-cell">
+      <p class="quote">&ldquo;The best braiding experience I&rsquo;ve ever had in Jersey. The grid parting is perfect, it feels weightless.&rdquo;</p>
+      <p class="attribution">— Happy Client, West Orange NJ</p>
+    </div>
+
+    <div class="gallery-cell text-cell" style="background: var(--cream); color: var(--espresso);">
+      <p class="section-label" style="margin-bottom: 12px;">Also Available</p>
+      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 9.5pt;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(60,36,21,0.06); padding-bottom: 8px;">
+          <span style="font-weight: 600;">Crochet Box Braids</span> <span style="color: var(--gold-dark);">$150+</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(60,36,21,0.06); padding-bottom: 8px;">
+          <span style="font-weight: 600;">Crochet Weave</span> <span style="color: var(--gold-dark);">$175+</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(60,36,21,0.06); padding-bottom: 8px;">
+          <span style="font-weight: 600;">Miracle Knots Braids</span> <span style="color: var(--gold-dark);">$200+</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(60,36,21,0.06); padding-bottom: 8px;">
+          <span style="font-weight: 600;">Starter Locs</span> <span style="color: var(--gold-dark);">$150+</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(60,36,21,0.06); padding-bottom: 8px;">
+          <span style="font-weight: 600;">Microlocs Installation</span> <span style="color: var(--gold-dark);">$600+</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(60,36,21,0.06); padding-bottom: 8px;">
+          <span style="font-weight: 600;">Full Sew-in Weave</span> <span style="color: var(--gold-dark);">$225+</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(60,36,21,0.06); padding-bottom: 8px;">
+          <span style="font-weight: 600;">Spring / Passion Twist</span> <span style="color: var(--gold-dark);">$225+</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(60,36,21,0.06); padding-bottom: 8px;">
+          <span style="font-weight: 600;">Kids Knotless Braids</span> <span style="color: var(--gold-dark);">$150+</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="font-weight: 600;">Cornrows (No Hair)</span> <span style="color: var(--gold-dark);">$55+</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gallery-cell">
+      <img src="lookbook-salon.jpg" alt="The Braid Bar Salon">
+      <div class="gallery-label">
+        <h3>The Experience</h3>
+        <p>Private • Luxurious • Personalized</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       PAGE 5: TEAM + ADD-ONS
+       ============================================= -->
+  <div class="page services-page-2">
+    <div style="padding: 0.7in 0.8in;">
+      <div class="services-header">
+        <p class="section-label">Meet the Team</p>
+        <h2 class="section-title" style="margin-bottom: 32px;">Behind The Braid Bar</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 48px;">
+        <div style="background: white; border: 1px solid rgba(60,36,21,0.06); border-radius: 16px; padding: 32px;">
+          <div style="width: 48px; height: 48px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 18pt; font-weight: 800; color: var(--espresso); margin-bottom: 16px;">S</div>
+          <h3 style="font-family: var(--font-display); font-size: 16pt; font-weight: 700; margin-bottom: 4px;">Sharon French</h3>
+          <p style="font-size: 7pt; text-transform: uppercase; letter-spacing: 0.2em; color: var(--terracotta); font-weight: 700; margin-bottom: 12px;">Founder & Lead Stylist</p>
+          <p style="font-size: 9pt; color: #777; line-height: 1.65;">A self-taught braider with over 20 years of experience. Owner of Apple Butter Boutique and The Braid Bar — a style haven in West Orange, NJ. Sharon's vision is to provide a luxury braiding experience that makes every client feel like royalty.</p>
+        </div>
+        <div style="background: white; border: 1px solid rgba(60,36,21,0.06); border-radius: 16px; padding: 32px;">
+          <div style="width: 48px; height: 48px; background: var(--terracotta); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 18pt; font-weight: 800; color: var(--cream); margin-bottom: 16px;">A</div>
+          <h3 style="font-family: var(--font-display); font-size: 16pt; font-weight: 700; margin-bottom: 4px;">Abigail Charles</h3>
+          <p style="font-size: 7pt; text-transform: uppercase; letter-spacing: 0.2em; color: var(--terracotta); font-weight: 700; margin-bottom: 12px;">Salon Assistant & Stylist</p>
+          <p style="font-size: 9pt; color: #777; line-height: 1.65;">The newest member of The Braid Bar team, bringing positive energy and a passion for natural hair care. Abigail supports with client prep, shampooing, and braid takedowns while developing her protective styling skills.</p>
+        </div>
+      </div>
+
+      <!-- Popular Add-ons -->
+      <div class="services-header" style="margin-top: 8px;">
+        <p class="section-label">Customize Your Style</p>
+        <h2 class="section-title" style="font-size: 22pt; margin-bottom: 20px;">Popular Add-Ons</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+        <div style="background: white; border: 1px solid rgba(60,36,21,0.06); border-radius: 10px; padding: 14px 16px;">
+          <p style="font-size: 9pt; font-weight: 600; color: var(--espresso); margin-bottom: 2px;">Bohemian {Small}</p>
+          <p style="font-size: 7pt; color: #999;">Synthetic curls</p>
+          <p style="font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: var(--gold-dark); margin-top: 6px;">$80</p>
+        </div>
+        <div style="background: white; border: 1px solid rgba(60,36,21,0.06); border-radius: 10px; padding: 14px 16px;">
+          <p style="font-size: 9pt; font-weight: 600; color: var(--espresso); margin-bottom: 2px;">Bohemian {Medium}</p>
+          <p style="font-size: 7pt; color: #999;">Synthetic curls</p>
+          <p style="font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: var(--gold-dark); margin-top: 6px;">$60</p>
+        </div>
+        <div style="background: white; border: 1px solid rgba(60,36,21,0.06); border-radius: 10px; padding: 14px 16px;">
+          <p style="font-size: 9pt; font-weight: 600; color: var(--espresso); margin-bottom: 2px;">Bohemian {Large}</p>
+          <p style="font-size: 7pt; color: #999;">Synthetic curls</p>
+          <p style="font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: var(--gold-dark); margin-top: 6px;">$50</p>
+        </div>
+        <div style="background: white; border: 1px solid rgba(60,36,21,0.06); border-radius: 10px; padding: 14px 16px;">
+          <p style="font-size: 9pt; font-weight: 600; color: var(--espresso); margin-bottom: 2px;">Shampoo & Blow-Dry</p>
+          <p style="font-size: 7pt; color: #999;">Pre-service prep</p>
+          <p style="font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: var(--gold-dark); margin-top: 6px;">$65+</p>
+        </div>
+        <div style="background: white; border: 1px solid rgba(60,36,21,0.06); border-radius: 10px; padding: 14px 16px;">
+          <p style="font-size: 9pt; font-weight: 600; color: var(--espresso); margin-bottom: 2px;">Creative Design</p>
+          <p style="font-size: 7pt; color: #999;">Custom patterns</p>
+          <p style="font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: var(--gold-dark); margin-top: 6px;">$25+</p>
+        </div>
+        <div style="background: white; border: 1px solid rgba(60,36,21,0.06); border-radius: 10px; padding: 14px 16px;">
+          <p style="font-size: 9pt; font-weight: 600; color: var(--espresso); margin-bottom: 2px;">Bun or Braid</p>
+          <p style="font-size: 7pt; color: #999;">Style finish</p>
+          <p style="font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: var(--gold-dark); margin-top: 6px;">$15</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       PAGE 6: CONTACT / BACK COVER
+       ============================================= -->
+  <div class="page contact-page">
+    <p class="section-label" style="color: var(--gold); margin-bottom: 32px;">Book Your Experience</p>
+
+    <h2 class="contact-logo">The Braid Bar <span>NJ</span></h2>
+    <p class="contact-tagline">&ldquo;Knot just braids, it&rsquo;s a vibe.&rdquo;</p>
+
+    <div class="contact-grid">
+      <div class="contact-block">
+        <h4>Location</h4>
+        <p>
+          558 Valley Road<br>
+          West Orange, NJ 07052<br>
+          Valley District
+        </p>
+      </div>
+      <div class="contact-block">
+        <h4>Contact</h4>
+        <p>
+          551-339-3637<br>
+          braidbar1nj@gmail.com<br>
+          @braidbarnj
+        </p>
+      </div>
+      <div class="contact-block">
+        <h4>Hours</h4>
+        <p>
+          Mon–Fri: 10AM — 6PM<br>
+          Saturday: 9AM — 3PM<br>
+          Sunday: Closed
+        </p>
+      </div>
+      <div class="contact-block">
+        <h4>Book Online</h4>
+        <p>
+          braidbarnj.as.me<br>
+          Deposits required<br>
+          WhatsApp available
+        </p>
+      </div>
+    </div>
+
+    <a href="https://braidbarnj.as.me/schedule" class="contact-cta">Book Your Appointment</a>
+
+    <div class="contact-social">
+      <a href="https://instagram.com/braidbarnj">Instagram</a>
+      <span>•</span>
+      <a href="https://braidbarnj.as.me/schedule">Acuity</a>
+      <span>•</span>
+      <span>West Orange, NJ</span>
+    </div>
+
+    <p class="contact-footer">&copy; 2025 The Braid Bar NJ. All rights reserved.</p>
+  </div>
+
+</body>
+</html>

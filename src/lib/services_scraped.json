@@ -1,0 +1,1743 @@
+{
+  "Braid Bar- VIP Services": [
+    {
+      "id": 71931392,
+      "name": "VIP Luxury Braiding Experience [Pre-Washed Kanekalon]",
+      "price": 400,
+      "duration_min": 360,
+      "description": "Indulge in a private elevated braiding experience designed for comfort, longevity & high-quality hair.\n\nThis exclusive appointment includes:\n• Private VIP session\n• Luxury shampoo, deep condition, scalp massage & blow-dry\n• Gyal hair\n• Custom color blend (if needed)\n• Signature medium Knotless or Fulani braids\n• Complimentary breakfast and/or lunch (based on service length)\n• Take-home satin bonnet, care guide & product essentials\n\nDuration: 6–8 hours (style dependent)\nStarting at $400 add-o",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048627,
+        1466734,
+        6838679,
+        6693871,
+        6838674,
+        6693868
+      ]
+    },
+    {
+      "id": 89671479,
+      "name": "VIP Luxury Braiding Experience [100% Human Hair]",
+      "price": 600,
+      "duration_min": 480,
+      "description": "Indulge in a private, elevated braiding experience curated for maximum comfort & flawless results using premium 100% human hair.\n\nYour VIP appointment includes:\n• Private luxury appointment\n• Signature shampoo and deep conditioning treatment\n• Premium 100% human hair\n• Human Hair Knotless\n• Complimentary breakfast and/or lunch (based on service length)\n• Take-home satin bonnet, personalized care guide & product essentials\n\nDuration: 6–10 hours (style dependent)\nInvestment: Starting at $600 add",
+      "addonIDs": [
+        6838614,
+        6838623
+      ]
+    }
+  ],
+  "Crochet": [
+    {
+      "id": 18980676,
+      "name": "Crochet Box Braids or Twist",
+      "price": 150,
+      "duration_min": 90,
+      "description": "Crochet Box Braids or Twist\n\nA low-maintenance, protective style that promotes healthy hair growth while allowing your scalp to breathe.\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nPlease Note:\nHair is not provided. Please check your local beauty supply store. For more hair options Amazon has a large variety of hair colors and options. \n\nHair is not provided,",
+      "addonIDs": [
+        1466815,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        1605835,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18980630,
+      "name": "Crochet Weave",
+      "price": 175,
+      "duration_min": 150,
+      "description": "Crochet Weave\nA low-maintenance, protective style that promotes healthy hair growth while allowing your scalp to breathe.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nPlease Note:\nHair is not provided. Please check your local beauty supply store. For more hair options Amazon has a large variety of hair colors and options.",
+      "addonIDs": [
+        1466815,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 87927362,
+      "name": "Crochet Weave- Human Hair",
+      "price": 200,
+      "duration_min": 180,
+      "description": "Human Hair Weave\nA protective style that promotes healthy hair growth while allowing your scalp to breathe.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nPlease Note:\nHair is not provided. Please check your local beauty supply store. For more hair options Amazon has a large variety of hair colors and options.",
+      "addonIDs": []
+    }
+  ],
+  "Feed-Ins": [
+    {
+      "id": 13734724,
+      "name": "2 Feed-in Braids",
+      "price": 60,
+      "duration_min": 60,
+      "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
+      "addonIDs": [
+        1466815,
+        1466793,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18971011,
+      "name": "4 Feed-in Braids",
+      "price": 80,
+      "duration_min": 90,
+      "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
+      "addonIDs": [
+        1466815,
+        1466793,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18971010,
+      "name": "5 Feed-in Braids",
+      "price": 95,
+      "duration_min": 120,
+      "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
+      "addonIDs": [
+        1466815,
+        1466793,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18974439,
+      "name": "6 Feed-in Braids",
+      "price": 120,
+      "duration_min": 150,
+      "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in the salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
+      "addonIDs": [
+        1466815,
+        1466793,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18974471,
+      "name": "8 Feed-in Braids",
+      "price": 170,
+      "duration_min": 180,
+      "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in the salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
+      "addonIDs": [
+        1466815,
+        2076874,
+        1466793,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 13734725,
+      "name": "10 Feed-in Braids",
+      "price": 200,
+      "duration_min": 210,
+      "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\nRuwa Hair is available for purchase in the salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
+      "addonIDs": [
+        1466815,
+        1466793,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18971012,
+      "name": "11-12 Feed-in Braids",
+      "price": 225,
+      "duration_min": 240,
+      "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in the salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
+      "addonIDs": [
+        1466815,
+        2076874,
+        1466788,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18974345,
+      "name": "14 Feed-in Braids",
+      "price": 250,
+      "duration_min": 300,
+      "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in the salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
+      "addonIDs": [
+        1466815,
+        2076874,
+        1466788,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18971014,
+      "name": "16-18 Feed-in Braids",
+      "price": 275,
+      "duration_min": 360,
+      "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in the salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
+      "addonIDs": [
+        1466815,
+        2076874,
+        1466788,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 70378428,
+      "name": "4 Fluffy Feed-in Braids",
+      "price": 120,
+      "duration_min": 120,
+      "description": "4 Feed-In Braids with Curls\n\nA sleek, stylish look enhanced with soft curls for extra flair.\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\n\nHair Information:\nRuwa Hair is available for purchase — please select your preferred color(s) under the \"Add-Ons\" section.\nPre-stretched brands are preferred (1 individual pack needed).",
+      "addonIDs": [
+        1466815,
+        5048629,
+        5257909,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Fulani Braids": [
+    {
+      "id": 18980442,
+      "name": "Fulani Knotless Braids {Small}",
+      "price": 325,
+      "duration_min": 420,
+      "description": "Small Fulani Braids. Knotless braids in the back and cornrows in the front.\n\n*Style pictured has a “Creative Design”\n\nPrep:\nPlease book your wash \"add-on\" or arrive with your hair washed, blow-dried, and flake-free for the best results.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}",
+      "addonIDs": [
+        1466815,
+        1646881,
+        2727538,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        6599628,
+        5816642,
+        5048627,
+        3219738,
+        1466734,
+        5816657,
+        5150817
+      ]
+    },
+    {
+      "id": 18980481,
+      "name": "Fulani Knotless Braids {Medium}",
+      "price": 275,
+      "duration_min": 360,
+      "description": "Medium Fulani Braids.  Knotless braids in the back and cornrows in the front.\n\nPrep:\nPlease book your wash \"add-on\" or arrive with your hair washed, blow-dried, and flake-free for the best results.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}",
+      "addonIDs": [
+        1466815,
+        2076864,
+        1466784,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        1821000,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        6599628,
+        5816642,
+        5048627,
+        1466739,
+        1466734,
+        5954776,
+        3651072,
+        2727537
+      ]
+    },
+    {
+      "id": 18980562,
+      "name": "Fulani Knotless Braids {Large}",
+      "price": 250,
+      "duration_min": 300,
+      "description": "Large Fulani Braids. Knotless braids in the back and cornrows in the front.\n\nPrep:\nPlease book your wash \"add-on\" or arrive with your hair washed, blow-dried, and flake-free for the best results.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}\n\nStyle pictured has “Creative Design” add-on.",
+      "addonIDs": [
+        1466815,
+        2076871,
+        1466788,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        1821002,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 22355637,
+      "name": "Fulani Knotless Braids {Jumbo}",
+      "price": 220,
+      "duration_min": 240,
+      "description": "Jumbo Fulani Braids. Knotless braids in the back and cornrows in the front.\n\nPrep:\nPlease book your wash \"add-on\" or arrive with your hair washed, blow-dried, and flake-free for the best results.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}\n\nStyle pictured has “Creative Design” add-on.",
+      "addonIDs": [
+        1466815,
+        2076874,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        1821004,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 27396713,
+      "name": "Half/Half Cornrow Style",
+      "price": 275,
+      "duration_min": 300,
+      "description": "Sew-in Weave in the back with cornrows in the front half with a Creative Design. \n\nPrep:\nPlease book your wash \"add-on\" or arrive with your hair washed, blow-dried, and flake-free for the best results.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {1 individual pack}. Weave hair is client preference.",
+      "addonIDs": [
+        1466815,
+        1466797,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 52772401,
+      "name": "Flip over Fulani Braids",
+      "price": 400,
+      "duration_min": 600,
+      "description": "Flip Fulani Braids. SMedium Knotless braids in the back and Creative Design cornrows in the front. Boho curls are also added throughout the style. \n\nPrep:\nPlease book your wash \"add-on\" or arrive with your hair washed, blow-dried, and flake-free for the best results.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Human Hair Knotless": [
+    {
+      "id": 89761128,
+      "name": "Miracle Knots Braids //NEW//",
+      "price": 200,
+      "duration_min": 240,
+      "description": "Miracle Knots is a viral crochet hairstyle that offers a quick and easy way to achieve a boho braids look without the long installation time or high cost of traditional methods.\n\nLight weight. Pain free.\n\nRows:\n4 front, 2 back\n\nPrep:\nHair must be washed and blown dry prior to service unless shampoo \"add-on\" was booked. Scalp must be clean + flake free.\n\nHair:\nFeather Human Crochet Hair {3 packs}",
+      "addonIDs": [
+        7041082,
+        7041083
+      ]
+    },
+    {
+      "id": 58772751,
+      "name": "100% Human Hair Knotless",
+      "price": 350,
+      "duration_min": 390,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRows:\n5 front, 3 back\n2-3 curls on each braid.\n\nPrep:\nHair can be washed and blown dry prior to service or you can book your wash \"add-on\". \n\nHair: 100% Human hair 3 individual packs. Hair curls or pattern is client preference. Braiding Hair is available for purchase under “add-ons”",
+      "addonIDs": [
+        5048629,
+        4814794,
+        6599628,
+        5816642,
+        5048627,
+        1466734,
+        5816657,
+        5150817
+      ]
+    },
+    {
+      "id": 45859942,
+      "name": "VOLUME 100% Human Hair Boho Knotless",
+      "price": 450,
+      "duration_min": 600,
+      "description": "Lightweight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRows:\n6 front, 3 back\n5-6 curls on each braid.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair: 100% Human hair ygwigs.com {3 individual packs} body wave or similar brand Depending on the volume of curls you want. Must be 18-24 inches",
+      "addonIDs": [
+        1466797,
+        2727527,
+        5048629,
+        4814794,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 60671914,
+      "name": "Mega VOLUME 100% Human Hair Boho Knotless",
+      "price": 600,
+      "duration_min": 720,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRows:\n5 front, 3 back\n8 curls on each braid.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\".\n\n100% Human hair {4 individual packs. Must be 18-24 inches. Braid Hair is available for purchase, please select color(s) located under “add-on’",
+      "addonIDs": [
+        1466797,
+        5048629,
+        4814794,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 60672211,
+      "name": "100% Human Hair Knotless Braids w/Sew-in WEAVE",
+      "price": 350,
+      "duration_min": 480,
+      "description": "Knotless Sew-in Weave is a nod to the throwback classic with updated knotless braids surrounding the crown with a weave in the middle. Cut down on time of a full head of braids but adds the fullness of a weave.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nHair: 100% Human hair 2 individual packs of braid hair. For Sew-in 1 bundle of hair. Hair curls or pattern is client preference.",
+      "addonIDs": [
+        1466797,
+        5048629,
+        4814794,
+        6599628,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Kids Styles": [
+    {
+      "id": 18980266,
+      "name": "Kids Knotless Braids",
+      "price": 175,
+      "duration_min": 240,
+      "description": "Kids prices are for ages 10 and under.\n\nLight-weight. Pain free.\n\nRows:\n4 front, 2 back\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair {2 packs}",
+      "addonIDs": [
+        1466815,
+        2076874,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 89661790,
+      "name": "Kids Miracle Knots Braids ",
+      "price": 175,
+      "duration_min": 180,
+      "description": "Miracle Knots is a viral crochet hairstyle that offers a quick and easy way to achieve a boho braids look without the long installation time or high cost of traditional methods.\n\nKids prices are for ages 10 and under.\n\nLight weight. Pain free.\n\nRows:\n5 front, 3 back\n\nPrep:\nHair must be washed and blown dry prior to service unless shampoo service was booked. Scalp must be clean + flake free.\n\nHair:\nFeather Human Crochet Hair {3 packs}",
+      "addonIDs": []
+    },
+    {
+      "id": 95433490,
+      "name": "KIDS Bohohiman Bob Knotless Braids",
+      "price": 200,
+      "duration_min": 270,
+      "description": "Kids' (Ages 5–12) \n\nLightweight, pain-free, and gentle on the scalp and edges. This protective style works beautifully on all hair textures. Style includes 5 front rows, 2 back rows, with 3–4 curls added to each braid. \n\nPlease arrive with hair washed and blow-dried or book our Wash & Blow-Dry Add-On. \n\nHair Required: 1 pack of Human Deep Twist or Deep Wave hair (14–16\").",
+      "addonIDs": []
+    },
+    {
+      "id": 90074145,
+      "name": "Box Braids w/Natural hair ",
+      "price": 150,
+      "duration_min": 180,
+      "description": "Box Braids with your natural hair and no hair added. Starts at $150 depending on length. Done with medium braids parts 2 rows in the back and 5 rows on each side in the front. A consultation is suggested before this style is rendered. Light weight. Tension free style. Versatile protective style.\nPrep:\nHair can be washed and blown dry prior to service. Scalp must be clean + flake free, or you can also select a Shampoo Service.",
+      "addonIDs": []
+    }
+  ],
+  "Knotless Braids": [
+    {
+      "id": 18979640,
+      "name": "Knotless Braids {Medium}",
+      "price": 235,
+      "duration_min": 330,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {Medium}:\nNot recommended for short or fine hair textures\nRows:\n5 front, 2 back\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair:\nHair is available for purchase.  \nRuwa hair preferred or most pre-stretched brands {3 indi",
+      "addonIDs": [
+        1466815,
+        2076864,
+        1466784,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        6934178,
+        1821000,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        6599628,
+        5816642,
+        5048627,
+        1466739,
+        1466734,
+        2727537
+      ]
+    },
+    {
+      "id": 34334793,
+      "name": "Knotless Braids {SMedium)",
+      "price": 250,
+      "duration_min": 420,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRows:\n5 front, 3 back\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}",
+      "addonIDs": [
+        1466815,
+        3219725,
+        1466784,
+        1466797,
+        2727527,
+        5048629,
+        6934176,
+        6599628,
+        5816642,
+        5048627,
+        1466734,
+        2727537
+      ]
+    },
+    {
+      "id": 18979784,
+      "name": "Knotless Braids {Large}",
+      "price": 210,
+      "duration_min": 240,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {Large}: Not recommended for short or fine hair textures\nRows:\n3 front, 2 back\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair:\nHair is available for purchase.\nRuwa hair preferred or most pre-stretched brands.",
+      "addonIDs": [
+        1466815,
+        2076871,
+        1466788,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        1821002,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734,
+        3651072
+      ]
+    },
+    {
+      "id": 18980090,
+      "name": "Knotless Braids {Jumbo}",
+      "price": 190,
+      "duration_min": 180,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {jumbo]:\nNot recommended for short or fine hair textures\nRows:\n3 front, 1 back\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair:\nHair is available for purchase.\nRuwa hair preferred or most pre-stretched brands",
+      "addonIDs": [
+        1466815,
+        2076874,
+        1466793,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        1821004,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734,
+        5954776
+      ]
+    },
+    {
+      "id": 18979549,
+      "name": "Knotless Braids {Small}",
+      "price": 280,
+      "duration_min": 480,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRows:\n6 front, 3-4 back\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}",
+      "addonIDs": [
+        1466815,
+        1646881,
+        2727538,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        6934182,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        6599628,
+        5816642,
+        5048627,
+        3219738,
+        1466734,
+        5816657,
+        5150817
+      ]
+    },
+    {
+      "id": 18980131,
+      "name": "Knotless Braids {X-Small parts}",
+      "price": 400,
+      "duration_min": 600,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {x-small}:\nRecommended for short or fine hair textures\n\nRows:\n7 front, -3-4 back\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair:\nHair is available for purchase. \nRuwa hair preferred or most pre-stretched brands",
+      "addonIDs": [
+        1466815,
+        2593625,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18980166,
+      "name": "Knotless Braids {Micros)",
+      "price": 500,
+      "duration_min": 960,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRecommended for short or fine hair textures\n\nRows:\n8 front, 4-5 back\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nHair:\nBraiding Hair is available for purchase. \nRuwa pre-stretched hair preferred for best results",
+      "addonIDs": [
+        1466815,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        6599628,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 62694732,
+      "name": "Bohohiman Bob Knotless Braids",
+      "price": 300,
+      "duration_min": 360,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRows:\n5 front, 2 back\n3-4 curls on each braid.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair: 100% Human hair Janet Wet and wavy  {2 individual packs} or similar brand Depending on the volume of curls you want. Must be 16 - 18 inches",
+      "addonIDs": [
+        1466797,
+        5048629,
+        6599628,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Locs": [
+    {
+      "id": 77875239,
+      "name": "Starter Locs ",
+      "price": 150,
+      "duration_min": 180,
+      "description": "Get your locs started today!\n\nComb coil locs with box or free parts. Low maintenance. The duration of the starter loc phase can vary depending on hair type, texture, and individual growth rate, potentially lasting a few weeks to several months. The duration of the starter loc phase can vary depending on hair type, texture, and individual growth rate, potentially lasting four weeks.\n\n“Starter locs” this option should be selected until locs begin to fuse together.",
+      "addonIDs": [
+        5048629,
+        5968741,
+        5968727,
+        6543688,
+        5816642,
+        5048627,
+        1466739
+      ]
+    },
+    {
+      "id": 56119890,
+      "name": "Microlocs Installation",
+      "price": 600,
+      "duration_min": 720,
+      "description": "Start your micro loc journey today. Please book a consultation BEFORE booking this service. Clients' hair density will determine if you are a good candidate for this hairstyle. This style can take 18 to 24 hours so it will be broken out into two sessions.\n\nPrice does vary depending on hair length. It’s $100 extra per inch.",
+      "addonIDs": [
+        5048629,
+        6543688,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Maintenance ": [
+    {
+      "id": 93421236,
+      "name": "Weave Refresh ",
+      "price": 75,
+      "duration_min": 90,
+      "description": "A style refresh with track tightening and shampoo included.",
+      "addonIDs": [
+        7004146
+      ]
+    },
+    {
+      "id": 77135785,
+      "name": "Loc Retwist",
+      "price": 95,
+      "duration_min": 120,
+      "description": "Loc retwist which includes shampoo and twist. No style.",
+      "addonIDs": [
+        5048629,
+        5968741,
+        5968727,
+        6543688,
+        5816642,
+        5048627
+      ]
+    },
+    {
+      "id": 88826766,
+      "name": "Starter Locs Retwist",
+      "price": 125,
+      "duration_min": 180,
+      "description": "Get your locs started today!\n\nComb coil locs with box or free parts. Low maintenance. The duration of the starter loc phase can vary depending on hair type, texture, and individual growth rate, potentially lasting a few weeks to several months. The duration of the starter loc phase can vary depending on hair type, texture, and individual growth rate, potentially lasting four weeks.\n\n“Starter locs” this option should be selected until locs begin to fuse together.",
+      "addonIDs": [
+        6543688
+      ]
+    },
+    {
+      "id": 73671826,
+      "name": "Microlocs Retie",
+      "price": 175,
+      "duration_min": 240,
+      "description": "This service is offered to current clients. A consultation must be selected BEFORE appointment is booked! This is the base price for up to four hours, each additional hour is $35.\n\nMaintenance on micro locs should be scheduled every 6-8 weeks unless advised otherwise.",
+      "addonIDs": [
+        5048629,
+        6543688,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 13734701,
+      "name": "Maintenance {Extra Small + Human Hair Knotless}",
+      "price": 175,
+      "duration_min": 240,
+      "description": "During the braid period, clients are urged to maintain their hair for the duration of the style. \n\nTo Prep:\nHair must be taken out prior to service. \nMust not exceed 8 weeks.  \n3 rows in the front + 1 in the back or 4 rows in the front.\n\nHair: Ruwa hair {1 pack} Can be purchased at Braid Bar or at a beauty supply store. \n\nPlease contact if you have any questions.",
+      "addonIDs": [
+        1466815,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466739,
+        1466734
+      ]
+    },
+    {
+      "id": 13734613,
+      "name": "Maintenance {Small Knotless] and [Boho Bob Knotless]",
+      "price": 150,
+      "duration_min": 180,
+      "description": "During the braid period, clients are urged to maintain their hair for the duration of the style. \n\nTo Prep:\nHair must be taken out prior to service. \nMust not exceed 8 weeks.  \n2 rows in the front + 1 in the back or 3 rows in the front.\n\nHair: Ruwa hair {1 pack} Can be purchased at Braid Bar or at a beauty supply store. \n\nPlease contact if you have any questions.",
+      "addonIDs": [
+        1466815,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466739,
+        1466734
+      ]
+    },
+    {
+      "id": 13734695,
+      "name": "Maintenance {Medium Knotless}",
+      "price": 100,
+      "duration_min": 150,
+      "description": "During the braid period, clients are urged to maintain their hair for the duration of the style. \n\nTo Prep:\nHair must be taken out prior to service. \nMust not exceed 8 weeks.  \n2 rows in the front + 1 in the back or 3 rows in the front.\n\nHair: Ruwa hair {1 pack} Can be purchased at Braid Bar or at a beauty supply store. \n\nPlease contact if you have any questions.",
+      "addonIDs": [
+        1466815,
+        7090362,
+        6113544,
+        2076874,
+        1466793,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466739,
+        1466734
+      ]
+    },
+    {
+      "id": 13734492,
+      "name": "Maintenance {Large Knotless}",
+      "price": 80,
+      "duration_min": 90,
+      "description": "During the braid period, clients are urged to maintain their hair for the duration of the style. \n\nTo Prep:\nHair must be taken out prior to service. \nMust not exceed 8 weeks.  \n2 rows in the front + 1 in the back or 3 rows in the front.\n\nHair: Ruwa hair {1 pack} Can be purchased at Braid Bar or at a beauty supply store. \n\nPlease contact if you have any questions.",
+      "addonIDs": [
+        1466815,
+        6113544,
+        2076874,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466739,
+        1466734
+      ]
+    },
+    {
+      "id": 18975242,
+      "name": "Maintenance {Jumbo Knotless}",
+      "price": 70,
+      "duration_min": 60,
+      "description": "During the braid period, clients are urged to maintain their hair for the duration of the style. \n\nTo Prep:\nHair must be taken out prior to service. \nMust not exceed 8 weeks.  \n1 rows in the front + 1 in the back or 2 rows in the front.\n\nHair: Ruwa hair {1 pack} Can be purchased at Braid Bar or at a beauty supply store. \n\nPlease contact if you have any questions.",
+      "addonIDs": [
+        1466815,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5257909,
+        5816642,
+        5048627,
+        1466739,
+        1466734
+      ]
+    },
+    {
+      "id": 27689668,
+      "name": "Maintenance {Small Fulani}",
+      "price": 175,
+      "duration_min": 150,
+      "description": "During the braid period, clients are urged to maintain their hair for the duration of the style. \n\nTo Prep:\nHair must be washed and taken out prior to service. \nMust not exceed 8 weeks.  \nCornrows + 1 row in the back in the front must be taken out prior to appointment.\n\nHair: Ruwa hair {1 pack} Can be purchased at Braid Bar or at a beauty supply store. \n\nPlease contact if you have any questions.",
+      "addonIDs": [
+        1466815,
+        1466797,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 27689658,
+      "name": "Maintenance {Medium + SMedium Fulani}",
+      "price": 150,
+      "duration_min": 150,
+      "description": "To Prep:\nHair must be washed and taken out prior to service\nMust not exceed 8 weeks.  \nCornrows + 1 row in the back in the front must be taken out prior to appointment.\n\nHair: Ruwa hair {1 pack} Can be purchased at Braid Bar or at a beauty supply store. \n\nPlease contact if you have any questions.",
+      "addonIDs": [
+        1466815,
+        6113544,
+        1466793,
+        1466797,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 64096077,
+      "name": "[Maintenance] Flip over Fulani Braids.",
+      "price": 190,
+      "duration_min": 210,
+      "description": "To Prep:\nHair must be washed and taken out prior to service \nMust not exceed 8 weeks.  \nCornrows + individuals in the front section ONLY. Hair must be taken out prior to appointment.\n\nHair: Ruwa hair {1 pack} Can be purchased at Braid Bar or at a beauty supply store. Curls are not provided.\n\nPlease contact if you have any questions.",
+      "addonIDs": [
+        6113544,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Men's Styles": [
+    {
+      "id": 27689723,
+      "name": "Cornrows with Creative Design",
+      "price": 120,
+      "duration_min": 120,
+      "description": "No hair added. Creative design (cris cross, zig zag).\n\nPrep:\nPlease come with hair washed and blown dry, or you can book your wash \"add-on\". A clean and flake free scalp produces best results.",
+      "addonIDs": [
+        1466815,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 19488140,
+      "name": "Cornrows {No Hair Added}",
+      "price": 90,
+      "duration_min": 90,
+      "description": "Simple cornrow protective style with no hair added.\n\nA additional fee may be added for designs or small braids.\n\nPrep:\nPlease come with hair washed and blown dry, or you can book your wash \"add-on\". A clean and flake free scalp produces best results.",
+      "addonIDs": [
+        1466815,
+        5048629,
+        2151624,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 76141761,
+      "name": "4 Cornrow Style No hair added",
+      "price": 55,
+      "duration_min": 60,
+      "description": "Protective style with no hair added.\n\nAn additional fee may be added for designs or small braids.\n\nPrep:\nPlease come with hair washed and blown dry, or you can book your wash \"add-on\". A clean and flake free scalp produces best results.",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048627
+      ]
+    },
+    {
+      "id": 80041439,
+      "name": "6 Cornrow Style No hair added",
+      "price": 80,
+      "duration_min": 120,
+      "description": "Cornrows with no hair added. \n\nPrep:\nPlease come with hair washed and blown dry, or you can book your wash \"add-on\". A clean and flake free scalp produces best results.",
+      "addonIDs": [
+        1466744,
+        5048629,
+        5816642,
+        5048627
+      ]
+    },
+    {
+      "id": 82074473,
+      "name": "Box Braids. No hair added.",
+      "price": 100,
+      "duration_min": 120,
+      "description": "Box braid protective style with no hair added.\n\nPrep:\nPlease come with hair washed and blown dry, or you can book your wash \"add-on\". A clean and flake free scalp produces best results.",
+      "addonIDs": [
+        1466744,
+        5048629,
+        5816642,
+        5048627
+      ]
+    },
+    {
+      "id": 22112926,
+      "name": "Box Braids {shaved sides} No hair added",
+      "price": 80,
+      "duration_min": 90,
+      "description": "Box braid protective style with no hair added. Sides shaved.\n\nA additional fee may be added for designs or small braids.",
+      "addonIDs": [
+        1466815,
+        5048629,
+        2151624,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Sew-in WEAVE": [
+    {
+      "id": 60672655,
+      "name": "Full Sew-in Weave (new)",
+      "price": 225,
+      "duration_min": 180,
+      "description": "Sew-in Weave. Crown of your natural hair is left out to give the most natural look and feel. Wear it up or down. Currently only providing curly weaves. No straighten services available at this time.  \n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your washed \"add-on\". Scalp must be clean + flake free.\n\nHair: 100% Human Hair 2 bundles of hair. Curls or pattern is client preference.",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 53045875,
+      "name": "Sew in Half up and Down",
+      "price": 200,
+      "duration_min": 150,
+      "description": "Half up Sew-in Weave. Front half choose from a bun or ponytail with a sew in weave in the back. Currently only providing curly weaves. No straighten services available at this time.  \n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nHair: 100% Human Hair 2 bundles of hair. Curls or pattern is client preference.",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "STYLIST// Abby Charles": [
+    {
+      "id": 18981490,
+      "name": "Large Knotless",
+      "price": 175,
+      "duration_min": 240,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {jumbo]:\nNot recommended for short or fine hair textures\nRows:\n4 front, 2 back\nPrep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase.\nRuwa hair preferred or most pre-stretched brands.",
+      "addonIDs": [
+        1466815,
+        1466788,
+        1466797,
+        2727527,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18981513,
+      "name": "Jumbo Knotless",
+      "price": 150,
+      "duration_min": 200,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {jumbo]:\nNot recommended for short or fine hair textures\nRows:\n4 front, 2 back\nPrep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase.\nRuwa hair preferred or most pre-stretched brands.",
+      "addonIDs": [
+        1466815,
+        1466797,
+        2727527,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 48768119,
+      "name": "Kids Knotless",
+      "price": 150,
+      "duration_min": 240,
+      "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {jumbo]:\nNot recommended for short or fine hair textures\nRows:\n3 front, 1 back\nPrep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase.\nRuwa hair preferred or most pre-stretched brands",
+      "addonIDs": [
+        1466797,
+        2727527,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 48430331,
+      "name": "Shampoo + Blow dry ONLY",
+      "price": 55,
+      "duration_min": 45,
+      "description": "Shampoo and blow dry. Clients' natural hair will be put into 2 simple cornrows.",
+      "addonIDs": [
+        1466797,
+        2727527,
+        5048629,
+        5816642,
+        5048631,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 46795410,
+      "name": "2 Feed in Braids",
+      "price": 45,
+      "duration_min": 60,
+      "description": "",
+      "addonIDs": [
+        1466797,
+        2727527,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 46057354,
+      "name": "4-feed-in braids",
+      "price": 65,
+      "duration_min": 120,
+      "description": "Prep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”\nRuwa hair preferred or most pre-stretched brands {1 individual pack}",
+      "addonIDs": [
+        1466797,
+        2727527,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 46057419,
+      "name": "6 feed-in braids",
+      "price": 85,
+      "duration_min": 180,
+      "description": "Prep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”\nRuwa hair preferred or most pre-stretched brands",
+      "addonIDs": [
+        1466797,
+        2727527,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 48430333,
+      "name": "Crochet/ Simple Weave Pattern (10 Braids)",
+      "price": 25,
+      "duration_min": 30,
+      "description": "",
+      "addonIDs": [
+        1466797,
+        2727527,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 37798909,
+      "name": "Wig Braid down",
+      "price": 55,
+      "duration_min": 60,
+      "description": "Simple cornrow protective style for wig ONLY.\n\n10-12 cornrows straight back \n\nPrep:\nHair can be washed and blown dry or you can book your wash \"add-on\". A clean and flake free scalp needed for best results.",
+      "addonIDs": [
+        5048629,
+        6599628,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Takedown": [
+    {
+      "id": 64741717,
+      "name": "Shampoo + Blow dry + Braid Takedown (Large)",
+      "price": 125,
+      "duration_min": 120,
+      "description": "Shampoo, deep conditioning, steam treatment, and blow dry. Clients' natural hair will be put into 2 simple cornrows.",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048631,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 95268253,
+      "name": "Shampoo + Blow dry + Crochet/Sew-in Weave ",
+      "price": 100,
+      "duration_min": 120,
+      "description": "Shampoo, deep conditioning, steam treatment, and blow dry. Clients' natural hair will be put into 2 simple cornrows.",
+      "addonIDs": []
+    },
+    {
+      "id": 67693407,
+      "name": "Shampoo + Blow dry + Braid Takedown (Medium)",
+      "price": 150,
+      "duration_min": 180,
+      "description": "Shampoo, deep conditioning, steam treatment, and blow dry. Clients' natural hair will be put into 2 simple cornrows.",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 67739521,
+      "name": "Shampoo + Blow dry + Braid Takedown (Small)",
+      "price": 175,
+      "duration_min": 240,
+      "description": "Shampoo, deep conditioning, steam treatment, and blow dry. Clients' natural hair will be put into 2 simple cornrows.",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Twist Styles": [
+    {
+      "id": 70302152,
+      "name": "Mini Twist w/Natural hair",
+      "price": 150,
+      "duration_min": 180,
+      "description": "Mini Twist with your natural hair and no hair added. Starts at $150 depending on length Done with small parts 3 rows in the back and 6 rows on each side in the front. A consultation is suggested before this style is rendered. Light weight. Tension free style. A good alternative to braids. Versatile protective style.\nPrep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free. you can also select a Shampoo Service.",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 56117036,
+      "name": "Small Knotless Twist",
+      "price": 350,
+      "duration_min": 480,
+      "description": "A simple, lightweight, protective style, perfect for the summer time, or anytime. \n\nHair Prep:\nHair can be washed and blown dry prior to appointment, or you can book your wash \"add-on\". A clean, flake free scalp produces best results. \n\nHair Recommended:\nQVR Afro Kinky Bulk \nhttps://qvr.com/products/qvr-natural-black-afro-kinky-bulk-hair-extensions-for-braiding-dreadlock-human-hair\n4 packs\n*Hair Not provided*",
+      "addonIDs": [
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18980208,
+      "name": "Spring || Passion Twist {shoulder - mid-back}",
+      "price": 225,
+      "duration_min": 300,
+      "description": "Passion Twist are Light-weight. Tension free style. A good alternative to braids. Versatile protective style.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nHair:\nWe do not provide hair.\nSpring Twist hair [3 packs] -OR-\nPassion Twist- Lulutress Water wave [6 packs]",
+      "addonIDs": [
+        1466815,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        5816642,
+        5048627,
+        3219738,
+        1466734
+      ]
+    },
+    {
+      "id": 18980236,
+      "name": "Spring || Passion Twist {lower back- waist length}",
+      "price": 255,
+      "duration_min": 360,
+      "description": "Passion Twist are Light-weight. Tension free style. A good alternative to braids. Versatile protective style.\n\nPrep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free.\n\nHair:\nWe do not provide hair.\nSpring Twist hair [3 packs] -OR-\nPassion Twist- Lulutress Water wave [6 packs]",
+      "addonIDs": [
+        1466815,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 30551124,
+      "name": "Passion Twist Braids",
+      "price": 200,
+      "duration_min": 300,
+      "description": "Knotless Passion Twist Braids are a playful mix of braids and waves. Due to the thickness of this style, I do not recommended this for short or fine hair textures.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nHair:\nBraiding hair is available for purchase.\nLulutress Waterwave  {4 individual packs} found at your local store.",
+      "addonIDs": [
+        1466815,
+        5048629,
+        5816642,
+        5048627,
+        3219738,
+        1466734
+      ]
+    }
+  ],
+  "Updo's + Ponytails + Simple Styles": [
+    {
+      "id": 90423263,
+      "name": "Double Bun",
+      "price": 100,
+      "duration_min": 30,
+      "description": "Keep it Sleek and Simple with this style!\n\nThis style is two buns with one under the crown of the head and one on your nape.\n\n//PRICE// varies depending on style $65 is a starting price. \n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean.\n\n(Salon does not provide hair for this style)\nRuwa hair {1 pack} for this style\nAdded an addition? Please bring a additional pack.",
+      "addonIDs": []
+    },
+    {
+      "id": 18980857,
+      "name": "Butterfly Braids",
+      "price": 90,
+      "duration_min": 90,
+      "description": "Butterfly Braids.\n2 feed-in braids with curls added to the ends.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nPrice:\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {1 individual pack} \n2-packs of sewn in hair. Any brand of your choice as long as the hair is on a track.",
+      "addonIDs": [
+        1466815,
+        1466797,
+        2727527,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 22052275,
+      "name": "The Swirl or Bun",
+      "price": 80,
+      "duration_min": 60,
+      "description": "Keep it Sleek and Simple with this style!\n\nThis style is one bun that can be on you nape (as pictured) or a cute top knot!\n\nDouble up on this fun style. Make it two buns instead of one click “add on”.\n\n//PRICE// varies depending on style $65 is a starting price. \n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean.\n\n(Salon does not provide hair for this style)\nRuwa hair {1 pack} for one bun\nAdded a addition? Please bring a additional pack.",
+      "addonIDs": [
+        1466815,
+        1739130,
+        1466744,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 22052386,
+      "name": "The Mermaid",
+      "price": 90,
+      "duration_min": 60,
+      "description": "Keep it Sleek and Simple with this style!\n\nThe Mermaid is a single thick braid or....\n\nDouble up on this fun style. Make it two braids instead of one, click “add on”.\n\n//PRICE// varies depending on style $65 is a starting price. \n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair {1 pack} for one braid\nAdded an addition? Please bring a additional pack.",
+      "addonIDs": [
+        1466815,
+        1739130,
+        1466744,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    },
+    {
+      "id": 18980377,
+      "name": "Braid Ponytail",
+      "price": 80,
+      "duration_min": 90,
+      "description": "Sleek Simple Ponytail\n\nWear it up. Wear to the side. Wear a Top knot. Wear it to the back.\n\nChoose from a traditional French Braid. Five Strand, Fishtail + more are extra. \n\n//PRICE// varies depending on style $65 is a starting price. \n\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair {1 pack}",
+      "addonIDs": [
+        1466815,
+        1466744,
+        4109151,
+        4109139,
+        5048629,
+        2151624,
+        2155516,
+        2155565,
+        2155572,
+        2155576,
+        2155521,
+        2155534,
+        2155539,
+        2155545,
+        2155558,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ],
+  "Welcome ": [
+    {
+      "id": 20963621,
+      "name": "Consultation",
+      "price": 50,
+      "duration_min": 30,
+      "description": "Book your in-person consultation today! Short hair? Long hair? Do you have questions or concerns regarding a service? \n\nRecommended for Microloc services. $50 will be deducted from your final service once you book your appointment.\n\nPlease book a consultation prior to booking an appointment. The $50 fee will be deducted from your service once you book.",
+      "addonIDs": [
+        1466815,
+        5048629,
+        2151624,
+        5816642,
+        5048627,
+        1466734
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum AppointmentStatus {
+  pending
+  confirmed
+  completed
+  cancelled
+  no_show
+
+  @@map("appointment_status")
+}
+
+enum UserRole {
+  client
+  admin
+}
+
+model Profile {
+  id           String        @id @db.Uuid
+  firstName    String        @map("first_name")
+  lastName     String        @map("last_name")
+  phone        String?
+  role         UserRole      @default(client)
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime      @default(now()) @map("updated_at") @db.Timestamptz
+  appointments Appointment[]
+
+  @@map("profiles")
+}
+
+model Service {
+  id              String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name            String
+  description     String?
+  durationMinutes Int           @map("duration_minutes")
+  price           Decimal       @db.Decimal(10, 2)
+  depositAmount   Decimal       @map("deposit_amount") @db.Decimal(10, 2)
+  isActive        Boolean       @default(true) @map("is_active")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  appointments    Appointment[]
+
+  @@map("services")
+}
+
+model Appointment {
+  id                   String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  clientId             String            @map("client_id") @db.Uuid
+  serviceId            String            @map("service_id") @db.Uuid
+  startTime            DateTime          @map("start_time") @db.Timestamptz
+  endTime              DateTime          @map("end_time") @db.Timestamptz
+  status               AppointmentStatus @default(pending)
+  stripePaymentIntent String?           @map("stripe_payment_intent")
+  clientNotes          String?           @map("client_notes")
+  adminNotes           String?           @map("admin_notes")
+  createdAt            DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime          @default(now()) @map("updated_at") @db.Timestamptz
+
+  profile Profile @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+
+  @@map("appointments")
+}

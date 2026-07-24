@@ -130,14 +130,13 @@ export default function HomePage() {
                 <Scissors className="w-3.5 h-3.5" />
                 View Gallery
               </a>
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/book"
                 className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-espresso font-medium px-8 py-4 rounded-full transition-all text-xs uppercase tracking-[0.2em] border border-white/20 shadow-lg backdrop-blur-sm"
               >
+                <Scissors className="w-3.5 h-3.5" />
                 Get Braided
-              </a>
+              </Link>
             </div>
           </div>
         </div>

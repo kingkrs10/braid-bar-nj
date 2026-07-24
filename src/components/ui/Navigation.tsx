@@ -29,8 +29,8 @@ export default function Navigation() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
+    { name: 'Book Appointment', href: '/book' },
     { name: 'Shop Catalog', href: '/shop' },
-    { name: 'Membership', href: '/#membership' },
     { name: 'Events', href: '/#events' },
     { name: 'Lookbook', href: '/#lookbook' },
     { name: 'Owner Portal', href: '/admin' },
@@ -39,19 +39,15 @@ export default function Navigation() {
   return (
     <>
       <header
+        id="main-navigation"
         className={cn(
-          'fixed top-0 left-0 w-full z-50 transition-all duration-500 px-4 md:px-8',
-          isScrolled ? 'py-3' : 'py-6'
+          'fixed top-0 left-0 right-0 z-50 transition-all duration-300 select-none max-w-7xl mx-auto mt-4 px-4',
+          isScrolled
+            ? 'bg-cream/95 backdrop-blur-md px-6 py-3 border-espresso/10 shadow-sm'
+            : 'px-4 py-2 border-transparent bg-transparent'
         )}
       >
-        <div
-          className={cn(
-            'max-w-7xl mx-auto flex items-center justify-between transition-all duration-500 rounded-full border',
-            isScrolled
-              ? 'bg-cream/95 backdrop-blur-md px-6 py-3 border-espresso/10 shadow-sm'
-              : 'px-4 py-2 border-transparent bg-transparent'
-          )}
-        >
+        <div className="flex items-center justify-between">
           {/* Logo — BB Monogram Logo */}
           <Link href="/" className="flex items-center select-none group py-0.5">
             <img
@@ -67,7 +63,7 @@ export default function Navigation() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-espresso/70 hover:text-terracotta font-[family-name:var(--font-body)] text-[10px] tracking-[0.2em] uppercase transition-colors py-1"
+                className="text-espresso/70 hover:text-terracotta font-[family-name:var(--font-body)] text-[10px] tracking-[0.2em] uppercase transition-colors py-1 font-semibold"
               >
                 {link.name}
               </Link>
@@ -92,16 +88,14 @@ export default function Navigation() {
             </button>
 
             {/* CTA Book Button */}
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/book"
               id="nav-book-cta"
               className="hidden sm:inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream font-medium px-5 py-2.5 rounded-full transition-all text-[10px] uppercase tracking-[0.25em] border border-transparent shadow-sm"
             >
               <Scissors className="w-3.5 h-3.5" />
               Get Braided
-            </a>
+            </Link>
 
             {/* Mobile Menu Hamburger */}
             <button
@@ -116,7 +110,7 @@ export default function Navigation() {
         </div>
       </header>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Slide-out Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -138,16 +132,14 @@ export default function Navigation() {
                 </Link>
               ))}
               <div className="h-[1px] bg-espresso/5 my-2" />
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/book"
                 onClick={() => setMobileMenuOpen(false)}
                 className="inline-flex items-center justify-center gap-2 bg-terracotta hover:bg-espresso text-cream font-medium px-8 py-4 rounded-full transition-all text-xs uppercase tracking-[0.2em] border border-transparent shadow-sm"
               >
                 <Scissors className="w-4 h-4" />
                 Get Braided
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}

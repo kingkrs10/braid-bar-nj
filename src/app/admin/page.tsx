@@ -44,7 +44,8 @@ import {
   CreditCard,
   Link2,
   BookOpen,
-  Lock
+  Lock,
+  ArrowRight
 } from 'lucide-react';
 import { formatPrice, formatDuration, getWhatsAppLink } from '@/lib/utils';
 

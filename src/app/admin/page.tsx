@@ -193,6 +193,22 @@ export default function AdminPage() {
     }
   };
 
+  // Site Launch Mode State (Default: false = Coming Soon Mode)
+  const [isSiteLive, setIsSiteLive] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bb_site_live');
+      return saved === 'true'; // false by default
+    }
+    return false;
+  });
+
+  const handleToggleSiteLive = (live: boolean) => {
+    setIsSiteLive(live);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_site_live', live ? 'true' : 'false');
+    }
+  };
+
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -283,6 +299,61 @@ export default function AdminPage() {
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (
           <div className="space-y-8">
+            {/* Site Launch Mode Control Card */}
+            <div className={`p-6 rounded-2xl border transition-all shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-6 ${
+              isSiteLive 
+                ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950' 
+                : 'bg-amber-50/80 border-amber-300 text-amber-950'
+            }`}>
+              <div className="flex items-start gap-4">
+                <div className={`p-3 rounded-2xl ${isSiteLive ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'} shadow-sm`}>
+                  {isSiteLive ? <Globe className="w-6 h-6" /> : <Lock className="w-6 h-6" />}
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                      isSiteLive ? 'bg-emerald-200 text-emerald-900' : 'bg-amber-200 text-amber-900'
+                    }`}>
+                      {isSiteLive ? '🟢 LIVE PRODUCTION MODE' : '🔴 COMING SOON MODE'}
+                    </span>
+                  </div>
+                  <h3 className="font-[family-name:var(--font-display)] text-lg font-bold">
+                    {isSiteLive 
+                      ? 'Your Website is LIVE & Open for Public Bookings!' 
+                      : 'Website is currently in "Coming Soon" Mode (Private to Owner)'}
+                  </h3>
+                  <p className="text-xs font-light max-w-2xl leading-relaxed">
+                    {isSiteLive 
+                      ? 'Visitors navigating to braidbarnj.com can explore styles and book appointments publicly.' 
+                      : 'Visitors navigating to braidbarnj.com see a "Coming Soon / Launching Soon" splash page with VIP email signup. Only you (the owner) can work in /admin until you are ready to open.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Master Toggle Switch */}
+              <div className="flex items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleToggleSiteLive(!isSiteLive)}
+                  className={`px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center gap-2 cursor-pointer ${
+                    isSiteLive 
+                      ? 'bg-amber-600 hover:bg-amber-700 text-white' 
+                      : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                  }`}
+                >
+                  {isSiteLive ? (
+                    <>
+                      <Lock className="w-4 h-4" /> Switch to Coming Soon Mode
+                    </>
+                  ) : (
+                    <>
+                      <Rocket className="w-4 h-4" /> 🚀 Launch Website Live Now
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
             {/* KPI Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Monthly Revenue */}

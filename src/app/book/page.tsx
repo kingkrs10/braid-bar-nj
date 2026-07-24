@@ -6,7 +6,24 @@ import Footer from '@/components/ui/Footer';
 import Scheduler from '@/components/booking/Scheduler';
 import { ShieldCheck, Calendar, MapPin, Phone } from 'lucide-react';
 
+import { ComingSoonPage } from '@/components/ui/ComingSoonPage';
+
 export default function BookPage() {
+  const [isSiteLive, setIsSiteLive] = React.useState<boolean>(true);
+  const [isCheckingLiveMode, setIsCheckingLiveMode] = React.useState(true);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bb_site_live');
+      setIsSiteLive(saved === 'true');
+      setIsCheckingLiveMode(false);
+    }
+  }, []);
+
+  if (!isCheckingLiveMode && !isSiteLive) {
+    return <ComingSoonPage />;
+  }
+
   return (
     <div className="min-h-screen bg-warm-white text-espresso flex flex-col justify-between font-[family-name:var(--font-body)]">
       <Navigation />

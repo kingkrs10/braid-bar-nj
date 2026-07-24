@@ -20,6 +20,7 @@ import { InstaFeed } from '@/components/gallery/InstaFeed';
 import { SplashPage } from '@/components/ui/SplashPage';
 import HeroCanvas from '@/components/hero/HeroCanvas';
 import { getWhatsAppLink, cn } from '@/lib/utils';
+import { ComingSoonPage } from '@/components/ui/ComingSoonPage';
 
 /* Animated Section Reveal Wrapper */
 function AnimatedSection({
@@ -39,8 +40,8 @@ function AnimatedSection({
       id={id}
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 35 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 35 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
@@ -52,6 +53,22 @@ export default function HomePage() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [membershipSpend, setMembershipSpend] = useState(150);
+
+  const [isSiteLive, setIsSiteLive] = useState<boolean>(true);
+  const [isCheckingLiveMode, setIsCheckingLiveMode] = useState(true);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bb_site_live');
+      // If not set or 'false', display Coming Soon Page
+      setIsSiteLive(saved === 'true');
+      setIsCheckingLiveMode(false);
+    }
+  }, []);
+
+  if (!isCheckingLiveMode && !isSiteLive) {
+    return <ComingSoonPage />;
+  }
 
   const whatsappUrl = getWhatsAppLink({
     serviceName: 'Hair Styling Session',

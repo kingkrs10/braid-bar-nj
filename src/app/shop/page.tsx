@@ -6,7 +6,24 @@ import Footer from '@/components/ui/Footer';
 import { ProductGrid } from '@/components/shop/ProductGrid';
 import CartDrawer from '@/components/shop/CartDrawer';
 
+import { ComingSoonPage } from '@/components/ui/ComingSoonPage';
+
 export default function ShopPage() {
+  const [isSiteLive, setIsSiteLive] = React.useState<boolean>(true);
+  const [isCheckingLiveMode, setIsCheckingLiveMode] = React.useState(true);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bb_site_live');
+      setIsSiteLive(saved === 'true');
+      setIsCheckingLiveMode(false);
+    }
+  }, []);
+
+  if (!isCheckingLiveMode && !isSiteLive) {
+    return <ComingSoonPage />;
+  }
+
   return (
     <div className="relative min-h-screen bg-cream flex flex-col justify-between">
       <Navigation />

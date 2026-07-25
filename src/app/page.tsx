@@ -162,53 +162,40 @@ export default function HomePage() {
       </section>
 
       {/* =============================================
-          2. WAVY ORGANIC TICKER BANNER (SVG CURVED TEXT-PATH)
+          2. STRAIGHT BAR TICKER MARQUEE BANNER
           ============================================= */}
-      <div className="relative w-full py-4 z-30 select-none overflow-hidden my-2">
-        <div className="relative w-full h-36 sm:h-44 flex items-center justify-center">
-          <svg 
-            className="w-full h-full text-espresso filter drop-shadow-2xl overflow-visible" 
-            viewBox="0 0 1200 180" 
-            preserveAspectRatio="none"
+      <div className="relative w-full bg-espresso border-y border-gold/40 py-4 z-30 select-none overflow-hidden my-4 shadow-md">
+        <div className="flex whitespace-nowrap overflow-hidden">
+          <motion.div
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{ duration: 25, ease: 'linear', repeat: Infinity }}
+            className="flex items-center gap-8 text-cream text-xs font-bold uppercase tracking-[0.3em] shrink-0"
           >
-            <defs>
-              {/* Continuous Wave Path for Curved Text to Follow */}
-              <path 
-                id="textWavePath" 
-                d="M -1200,95 C -1000,185 -800,5 -600,95 C -400,185 -200,5 0,95 C 200,185 400,5 600,95 C 800,185 1000,5 1200,95 C 1400,185 1600,5 1800,95 C 2000,185 2200,5 2400,95" 
-              />
-            </defs>
-
-            {/* Dark Espresso Organic Double-Wave Ribbon Background */}
-            <path 
-              d="M 0,60 C 200,160 400,-20 600,60 C 800,140 1000,-10 1200,60 L 1200,140 C 1000,70 800,220 600,140 C 400,60 200,240 0,140 Z" 
-              fill="#1E1210" 
-            />
-
-            {/* Gold Accent Curved Contour Borders */}
-            <path 
-              d="M 0,60 C 200,160 400,-20 600,60 C 800,140 1000,-10 1200,60" 
-              fill="none" 
-              stroke="#E4AF9E" 
-              strokeWidth="4" 
-              opacity="0.85" 
-            />
-            <path 
-              d="M 0,140 C 200,240 400,60 600,140 C 800,220 1000,70 1200,140" 
-              fill="none" 
-              stroke="#E4AF9E" 
-              strokeWidth="4" 
-              opacity="0.85" 
-            />
-
-            {/* Text Flowing on the Exact Wave Contour Path */}
-            <text fill="#FAF2EA" fontSize="13" fontWeight="bold" letterSpacing="0.25em" dy="2">
-              <textPath href="#textWavePath" startOffset="0%">
-                🌊 KNOTLESS BRAIDS • FULANI DESIGNS • LOC MAINTENANCE • WASH &amp; BLOW DRY • HAIR CARE ✦ 560 VALLEY ROAD, WEST ORANGE, NJ 🌊 KNOTLESS BRAIDS • FULANI DESIGNS • LOC MAINTENANCE • WASH &amp; BLOW DRY • HAIR CARE ✦ 560 VALLEY ROAD, WEST ORANGE, NJ 🌊 KNOTLESS BRAIDS • FULANI DESIGNS • LOC MAINTENANCE • WASH &amp; BLOW DRY • HAIR CARE ✦ 560 VALLEY ROAD, WEST ORANGE, NJ
-                <animate attributeName="startOffset" from="0%" to="-50%" dur="28s" repeatCount="indefinite" />
-              </textPath>
-            </text>
-          </svg>
+            <span>✨ KNOTLESS BRAIDS</span>
+            <span className="text-terracotta">•</span>
+            <span>FULANI DESIGNS</span>
+            <span className="text-terracotta">•</span>
+            <span>LOC MAINTENANCE</span>
+            <span className="text-terracotta">•</span>
+            <span>WASH &amp; BLOW DRY</span>
+            <span className="text-terracotta">•</span>
+            <span>VIP LUXURY EXPERIENCES</span>
+            <span className="text-terracotta">•</span>
+            <span>560 VALLEY ROAD, WEST ORANGE, NJ</span>
+            <span className="text-terracotta">•</span>
+            <span>✨ KNOTLESS BRAIDS</span>
+            <span className="text-terracotta">•</span>
+            <span>FULANI DESIGNS</span>
+            <span className="text-terracotta">•</span>
+            <span>LOC MAINTENANCE</span>
+            <span className="text-terracotta">•</span>
+            <span>WASH &amp; BLOW DRY</span>
+            <span className="text-terracotta">•</span>
+            <span>VIP LUXURY EXPERIENCES</span>
+            <span className="text-terracotta">•</span>
+            <span>560 VALLEY ROAD, WEST ORANGE, NJ</span>
+            <span className="text-terracotta">•</span>
+          </motion.div>
         </div>
       </div>
 

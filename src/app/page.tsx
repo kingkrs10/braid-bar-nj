@@ -208,6 +208,23 @@ export default function HomePage() {
         <div className="absolute top-8 right-8 text-[9px] font-bold uppercase tracking-[0.2em] text-espresso/40 z-10">BRAND MISSION</div>
         
         <div className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
+          {/* Half-Circle / Arch Frame displaying Salon Shop Reception Image */}
+          <div className="mb-10 group relative select-none">
+            <div className="w-56 sm:w-72 md:w-80 h-72 sm:h-96 rounded-t-full overflow-hidden border-2 border-gold/40 shadow-2xl bg-cream-dark p-1.5 relative">
+              <div className="w-full h-full rounded-t-full overflow-hidden">
+                <img
+                  src="/images/salon-reception-arch.jpg"
+                  alt="Braid Bar NJ Salon Reception"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+            </div>
+            {/* Decorative gold badge */}
+            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-espresso text-cream text-[9px] font-bold uppercase tracking-[0.25em] px-4 py-1.5 rounded-full border border-gold/40 shadow-md">
+              THE SALON SANCTUARY
+            </div>
+          </div>
+
           <h2 className="font-[family-name:var(--font-display)] text-3xl md:text-5xl font-normal text-espresso leading-tight mb-8 max-w-3xl">
             Crafted Braids. Elevated Care. <br className="hidden md:inline" />
             <span className="font-normal italic font-[family-name:var(--font-display)] text-terracotta">Everyday Luxury.</span>

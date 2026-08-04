@@ -211,8 +211,10 @@ export default function AdminPage() {
     }
   };
 
-  // Owner Passcode Authentication State (Access Code: 592)
+  // Owner Passcode Authentication State (Owner: 592 | Assistant: 2026)
   const OWNER_PASSCODE = '592';
+  const ASSISTANT_PASSCODE = '2026';
+  const [userRole, setUserRole] = useState<'owner' | 'assistant'>('owner');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return sessionStorage.getItem('bb_owner_authed') === 'true';
@@ -224,11 +226,22 @@ export default function AdminPage() {
 
   const handleVerifyPasscode = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passcodeInput.trim() === OWNER_PASSCODE) {
+    const cleanPass = passcodeInput.trim();
+    if (cleanPass === OWNER_PASSCODE) {
+      setUserRole('owner');
       setIsAuthenticated(true);
       setPasscodeError(false);
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('bb_owner_authed', 'true');
+        sessionStorage.setItem('bb_user_role', 'owner');
+      }
+    } else if (cleanPass === ASSISTANT_PASSCODE) {
+      setUserRole('assistant');
+      setIsAuthenticated(true);
+      setPasscodeError(false);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('bb_owner_authed', 'true');
+        sessionStorage.setItem('bb_user_role', 'assistant');
       }
     } else {
       setPasscodeError(true);
@@ -240,6 +253,7 @@ export default function AdminPage() {
     setPasscodeInput('');
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('bb_owner_authed');
+      sessionStorage.removeItem('bb_user_role');
     }
   };
 
@@ -247,8 +261,62 @@ export default function AdminPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  // Service Edit Modal state
-  const [editingService, setEditingService] = useState<any | null>(null);
+  // Service Add/Edit Modal state
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [serviceFormData, setServiceFormData] = useState({
+    id: '',
+    name: '',
+    category: 'Knotless Braids',
+    duration_min: 180,
+    price: 250,
+    deposit_amount: 50,
+    description: '',
+  });
+
+  const handleOpenAddService = () => {
+    setServiceFormData({
+      id: '',
+      name: '',
+      category: 'Knotless Braids',
+      duration_min: 180,
+      price: 250,
+      deposit_amount: 50,
+      description: '',
+    });
+    setIsServiceModalOpen(true);
+  };
+
+  const handleOpenEditService = (srv: any) => {
+    setServiceFormData({
+      id: srv.id,
+      name: srv.name,
+      category: srv.category,
+      duration_min: srv.duration_min,
+      price: srv.price,
+      deposit_amount: srv.deposit_amount,
+      description: srv.description || '',
+    });
+    setIsServiceModalOpen(true);
+  };
+
+  const handleSaveServiceForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!serviceFormData.name) return;
+
+    if (serviceFormData.id) {
+      setServicesList((prev) =>
+        prev.map((s) => (s.id === serviceFormData.id ? { ...s, ...serviceFormData } : s))
+      );
+    } else {
+      const newService = {
+        ...serviceFormData,
+        id: `srv-${Date.now()}`,
+        image_url: 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80',
+      };
+      setServicesList((prev) => [newService, ...prev]);
+    }
+    setIsServiceModalOpen(false);
+  };
 
   // Update Booking Status
   const handleUpdateBookingStatus = (id: string, newStatus: string) => {
@@ -292,13 +360,13 @@ export default function AdminPage() {
               className="h-16 w-auto object-contain filter drop-shadow-sm"
             />
             <div className="inline-flex items-center gap-1.5 bg-terracotta/10 text-terracotta px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
-              <Lock className="w-3.5 h-3.5" /> Restricted Owner Authorization
+              <Lock className="w-3.5 h-3.5" /> Staff &amp; Owner Security Authorization
             </div>
             <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold text-espresso">
-              Owner Security Lock
+              Portal Access Lock
             </h2>
             <p className="text-xs text-espresso/60 font-light leading-relaxed">
-              Please enter your 3-digit salon owner security passcode to access your administrative dashboard.
+              Please enter your security passcode to access your portal.
             </p>
           </div>
 
@@ -309,7 +377,7 @@ export default function AdminPage() {
                 type="password"
                 maxLength={4}
                 autoFocus
-                placeholder="Passcode (592)"
+                placeholder="Passcode (592 / 2026)"
                 value={passcodeInput}
                 onChange={(e) => {
                   setPasscodeInput(e.target.value);
@@ -323,7 +391,7 @@ export default function AdminPage() {
               />
               {passcodeError && (
                 <p className="text-xs text-red-600 font-semibold">
-                  ⚠️ Incorrect security passcode. Please try again.
+                  ⚠️ Incorrect passcode. Owner: 592 | Assistant: 2026
                 </p>
               )}
             </div>
@@ -896,10 +964,8 @@ export default function AdminPage() {
                 <p className="text-xs text-espresso/60 font-light">Edit hair service prices, durations, and deposits</p>
               </div>
               <button
-                onClick={() =>
-                  alert('Add New Service modal can be connected to database!')
-                }
-                className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm"
+                onClick={handleOpenAddService}
+                className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
               >
                 <Plus className="w-4 h-4" /> Add Service
               </button>
@@ -930,20 +996,10 @@ export default function AdminPage() {
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => {
-                          const newPriceStr = prompt(`Enter new price for "${srv.name}":`, srv.price.toString());
-                          if (newPriceStr) {
-                            const newPrice = parseFloat(newPriceStr);
-                            if (!isNaN(newPrice)) {
-                              setServicesList((prev) =>
-                                prev.map((s) => (s.id === srv.id ? { ...s, price: newPrice } : s))
-                              );
-                            }
-                          }
-                        }}
-                        className="px-3 py-1.5 bg-cream/50 hover:bg-cream border border-espresso/10 rounded-xl text-xs font-semibold text-espresso transition-colors flex items-center gap-1"
+                        onClick={() => handleOpenEditService(srv)}
+                        className="px-3 py-1.5 bg-cream/50 hover:bg-cream border border-espresso/10 rounded-xl text-xs font-semibold text-espresso transition-colors flex items-center gap-1 cursor-pointer"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-terracotta" /> Edit Price
+                        <Edit3 className="w-3.5 h-3.5 text-terracotta" /> Edit Service Details
                       </button>
                     </div>
                   </div>
@@ -2182,6 +2238,127 @@ export default function AdminPage() {
           </div>
         )}
       </main>
+
+      {/* Add / Edit Service Modal */}
+      {isServiceModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-lg w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-espresso/10 pb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                  {serviceFormData.id ? 'Edit Service Details' : 'Add New Service'}
+                </span>
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso mt-1">
+                  {serviceFormData.id ? serviceFormData.name : 'Create New Service'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsServiceModalOpen(false)}
+                className="text-espresso/40 hover:text-espresso p-1 rounded-full text-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveServiceForm} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Service Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Medium Bohemian Knotless"
+                  value={serviceFormData.name}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, name: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Category</label>
+                  <select
+                    value={serviceFormData.category}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, category: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  >
+                    <option value="VIP Services">VIP Services</option>
+                    <option value="Knotless Braids">Knotless Braids</option>
+                    <option value="Fulani & Custom">Fulani & Custom</option>
+                    <option value="Locs & Twists">Locs & Twists</option>
+                    <option value="Wash & Prep">Wash & Prep</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Duration (Minutes)</label>
+                  <input
+                    type="number"
+                    required
+                    min={15}
+                    step={15}
+                    value={serviceFormData.duration_min}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, duration_min: parseInt(e.target.value) || 60 })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Total Price ($)</label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={serviceFormData.price}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, price: parseFloat(e.target.value) || 0 })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Required Deposit ($)</label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={serviceFormData.deposit_amount}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, deposit_amount: parseFloat(e.target.value) || 0 })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Description / Copy</label>
+                <textarea
+                  rows={3}
+                  placeholder="Describe what's included in this hair service..."
+                  value={serviceFormData.description}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, description: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3 border-t border-espresso/10">
+                <button
+                  type="button"
+                  onClick={() => setIsServiceModalOpen(false)}
+                  className="px-5 py-2.5 bg-cream/50 hover:bg-cream text-espresso font-semibold rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-terracotta hover:bg-espresso text-cream font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm"
+                >
+                  {serviceFormData.id ? 'Save Service Changes' : 'Publish Service'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

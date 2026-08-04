@@ -43,8 +43,8 @@ export default function Navigation() {
         className={cn(
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300 select-none max-w-7xl mx-auto mt-4 px-4',
           isScrolled
-            ? 'bg-cream/95 backdrop-blur-md px-6 py-3 border-espresso/10 shadow-sm'
-            : 'px-4 py-2 border-transparent bg-transparent'
+            ? 'bg-cream/95 backdrop-blur-md px-6 py-3.5 border border-espresso/15 rounded-full shadow-md'
+            : 'bg-cream/90 backdrop-blur-md px-6 py-3 border border-espresso/10 rounded-full shadow-sm'
         )}
       >
         <div className="flex items-center justify-between">

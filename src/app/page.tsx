@@ -164,7 +164,7 @@ export default function HomePage() {
       {/* =============================================
           2. STRAIGHT BAR TICKER MARQUEE BANNER
           ============================================= */}
-      <div className="relative w-full bg-espresso border-y border-gold/40 py-4 z-30 select-none overflow-hidden my-4 shadow-md">
+      <div className="relative w-full bg-espresso border-y border-gold/40 py-4 z-30 select-none overflow-hidden mt-4 mb-0 shadow-md">
         <div className="flex whitespace-nowrap overflow-hidden">
           <motion.div
             animate={{ x: ['0%', '-50%'] }}
@@ -200,47 +200,46 @@ export default function HomePage() {
       </div>
 
       {/* =============================================
-          3. BRAND MISSION SECTION (Oval image & Headline)
+          3. BRAND MISSION SECTION (Flipped Half Circle starting at ticker bottom)
           ============================================= */}
-      <AnimatedSection className="py-24 bg-cream px-4 relative">
-        {/* Editorial layout markings */}
-        <div className="absolute top-8 left-8 text-[9px] font-bold uppercase tracking-[0.2em] text-espresso/40 z-10">NO. 1</div>
-        <div className="absolute top-8 right-8 text-[9px] font-bold uppercase tracking-[0.2em] text-espresso/40 z-10">BRAND MISSION</div>
+      <AnimatedSection className="pt-0 pb-20 bg-[#F7F2EB] px-4 relative overflow-hidden">
+        {/* Editorial layout markings / Vertical side typography like reference image */}
+        <div className="absolute top-16 left-6 sm:left-12 flex flex-col gap-12 text-[9px] font-bold uppercase tracking-[0.25em] text-espresso/40 z-10 select-none">
+          <span className="[writing-mode:vertical-lr] rotate-180">CRAFTED</span>
+          <span className="[writing-mode:vertical-lr] rotate-180">PROTECTIVE</span>
+        </div>
+        <div className="absolute top-16 right-6 sm:right-12 flex flex-col gap-12 text-[9px] font-bold uppercase tracking-[0.25em] text-espresso/40 z-10 select-none">
+          <span className="[writing-mode:vertical-lr]">BRAND MISSION</span>
+          <span className="[writing-mode:vertical-lr]">THE SANCTUARY</span>
+        </div>
         
         <div className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
-          {/* Half-Circle / Arch Frame displaying Salon Shop Reception Image */}
-          <div className="mb-10 group relative select-none">
-            <div className="w-56 sm:w-72 md:w-80 h-72 sm:h-96 rounded-t-full overflow-hidden border-2 border-gold/40 shadow-2xl bg-cream-dark p-1.5 relative">
-              <div className="w-full h-full rounded-t-full overflow-hidden">
+          {/* Half-Circle starting flush at scrolling bar bottom with bottom curve */}
+          <div className="mb-10 group relative select-none w-full flex justify-center">
+            <div className="w-72 sm:w-96 md:w-[480px] h-44 sm:h-60 md:h-72 rounded-b-full overflow-hidden border-x border-b border-espresso/15 shadow-xl bg-cream-dark p-1 relative">
+              <div className="w-full h-full rounded-b-full overflow-hidden">
                 <img
                   src="/images/salon-reception-arch.jpg"
-                  alt="Braid Bar NJ Salon Reception"
+                  alt="Braid Bar NJ Salon Sanctuary"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
             </div>
-            {/* Decorative gold badge */}
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-espresso text-cream text-[9px] font-bold uppercase tracking-[0.25em] px-4 py-1.5 rounded-full border border-gold/40 shadow-md">
-              THE SALON SANCTUARY
-            </div>
           </div>
 
-          <h2 className="font-[family-name:var(--font-display)] text-3xl md:text-5xl font-normal text-espresso leading-tight mb-8 max-w-3xl">
-            Crafted Braids. Elevated Care. <br className="hidden md:inline" />
-            <span className="font-normal italic font-[family-name:var(--font-display)] text-terracotta">Everyday Luxury.</span>
+          <h2 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl md:text-5xl font-normal text-espresso leading-tight mb-6 max-w-2xl">
+            All good ideas start somewhere and have a headline.
           </h2>
-          
-          <div className="w-12 h-[1px] bg-espresso/20 mb-8" />
 
-          <p className="text-espresso/70 text-sm max-w-xl mx-auto leading-relaxed mb-6 font-light">
-            We believe styling protective crowns should be a therapeutic, beautiful ritual. Our space in West Orange, New Jersey is structured around VIP client comfort, neat and clean grid partings, and meticulous tension-free braid installations that nurture your natural hair growth.
+          <p className="text-espresso/70 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed mb-8 font-light">
+            Here — you can add copy about you or your brand mission. Our space in West Orange, New Jersey is structured around VIP client comfort, neat and clean grid partings, and meticulous tension-free braid installations that nurture your natural hair growth.
           </p>
 
           <a
             href="#lookbook"
-            className="text-[10px] font-bold uppercase tracking-[0.2em] text-espresso hover:text-terracotta transition-colors border-b border-espresso pb-1"
+            className="text-[10px] font-bold uppercase tracking-[0.2em] text-espresso hover:text-terracotta transition-colors border-b border-espresso/40 pb-1"
           >
-            View Gallery
+            View Gallery &amp; Services
           </a>
         </div>
       </AnimatedSection>

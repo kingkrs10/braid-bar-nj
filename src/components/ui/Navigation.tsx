@@ -3,12 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, ShoppingBag, Scissors } from 'lucide-react';
-import { useCartStore, useUIStore } from '@/lib/store';
+import { Menu, X, Scissors } from 'lucide-react';
+import { useUIStore } from '@/lib/store';
 import { cn, getWhatsAppLink } from '@/lib/utils';
 
 export default function Navigation() {
-  const { toggleCart, getItemCount } = useCartStore();
   const { isMobileMenuOpen, toggleMobileMenu, setMobileMenuOpen } = useUIStore();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -30,7 +29,6 @@ export default function Navigation() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Book Appointment', href: '/book' },
-    { name: 'Shop Catalog', href: '/shop' },
     { name: 'Events', href: '/#events' },
     { name: 'Lookbook', href: '/#lookbook' },
     { name: 'Owner Portal', href: '/admin' },
@@ -72,20 +70,6 @@ export default function Navigation() {
 
           {/* Action Icons */}
           <div className="flex items-center gap-3">
-            {/* Cart Icon button */}
-            <button
-              id="nav-cart-btn"
-              onClick={toggleCart}
-              className="relative p-2.5 text-espresso hover:text-terracotta hover:border-terracotta transition-colors duration-200 cursor-pointer bg-white/50 rounded-full border border-espresso/10"
-              aria-label="Open Shopping Cart"
-            >
-              <ShoppingBag className="w-4 h-4" />
-              {getItemCount() > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-terracotta text-cream text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  {getItemCount()}
-                </span>
-              )}
-            </button>
 
             {/* CTA Book Button */}
             <Link

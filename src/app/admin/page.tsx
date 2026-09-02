@@ -4,7 +4,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import { services as initialServices, products as initialProducts } from '@/lib/data';
-import { CLIENT_CHOSEN_AMAZON_PRODUCTS, type AmazonProduct } from '@/lib/amazon-store-data';
+import { 
+  CLIENT_CHOSEN_AMAZON_PRODUCTS, 
+  DEFAULT_AMAZON_SHOP_TEXT, 
+  type AmazonProduct, 
+  type AmazonShopText 
+} from '@/lib/amazon-store-data';
 import { 
   Calendar, 
   Clock, 
@@ -124,6 +129,31 @@ export default function AdminPage() {
     setAmazonProductsList(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem('bb_curated_amazon_products', JSON.stringify(updated));
+    }
+  };
+
+  // Amazon Storefront Dynamic Copy State
+  const [amazonShopText, setAmazonShopText] = useState<AmazonShopText>(DEFAULT_AMAZON_SHOP_TEXT);
+  const [shopTextSavedNotice, setShopTextSavedNotice] = useState(false);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bb_amazon_shop_text');
+      if (saved) {
+        try {
+          setAmazonShopText((prev) => ({ ...prev, ...JSON.parse(saved) }));
+        } catch (e) {}
+      }
+    }
+  }, []);
+
+  const handleSaveAmazonShopText = (updatedText: AmazonShopText) => {
+    setAmazonShopText(updatedText);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_amazon_shop_text', JSON.stringify(updatedText));
+      window.dispatchEvent(new Event('bb_amazon_shop_text_updated'));
+      setShopTextSavedNotice(true);
+      setTimeout(() => setShopTextSavedNotice(false), 3000);
     }
   };
 
@@ -2196,6 +2226,119 @@ export default function AdminPage() {
               <div className="bg-white p-4 rounded-xl border border-espresso/10">
                 <span className="text-[10px] uppercase tracking-wider text-espresso/50 font-semibold block">Partner Tag Active</span>
                 <span className="text-sm font-bold text-emerald-700 mt-1 block">braidbarnj-20 ✓</span>
+              </div>
+            </div>
+
+            {/* Amazon Storefront Copy & Content Editor */}
+            <div className="bg-white rounded-2xl border border-espresso/10 p-6 shadow-sm space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-espresso/10 pb-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Edit3 className="w-4 h-4 text-terracotta" />
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-terracotta">
+                      Storefront Copy CMS
+                    </span>
+                  </div>
+                  <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso">
+                    Edit Amazon Storefront Texts
+                  </h4>
+                  <p className="text-xs text-espresso/60 font-light">
+                    Update headlines, badges, subtitles, and consultation advice displayed on /shop.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {shopTextSavedNotice && (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200 animate-pulse">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Saved Live!
+                    </span>
+                  )}
+                  <button
+                    onClick={() => handleSaveAmazonShopText(amazonShopText)}
+                    className="inline-flex items-center gap-1.5 bg-terracotta hover:bg-espresso text-cream px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                  >
+                    <Save className="w-3.5 h-3.5" /> Save Copy
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label className="font-semibold text-espresso block mb-1">Top Badge Pill</label>
+                  <input
+                    type="text"
+                    value={amazonShopText.badge}
+                    onChange={(e) => setAmazonShopText({ ...amazonShopText, badge: e.target.value })}
+                    placeholder="e.g. The Braid Bar NJ • Sharon’s Curated Storefront"
+                    className="w-full p-2.5 bg-cream/30 rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-espresso block mb-1">Amazon Disclosure Notice</label>
+                  <input
+                    type="text"
+                    value={amazonShopText.disclosure}
+                    onChange={(e) => setAmazonShopText({ ...amazonShopText, disclosure: e.target.value })}
+                    placeholder="e.g. Verified Amazon Associates Catalog • Safe & Direct Prime Delivery"
+                    className="w-full p-2.5 bg-cream/30 rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-espresso block mb-1">Main Headline</label>
+                  <input
+                    type="text"
+                    value={amazonShopText.headline}
+                    onChange={(e) => setAmazonShopText({ ...amazonShopText, headline: e.target.value })}
+                    placeholder="e.g. Stylist-Approved"
+                    className="w-full p-2.5 bg-cream/30 rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-espresso block mb-1">Headline Accent (Italic)</label>
+                  <input
+                    type="text"
+                    value={amazonShopText.headlineAccent}
+                    onChange={(e) => setAmazonShopText({ ...amazonShopText, headlineAccent: e.target.value })}
+                    placeholder="e.g. Amazon Hair & Care"
+                    className="w-full p-2.5 bg-cream/30 rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta font-medium"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="font-semibold text-espresso block mb-1">Storefront Subtitle</label>
+                  <textarea
+                    rows={2}
+                    value={amazonShopText.subtitle}
+                    onChange={(e) => setAmazonShopText({ ...amazonShopText, subtitle: e.target.value })}
+                    placeholder="Stylist guarantee and introduction..."
+                    className="w-full p-2.5 bg-cream/30 rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-espresso block mb-1">Stylist Assistance Box Title</label>
+                  <input
+                    type="text"
+                    value={amazonShopText.adviceTitle}
+                    onChange={(e) => setAmazonShopText({ ...amazonShopText, adviceTitle: e.target.value })}
+                    placeholder="e.g. Have questions about hair color or texture matching?"
+                    className="w-full p-2.5 bg-cream/30 rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-espresso block mb-1">Stylist Assistance Box Copy</label>
+                  <input
+                    type="text"
+                    value={amazonShopText.adviceBody}
+                    onChange={(e) => setAmazonShopText({ ...amazonShopText, adviceBody: e.target.value })}
+                    placeholder="Sharon and our stylists are always happy to advise..."
+                    className="w-full p-2.5 bg-cream/30 rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta font-medium"
+                  />
+                </div>
               </div>
             </div>
 

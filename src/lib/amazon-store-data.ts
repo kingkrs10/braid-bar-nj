@@ -361,3 +361,27 @@ export const CATEGORIES_LIST: Array<{ id: ProductCategory; name: string }> = [
   { id: 'maintenance', name: 'Maintenance & Takedown' },
   { id: 'tools', name: 'Stylist Tools' },
 ];
+
+export interface AmazonShopText {
+  badge: string;
+  headline: string;
+  headlineAccent: string;
+  subtitle: string;
+  disclosure: string;
+  adviceTitle: string;
+  adviceBody: string;
+  packGuideTitle: string;
+  packGuideSubtitle: string;
+}
+
+export const DEFAULT_AMAZON_SHOP_TEXT: AmazonShopText = {
+  badge: 'The Braid Bar NJ • Sharon’s Curated Storefront',
+  headline: 'Stylist-Approved',
+  headlineAccent: 'Amazon Hair & Care',
+  subtitle: 'Skip the beauty supply store guessing game. Every product below is personally tested, approved, and recommended by Sharon French for your salon appointments, braid prep, and daily protective style health.',
+  disclosure: 'Verified Amazon Associates Catalog • Safe & Direct Prime Delivery',
+  adviceTitle: 'Have questions about hair color or texture matching?',
+  adviceBody: 'Sharon and our stylists are always happy to advise. Send us a message or consultation inquiry before purchasing so you get the exact shade and length for your appointment.',
+  packGuideTitle: 'Sharon’s Appointment Hair Pack Guide',
+  packGuideSubtitle: 'Not sure how many packs to order before your appointment? Click to view Sharon’s exact requirements.',
+};

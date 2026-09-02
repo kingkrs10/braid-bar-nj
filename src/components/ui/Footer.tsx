@@ -72,8 +72,8 @@ export default function Footer() {
           <ul className="flex flex-col gap-3 text-xs text-cream/70 font-light">
             {[
               { name: 'Home', href: '/' },
+              { name: 'Salon Hair Services', href: '/#services' },
               { name: 'Lookbook Gallery', href: '/#lookbook' },
-              { name: 'Shop Care & Accessories', href: '/shop' },
               { name: 'Membership', href: '/#membership' },
               { name: 'Events & Contact', href: '/#events' },
               { name: 'Owner Portal (Admin)', href: '/admin' },

@@ -11,7 +11,7 @@ const mockInstaPosts = [
   {
     id: 'post-1',
     imageUrl: 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80',
-    permalink: 'https://instagram.com/p/mock-1',
+    permalink: 'https://www.instagram.com/braidbarnj',
     caption: 'Soft blush knotless braids. Protective, elegant, and lightweight. ✨ #knotlessbraids #thebraidbar',
     likes: 142,
     comments: 18,
@@ -19,7 +19,7 @@ const mockInstaPosts = [
   {
     id: 'post-2',
     imageUrl: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80',
-    permalink: 'https://instagram.com/p/mock-2',
+    permalink: 'https://www.instagram.com/braidbarnj',
     caption: 'Feed-in cornrows with dynamic grid parting. Sleek lines only. 📐🖤 #cornrows #braidbarnj',
     likes: 98,
     comments: 12,
@@ -27,7 +27,7 @@ const mockInstaPosts = [
   {
     id: 'post-3',
     imageUrl: 'https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80',
-    permalink: 'https://instagram.com/p/mock-3',
+    permalink: 'https://www.instagram.com/braidbarnj',
     caption: 'Mommy & Me private class session! Bonding through styling tutorials. 👩‍👧💛 #braidclass #salonnj',
     likes: 165,
     comments: 24,
@@ -35,7 +35,7 @@ const mockInstaPosts = [
   {
     id: 'post-4',
     imageUrl: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80',
-    permalink: 'https://instagram.com/p/mock-4',
+    permalink: 'https://www.instagram.com/braidbarnj',
     caption: 'Signature Silk Press blowout. Mirror shine + healthy trims. 💆‍♀️✨ #silkpress #westorangenj',
     likes: 120,
     comments: 15,

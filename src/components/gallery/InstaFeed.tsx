@@ -49,14 +49,20 @@ export function InstaFeed() {
     <div className="w-full max-w-7xl mx-auto px-4 py-8 flex flex-col gap-8">
       {/* Visual Header */}
       <div className="flex flex-col items-center text-center gap-2 mb-4">
-        <div className="p-2.5 bg-espresso text-cream rounded-full">
-          <Instagram className="w-6 h-6" />
-        </div>
         <a
-          href="https://instagram.com/braidbarnj"
+          href="https://www.instagram.com/braidbarnj"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-[family-name:var(--font-display)] text-xl font-bold hover:text-gold-dark transition-colors tracking-tight text-espresso"
+          className="p-2.5 bg-espresso text-cream hover:bg-terracotta transition-colors rounded-full"
+          aria-label="Visit @braidbarnj on Instagram"
+        >
+          <Instagram className="w-6 h-6" />
+        </a>
+        <a
+          href="https://www.instagram.com/braidbarnj"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-[family-name:var(--font-display)] text-xl font-bold hover:text-terracotta transition-colors tracking-tight text-espresso"
         >
           @braidbarnj
         </a>

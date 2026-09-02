@@ -33,7 +33,9 @@ export default function Footer() {
           </p>
           <div className="flex items-center gap-3 mt-2">
             <Link
-              href="https://instagram.com/braidbarnj"
+              href="https://www.instagram.com/braidbarnj"
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2.5 bg-cream/5 hover:bg-clay-rose/10 rounded-full text-clay-rose hover:text-white transition-all duration-200 border border-cream/10 hover:border-clay-rose hover:scale-105"
               aria-label="Instagram Page"
             >

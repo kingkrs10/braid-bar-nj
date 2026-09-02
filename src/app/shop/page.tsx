@@ -4,27 +4,9 @@ import React from 'react';
 import Navigation from '@/components/ui/Navigation';
 import Footer from '@/components/ui/Footer';
 import { AmazonProductGrid } from '@/components/shop/AmazonProductGrid';
-import { ComingSoonPage } from '@/components/ui/ComingSoonPage';
 import { Sparkles, ShieldCheck, HeartHandshake } from 'lucide-react';
 
 export default function ShopPage() {
-  const [isSiteLive, setIsSiteLive] = React.useState<boolean>(true);
-  const [isCheckingLiveMode, setIsCheckingLiveMode] = React.useState(true);
-
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('bb_site_live');
-      const isOwnerAuthed = sessionStorage.getItem('bb_owner_authed') === 'true';
-      const hasPreviewQuery = window.location.search.includes('preview=true');
-      setIsSiteLive(saved === 'true' || isOwnerAuthed || hasPreviewQuery);
-      setIsCheckingLiveMode(false);
-    }
-  }, []);
-
-  if (!isCheckingLiveMode && !isSiteLive) {
-    return <ComingSoonPage />;
-  }
-
   return (
     <div className="relative min-h-screen bg-cream flex flex-col justify-between">
       <Navigation />

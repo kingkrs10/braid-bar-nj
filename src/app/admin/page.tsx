@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import { services as initialServices, products as initialProducts } from '@/lib/data';
+import { CLIENT_CHOSEN_AMAZON_PRODUCTS, type AmazonProduct } from '@/lib/amazon-store-data';
 import { 
   Calendar, 
   Clock, 
@@ -86,6 +87,45 @@ export default function AdminPage() {
   const [servicesList, setServicesList] = useState(initialServices);
   const [productsList, setProductsList] = useState(initialProducts);
   const [applications, setApplications] = useState(initialApplications);
+
+  // Curated Amazon Products (Client-Chosen Storefront)
+  const [amazonProductsList, setAmazonProductsList] = useState<AmazonProduct[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_curated_amazon_products');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return CLIENT_CHOSEN_AMAZON_PRODUCTS;
+  });
+  const [isAddAmazonModalOpen, setIsAddAmazonModalOpen] = useState(false);
+  const [newAmazonItem, setNewAmazonItem] = useState({
+    name: '',
+    brand: '',
+    asin: '',
+    category: 'braiding-hair' as any,
+    categoryLabel: 'Braiding & Bulk Hair',
+    description: '',
+    stylistNotes: '',
+    packGuidance: '',
+    price: 19.99,
+    rating: 4.8,
+    reviewCount: 150,
+    prime: true,
+    badge: 'Sharon’s Pick' as any,
+    imageUrl: '',
+    amazonUrl: '',
+  });
+
+  const handleSaveAmazonProducts = (updated: AmazonProduct[]) => {
+    setAmazonProductsList(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_curated_amazon_products', JSON.stringify(updated));
+    }
+  };
 
   // Site Text Content State
   const defaultSiteText = {
@@ -2084,60 +2124,382 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* TAB 4: SHOP INVENTORY */}
+        {/* TAB 4: CURATED AMAZON STOREFRONT */}
         {activeTab === 'shop' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-espresso/10 shadow-sm">
+            {/* Header Control Card */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-espresso/10 shadow-sm">
               <div>
-                <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso">Hair Care Products Inventory</h3>
-                <p className="text-xs text-espresso/60 font-light">Manage stock, prices, and product listings</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-terracotta" />
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-terracotta">
+                    Client-Chosen Storefront
+                  </span>
+                </div>
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso">
+                  Curated Amazon Hair &amp; Care Catalog
+                </h3>
+                <p className="text-xs text-espresso/60 font-light">
+                  Hand-select and manage the exact products recommended to clients on /shop and shop.braidbarnj.com.
+                </p>
               </div>
-              <button
-                onClick={() => alert('Add New Product modal active!')}
-                className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm"
-              >
-                <Plus className="w-4 h-4" /> Add Product
-              </button>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                <Link
+                  href="/shop"
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 border border-espresso/15 hover:bg-cream rounded-full text-xs font-semibold text-espresso transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Preview Storefront</span>
+                </Link>
+
+                <button
+                  onClick={() => {
+                    if (confirm('Reset catalog back to Sharon’s 12 default salon-tested items?')) {
+                      handleSaveAmazonProducts(CLIENT_CHOSEN_AMAZON_PRODUCTS);
+                    }
+                  }}
+                  className="px-3.5 py-2 border border-espresso/15 hover:bg-cream text-espresso/70 rounded-full text-xs font-semibold transition-colors"
+                  title="Reset to default items"
+                >
+                  Reset Defaults
+                </button>
+
+                <button
+                  onClick={() => setIsAddAmazonModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 bg-terracotta hover:bg-espresso text-cream px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" /> Add Product
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {productsList.map((prod) => (
-                <div key={prod.id} className="bg-white rounded-2xl border border-espresso/10 p-5 shadow-sm flex flex-col justify-between">
+            {/* KPI summary bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="bg-white p-4 rounded-xl border border-espresso/10">
+                <span className="text-[10px] uppercase tracking-wider text-espresso/50 font-semibold block">Total Client Picks</span>
+                <span className="text-2xl font-bold text-espresso">{amazonProductsList.length}</span>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-espresso/10">
+                <span className="text-[10px] uppercase tracking-wider text-espresso/50 font-semibold block">Sharon’s Top Picks</span>
+                <span className="text-2xl font-bold text-terracotta">
+                  {amazonProductsList.filter(p => p.badge === 'Sharon’s Pick' || p.badge === 'Salon Required').length}
+                </span>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-espresso/10">
+                <span className="text-[10px] uppercase tracking-wider text-espresso/50 font-semibold block">Braiding &amp; Bulk Hair</span>
+                <span className="text-2xl font-bold text-espresso">
+                  {amazonProductsList.filter(p => p.category === 'braiding-hair').length}
+                </span>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-espresso/10">
+                <span className="text-[10px] uppercase tracking-wider text-espresso/50 font-semibold block">Partner Tag Active</span>
+                <span className="text-sm font-bold text-emerald-700 mt-1 block">braidbarnj-20 ✓</span>
+              </div>
+            </div>
+
+            {/* Curated Products Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {amazonProductsList.map((prod) => (
+                <div
+                  key={prod.id}
+                  className="bg-white rounded-2xl border border-espresso/10 p-5 shadow-sm flex flex-col justify-between space-y-4 relative group"
+                >
                   <div>
-                    <div className="aspect-square w-full rounded-xl overflow-hidden mb-4 bg-cream/30 border border-espresso/5">
-                      <img src={prod.images?.[0] || (prod as any).image_url} alt={prod.name} className="w-full h-full object-cover" />
+                    <div className="aspect-video w-full rounded-xl overflow-hidden mb-3 bg-cream-dark/30 border border-espresso/5 flex items-center justify-center p-3">
+                      <img
+                        src={prod.images?.[0]}
+                        alt={prod.name}
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/images/branding/logo-monogram-bb.png';
+                          (e.target as HTMLImageElement).className = 'w-1/3 h-1/3 object-contain';
+                        }}
+                      />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta">{prod.category}</span>
-                    <h4 className="font-[family-name:var(--font-display)] text-base font-bold text-espresso mb-1">{prod.name}</h4>
-                    <p className="text-xs text-espresso/60 font-light line-clamp-2 mb-3">{prod.description}</p>
+
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-terracotta bg-clay-rose/15 px-2 py-0.5 rounded-full">
+                        {prod.categoryLabel || prod.category}
+                      </span>
+                      {prod.badge && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-espresso/70 bg-cream px-2 py-0.5 rounded-full border border-espresso/10">
+                          {prod.badge}
+                        </span>
+                      )}
+                    </div>
+
+                    <h4 className="font-[family-name:var(--font-display)] text-base font-bold text-espresso line-clamp-1 mb-1">
+                      {prod.name}
+                    </h4>
+                    <p className="text-[11px] text-espresso/50 mb-2">Brand: {prod.brand}</p>
+
+                    {/* Sharon's Note */}
+                    <div className="bg-cream/70 border border-espresso/5 rounded-lg p-2.5 mb-2">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-terracotta block mb-0.5">
+                        Sharon’s Advice:
+                      </span>
+                      <p className="text-[11px] text-espresso/80 font-light italic line-clamp-2">
+                        &ldquo;{prod.stylistNotes}&rdquo;
+                      </p>
+                    </div>
+
+                    {prod.packGuidance && (
+                      <p className="text-[10px] text-espresso/70 font-semibold mb-1">
+                        📦 Prep: {prod.packGuidance}
+                      </p>
+                    )}
                   </div>
 
                   <div className="pt-3 border-t border-espresso/10 flex items-center justify-between">
                     <div>
                       <span className="text-base font-bold text-espresso">{formatPrice(prod.price)}</span>
-                      <span className="block text-[10px] text-emerald-700 font-medium">In Stock ({(prod as any).stock_quantity || 15} units)</span>
+                      {prod.prime && (
+                        <span className="ml-2 text-[9px] font-bold uppercase text-sky-800 bg-sky-100 px-1.5 py-0.5 rounded">
+                          Prime
+                        </span>
+                      )}
                     </div>
 
-                    <button
-                      onClick={() => {
-                        const newStockStr = prompt(`Update stock quantity for "${prod.name}":`, '20');
-                        if (newStockStr) {
-                          const newStock = parseInt(newStockStr, 10);
-                          if (!isNaN(newStock)) {
-                            setProductsList((prev) =>
-                              prev.map((p) => (p.id === prod.id ? ({ ...p, stock_quantity: newStock } as any) : p))
-                            );
+                    <div className="flex items-center gap-1.5">
+                      <a
+                        href={prod.amazonUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 hover:bg-cream rounded-lg text-espresso/60 hover:text-espresso"
+                        title="Open on Amazon"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Remove "${prod.name}" from your public storefront?`)) {
+                            handleSaveAmazonProducts(amazonProductsList.filter(p => p.id !== prod.id));
                           }
-                        }
-                      }}
-                      className="px-3 py-1.5 bg-cream/50 hover:bg-cream border border-espresso/10 rounded-xl text-xs font-semibold text-espresso transition-colors"
-                    >
-                      Update Stock
-                    </button>
+                        }}
+                        className="p-1.5 hover:bg-red-50 text-red-500 hover:text-red-700 rounded-lg transition-colors"
+                        title="Remove product"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Add New Amazon Product Modal */}
+            {isAddAmazonModalOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-espresso/60 backdrop-blur-xs overflow-y-auto">
+                <div className="bg-cream border border-espresso/15 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4 my-8">
+                  <div className="flex items-center justify-between border-b border-espresso/10 pb-3">
+                    <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso">
+                      Add Client-Chosen Product
+                    </h3>
+                    <button
+                      onClick={() => setIsAddAmazonModalOpen(false)}
+                      className="text-espresso/60 hover:text-espresso"
+                    >
+                      <XCircle className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-3 text-xs">
+                    <div>
+                      <label className="font-semibold text-espresso block mb-1">Product Title *</label>
+                      <input
+                        type="text"
+                        value={newAmazonItem.name}
+                        onChange={(e) => setNewAmazonItem({ ...newAmazonItem, name: e.target.value })}
+                        placeholder="e.g. Ruwa Pre-Stretched Braiding Hair 24 Inch"
+                        className="w-full p-2.5 bg-white rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="font-semibold text-espresso block mb-1">Brand Name *</label>
+                        <input
+                          type="text"
+                          value={newAmazonItem.brand}
+                          onChange={(e) => setNewAmazonItem({ ...newAmazonItem, brand: e.target.value })}
+                          placeholder="e.g. Ruwa / Mielle"
+                          className="w-full p-2.5 bg-white rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-semibold text-espresso block mb-1">Category *</label>
+                        <select
+                          value={newAmazonItem.category}
+                          onChange={(e) => {
+                            const cat = e.target.value as any;
+                            const labels: Record<string, string> = {
+                              'braiding-hair': 'Braiding Hair & Bulk',
+                              'edge-control': 'Edge Control & Slicking',
+                              'scalp-care': 'Scalp Care & Serums',
+                              'sleep-silk': 'Silk Sleep & Bonnets',
+                              'maintenance': 'Maintenance & Takedown',
+                              'tools': 'Stylist Tools',
+                            };
+                            setNewAmazonItem({ 
+                              ...newAmazonItem, 
+                              category: cat,
+                              categoryLabel: labels[cat] || 'Hair Care'
+                            });
+                          }}
+                          className="w-full p-2.5 bg-white rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta"
+                        >
+                          <option value="braiding-hair">Braiding Hair &amp; Bulk</option>
+                          <option value="edge-control">Edge Control &amp; Slicking</option>
+                          <option value="scalp-care">Scalp Care &amp; Serums</option>
+                          <option value="sleep-silk">Silk Sleep &amp; Bonnets</option>
+                          <option value="maintenance">Maintenance &amp; Takedown</option>
+                          <option value="tools">Stylist Tools</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="font-semibold text-espresso block mb-1">Price ($) *</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={newAmazonItem.price}
+                          onChange={(e) => setNewAmazonItem({ ...newAmazonItem, price: parseFloat(e.target.value) || 0 })}
+                          className="w-full p-2.5 bg-white rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-semibold text-espresso block mb-1">Badge</label>
+                        <select
+                          value={newAmazonItem.badge}
+                          onChange={(e) => setNewAmazonItem({ ...newAmazonItem, badge: e.target.value as any })}
+                          className="w-full p-2.5 bg-white rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta"
+                        >
+                          <option value="Sharon’s Pick">Sharon’s Pick</option>
+                          <option value="Salon Required">Salon Required</option>
+                          <option value="Client Favorite">Client Favorite</option>
+                          <option value="Best Value">Best Value</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-espresso block mb-1">Sharon’s Stylist Note *</label>
+                      <textarea
+                        rows={2}
+                        value={newAmazonItem.stylistNotes}
+                        onChange={(e) => setNewAmazonItem({ ...newAmazonItem, stylistNotes: e.target.value })}
+                        placeholder="Why do you recommend this item to clients?"
+                        className="w-full p-2.5 bg-white rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta text-xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-espresso block mb-1">Appointment Pack Guidance (Optional)</label>
+                      <input
+                        type="text"
+                        value={newAmazonItem.packGuidance}
+                        onChange={(e) => setNewAmazonItem({ ...newAmazonItem, packGuidance: e.target.value })}
+                        placeholder="e.g. Bring 3 packs to your Knotless appointment"
+                        className="w-full p-2.5 bg-white rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-espresso block mb-1">Amazon Product URL or ASIN *</label>
+                      <input
+                        type="text"
+                        value={newAmazonItem.amazonUrl}
+                        onChange={(e) => setNewAmazonItem({ ...newAmazonItem, amazonUrl: e.target.value })}
+                        placeholder="https://www.amazon.com/dp/B07N8MZZ47?tag=braidbarnj-20"
+                        className="w-full p-2.5 bg-white rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-espresso block mb-1">Product Image URL (Optional)</label>
+                      <input
+                        type="text"
+                        value={newAmazonItem.imageUrl}
+                        onChange={(e) => setNewAmazonItem({ ...newAmazonItem, imageUrl: e.target.value })}
+                        placeholder="https://m.media-amazon.com/images/... or Unsplash link"
+                        className="w-full p-2.5 bg-white rounded-xl border border-espresso/15 focus:outline-none focus:border-terracotta"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-espresso/10">
+                    <button
+                      onClick={() => setIsAddAmazonModalOpen(false)}
+                      className="px-4 py-2 border border-espresso/20 rounded-full text-xs font-semibold text-espresso"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!newAmazonItem.name || !newAmazonItem.brand) {
+                          alert('Please enter a product name and brand.');
+                          return;
+                        }
+                        const finalUrl = newAmazonItem.amazonUrl.includes('tag=')
+                          ? newAmazonItem.amazonUrl
+                          : `${newAmazonItem.amazonUrl}${newAmazonItem.amazonUrl.includes('?') ? '&' : '?'}tag=braidbarnj-20`;
+
+                        const created: AmazonProduct = {
+                          id: `bb-amz-custom-${Date.now()}`,
+                          asin: newAmazonItem.asin || 'CUSTOM',
+                          name: newAmazonItem.name,
+                          brand: newAmazonItem.brand,
+                          category: newAmazonItem.category,
+                          categoryLabel: newAmazonItem.categoryLabel,
+                          description: newAmazonItem.description || newAmazonItem.stylistNotes,
+                          stylistNotes: newAmazonItem.stylistNotes || 'Selected by Sharon French for appointment prep.',
+                          packGuidance: newAmazonItem.packGuidance,
+                          recommendedFor: ['Salon Protective Styling'],
+                          price: newAmazonItem.price,
+                          rating: newAmazonItem.rating,
+                          reviewCount: newAmazonItem.reviewCount,
+                          prime: newAmazonItem.prime,
+                          images: [newAmazonItem.imageUrl || '/images/branding/logo-monogram-bb.png'],
+                          amazonUrl: finalUrl,
+                          badge: newAmazonItem.badge,
+                          inStock: true,
+                          featured: true,
+                        };
+
+                        handleSaveAmazonProducts([created, ...amazonProductsList]);
+                        setIsAddAmazonModalOpen(false);
+                        setNewAmazonItem({
+                          name: '',
+                          brand: '',
+                          asin: '',
+                          category: 'braiding-hair',
+                          categoryLabel: 'Braiding & Bulk Hair',
+                          description: '',
+                          stylistNotes: '',
+                          packGuidance: '',
+                          price: 19.99,
+                          rating: 4.8,
+                          reviewCount: 150,
+                          prime: true,
+                          badge: 'Sharon’s Pick',
+                          imageUrl: '',
+                          amazonUrl: '',
+                        });
+                      }}
+                      className="px-5 py-2 bg-terracotta hover:bg-espresso text-cream rounded-full text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
+                    >
+                      Save to Storefront
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

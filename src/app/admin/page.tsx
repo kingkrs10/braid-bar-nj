@@ -88,12 +88,12 @@ export default function AdminPage() {
   const [applications, setApplications] = useState(initialApplications);
 
   // Site Text Content State
-  const [siteText, setSiteText] = useState({
+  const defaultSiteText = {
     heroBadge: '560 Valley Road, West Orange, NJ',
     heroHeadline: 'Crafted Braids, Elevated Care.',
-    heroSubtitle: 'Precision parting. Weightless protective length. Clean healthy scalp.',
-    missionTitle: 'Crafted Braids. Elevated Care. Everyday Luxury.',
-    missionBody: 'At Braid Bar NJ, we blend precision parting with weightless protective length, ensuring your natural hair is shielded, neat, and styled beautifully.',
+    heroSubtitle: 'Elevated protective styling crafted for longevity, neatness, and scalp health. Knotless braids, custom cornrows, and private VIP experiences designed around you.',
+    missionTitle: 'All good ideas start somewhere and have a headline.',
+    missionBody: 'Here — you can add copy about you or your brand mission. Our space in West Orange, New Jersey is structured around VIP client comfort, neat and clean grid partings, and meticulous tension-free braid installations that nurture your natural hair growth.',
     sharonTitle: 'Founder & Lead Stylist',
     sharonBio: 'Sharon French is a self-taught braider with over 20 years of experience. At Braid Bar NJ, she blends precision parting with weightless protective length, ensuring your natural hair is shielded, neat, and styled beautifully.',
     sharonBadge: '📍 560 Valley Road, West Orange • 20+ Years Exp',
@@ -101,7 +101,30 @@ export default function AdminPage() {
     abigailBio: 'Abigail Charles supports natural hair preps, wash-station washes, and braid removals, ensuring every client enjoys a relaxing, VIP prep experience while continuing to develop natural styling techniques.',
     abigailBadge: '📍 560 Valley Road, West Orange • Client Care Specialist',
     marqueeText: '✨ NOW BOOKING AUGUST & SEPTEMBER • 560 VALLEY ROAD, WEST ORANGE, NJ • VIP BRAID EXPERIENCES AVAILABLE',
-  });
+  };
+
+  const [siteText, setSiteText] = useState(defaultSiteText);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bb_site_text');
+      if (saved) {
+        try {
+          setSiteText((prev) => ({ ...prev, ...JSON.parse(saved) }));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, []);
+
+  const handleSaveSiteText = (updatedText: typeof defaultSiteText) => {
+    setSiteText(updatedText);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_site_text', JSON.stringify(updatedText));
+      window.dispatchEvent(new Event('bb_sitetext_updated'));
+    }
+  };
 
   // Site Image Assets State
   const [siteImages, setSiteImages] = useState({
@@ -1022,8 +1045,9 @@ export default function AdminPage() {
               </div>
               <button
                 onClick={() => {
+                  handleSaveSiteText(siteText);
                   handleTriggerDeploy();
-                  alert('✨ All website text, lookbook photos, and image assets saved & deployment triggered live!');
+                  alert('✨ All website text, headlines, slogans, and image assets saved & published live!');
                 }}
                 className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
               >

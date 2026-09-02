@@ -57,14 +57,43 @@ export default function HomePage() {
   const [isSiteLive, setIsSiteLive] = useState<boolean>(true);
   const [isCheckingLiveMode, setIsCheckingLiveMode] = useState(true);
 
+  // Dynamic Site Text State (synced from CMS Admin Editor)
+  const [siteText, setSiteText] = useState({
+    heroBadge: '560 Valley Road, West Orange, NJ',
+    heroHeadline: 'Crafted Braids, Elevated Care.',
+    heroSubtitle: 'Elevated protective styling crafted for longevity, neatness, and scalp health. Knotless braids, custom cornrows, and private VIP experiences designed around you.',
+    missionTitle: 'All good ideas start somewhere and have a headline.',
+    missionBody: 'Here — you can add copy about you or your brand mission. Our space in West Orange, New Jersey is structured around VIP client comfort, neat and clean grid partings, and meticulous tension-free braid installations that nurture your natural hair growth.',
+    marqueeText: '✨ NOW BOOKING AUGUST & SEPTEMBER • 560 VALLEY ROAD, WEST ORANGE, NJ • VIP BRAID EXPERIENCES AVAILABLE',
+  });
+
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('bb_site_live');
+      const savedLive = localStorage.getItem('bb_site_live');
       const isOwnerAuthed = sessionStorage.getItem('bb_owner_authed') === 'true';
       const hasPreviewQuery = window.location.search.includes('preview=true');
-      // If owner is logged into /admin OR has ?preview=true OR site is live: bypass Coming Soon!
-      setIsSiteLive(saved === 'true' || isOwnerAuthed || hasPreviewQuery);
+      setIsSiteLive(savedLive === 'true' || isOwnerAuthed || hasPreviewQuery);
       setIsCheckingLiveMode(false);
+
+      const loadSiteText = () => {
+        const savedText = localStorage.getItem('bb_site_text');
+        if (savedText) {
+          try {
+            setSiteText((prev) => ({ ...prev, ...JSON.parse(savedText) }));
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      };
+
+      loadSiteText();
+      window.addEventListener('storage', loadSiteText);
+      window.addEventListener('bb_sitetext_updated', loadSiteText);
+
+      return () => {
+        window.removeEventListener('storage', loadSiteText);
+        window.removeEventListener('bb_sitetext_updated', loadSiteText);
+      };
     }
   }, []);
 
@@ -125,7 +154,7 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-2 bg-terracotta/80 backdrop-blur-md text-cream px-4 py-2 rounded-full border border-white/20 w-fit shadow-md">
               <MapPin className="w-3.5 h-3.5 text-accent-gold" />
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream">
-                560 Valley Road, West Orange, NJ
+                {siteText.heroBadge}
               </span>
             </div>
 
@@ -139,7 +168,7 @@ export default function HomePage() {
             </div>
 
             <p className="text-white/95 text-base md:text-lg font-light leading-relaxed max-w-xl font-[family-name:var(--font-body)] drop-shadow-sm">
-              Elevated protective styling crafted for longevity, neatness, and scalp health. Knotless braids, custom cornrows, and private VIP experiences designed around you.
+              {siteText.heroSubtitle}
             </p>
             <div className="flex flex-wrap gap-4 mt-4">
               <a
@@ -171,29 +200,9 @@ export default function HomePage() {
             transition={{ duration: 25, ease: 'linear', repeat: Infinity }}
             className="flex items-center gap-8 text-cream text-xs font-bold uppercase tracking-[0.3em] shrink-0"
           >
-            <span>✨ KNOTLESS BRAIDS</span>
+            <span>{siteText.marqueeText}</span>
             <span className="text-terracotta">•</span>
-            <span>FULANI DESIGNS</span>
-            <span className="text-terracotta">•</span>
-            <span>LOC MAINTENANCE</span>
-            <span className="text-terracotta">•</span>
-            <span>WASH &amp; BLOW DRY</span>
-            <span className="text-terracotta">•</span>
-            <span>VIP LUXURY EXPERIENCES</span>
-            <span className="text-terracotta">•</span>
-            <span>560 VALLEY ROAD, WEST ORANGE, NJ</span>
-            <span className="text-terracotta">•</span>
-            <span>✨ KNOTLESS BRAIDS</span>
-            <span className="text-terracotta">•</span>
-            <span>FULANI DESIGNS</span>
-            <span className="text-terracotta">•</span>
-            <span>LOC MAINTENANCE</span>
-            <span className="text-terracotta">•</span>
-            <span>WASH &amp; BLOW DRY</span>
-            <span className="text-terracotta">•</span>
-            <span>VIP LUXURY EXPERIENCES</span>
-            <span className="text-terracotta">•</span>
-            <span>560 VALLEY ROAD, WEST ORANGE, NJ</span>
+            <span>{siteText.marqueeText}</span>
             <span className="text-terracotta">•</span>
           </motion.div>
         </div>
@@ -228,11 +237,11 @@ export default function HomePage() {
           </div>
 
           <h2 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl md:text-5xl font-normal text-espresso leading-tight mb-6 max-w-2xl">
-            All good ideas start somewhere and have a headline.
+            {siteText.missionTitle}
           </h2>
 
           <p className="text-espresso/70 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed mb-8 font-light">
-            Here — you can add copy about you or your brand mission. Our space in West Orange, New Jersey is structured around VIP client comfort, neat and clean grid partings, and meticulous tension-free braid installations that nurture your natural hair growth.
+            {siteText.missionBody}
           </p>
 
           <a

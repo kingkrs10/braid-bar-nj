@@ -57,14 +57,20 @@ export default function HomePage() {
   const [isSiteLive, setIsSiteLive] = useState<boolean>(true);
   const [isCheckingLiveMode, setIsCheckingLiveMode] = useState(true);
 
-  // Dynamic Site Text State (synced from CMS Admin Editor)
+  // Dynamic Site Text & Images State (synced from CMS Admin Editor & /api/site-content)
   const [siteText, setSiteText] = useState({
     heroBadge: '560 Valley Road, West Orange, NJ',
     heroHeadline: 'Crafted Braids, Elevated Care.',
     heroSubtitle: 'Elevated protective styling crafted for longevity, neatness, and scalp health. Knotless braids, custom cornrows, and private VIP experiences designed around you.',
-    missionTitle: 'All good ideas start somewhere and have a headline.',
-    missionBody: 'Here — you can add copy about you or your brand mission. Our space in West Orange, New Jersey is structured around VIP client comfort, neat and clean grid partings, and meticulous tension-free braid installations that nurture your natural hair growth.',
+    missionTitle: 'Crafted Braids. Elevated Care. Everyday Luxury.',
+    missionBody: 'We believe styling protective crowns should be a therapeutic, beautiful ritual. Our space in West Orange, New Jersey is structured around VIP client comfort, neat and clean grid partings, and meticulous tension-free braid installations that nurture your natural hair growth.',
     marqueeText: '✨ NOW BOOKING AUGUST & SEPTEMBER • 560 VALLEY ROAD, WEST ORANGE, NJ • VIP BRAID EXPERIENCES AVAILABLE',
+  });
+
+  const [siteImages, setSiteImages] = useState({
+    heroBg: '/images/branding/hero-sitting.jpg',
+    salonArch: '/images/salon-reception-arch.jpg',
+    portfolioOval: '/images/braids-twists.jpg',
   });
 
   React.useEffect(() => {
@@ -75,7 +81,20 @@ export default function HomePage() {
       setIsSiteLive(savedLive === 'true' || isOwnerAuthed || hasPreviewQuery);
       setIsCheckingLiveMode(false);
 
-      const loadSiteText = () => {
+      const loadSiteData = async () => {
+        // First try server API for cross-device persistence
+        try {
+          const res = await fetch('/api/site-content');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.data?.text) setSiteText((prev) => ({ ...prev, ...data.data.text }));
+            if (data.data?.images) setSiteImages((prev) => ({ ...prev, ...data.data.images }));
+          }
+        } catch (err) {
+          console.warn('Fallback to local storage for site content');
+        }
+
+        // Local storage backup
         const savedText = localStorage.getItem('bb_site_text');
         if (savedText) {
           try {
@@ -84,15 +103,23 @@ export default function HomePage() {
             console.error(e);
           }
         }
+        const savedImages = localStorage.getItem('bb_site_images');
+        if (savedImages) {
+          try {
+            setSiteImages((prev) => ({ ...prev, ...JSON.parse(savedImages) }));
+          } catch (e) {
+            console.error(e);
+          }
+        }
       };
 
-      loadSiteText();
-      window.addEventListener('storage', loadSiteText);
-      window.addEventListener('bb_sitetext_updated', loadSiteText);
+      loadSiteData();
+      window.addEventListener('storage', loadSiteData);
+      window.addEventListener('bb_sitetext_updated', loadSiteData);
 
       return () => {
-        window.removeEventListener('storage', loadSiteText);
-        window.removeEventListener('bb_sitetext_updated', loadSiteText);
+        window.removeEventListener('storage', loadSiteData);
+        window.removeEventListener('bb_sitetext_updated', loadSiteData);
       };
     }
   }, []);
@@ -228,7 +255,7 @@ export default function HomePage() {
             <div className="w-72 sm:w-96 md:w-[480px] h-44 sm:h-60 md:h-72 rounded-b-full overflow-hidden border-x border-b border-espresso/15 shadow-xl bg-cream-dark p-1 relative">
               <div className="w-full h-full rounded-b-full overflow-hidden">
                 <img
-                  src="/images/salon-reception-arch.jpg"
+                  src={siteImages.salonArch || "/images/salon-reception-arch.jpg"}
                   alt="Braid Bar NJ Salon Sanctuary"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />

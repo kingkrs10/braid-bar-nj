@@ -353,6 +353,79 @@ export default function AdminPage() {
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [staffCalendarFilter, setStaffCalendarFilter] = useState('All Staff');
+  const [autoSaveNotice, setAutoSaveNotice] = useState(false);
+
+  // Sync to backend server API
+  const syncToApiServer = async (payload: any) => {
+    try {
+      await fetch('/api/site-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      setAutoSaveNotice(true);
+      setTimeout(() => setAutoSaveNotice(false), 2500);
+    } catch (e) {
+      console.warn('Server sync error:', e);
+    }
+  };
+
+  // Add-Ons State & Modal
+  const [addonsList, setAddonsList] = useState<Array<{ id: string; name: string; price: number; duration_min: number }>>([
+    { id: 'add-1', name: 'Luxury Shampoo & Scalp Detox Wash', price: 35, duration_min: 30 },
+    { id: 'add-2', name: 'Extra Waist / Hip Extended Length', price: 40, duration_min: 45 },
+    { id: 'add-3', name: 'Bohemian Curly Ends (Human Hair)', price: 50, duration_min: 45 },
+    { id: 'add-4', name: 'Custom Hair Color Blending', price: 25, duration_min: 20 },
+    { id: 'add-5', name: 'Goddess Braid Accents', price: 30, duration_min: 30 },
+    { id: 'add-6', name: 'Braid Takedown & Comb Out Prep', price: 60, duration_min: 60 },
+  ]);
+
+  const [isAddonModalOpen, setIsAddonModalOpen] = useState(false);
+  const [addonFormData, setAddonFormData] = useState({
+    id: '',
+    name: '',
+    price: 30,
+    duration_min: 30,
+  });
+
+  const handleOpenAddAddon = () => {
+    setAddonFormData({ id: '', name: '', price: 30, duration_min: 30 });
+    setIsAddonModalOpen(true);
+  };
+
+  const handleOpenEditAddon = (add: any) => {
+    setAddonFormData({ id: add.id, name: add.name, price: add.price, duration_min: add.duration_min });
+    setIsAddonModalOpen(true);
+  };
+
+  const handleSaveAddonForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!addonFormData.name) return;
+
+    if (addonFormData.id) {
+      setAddonsList((prev) => prev.map((a) => (a.id === addonFormData.id ? { ...addonFormData } : a)));
+    } else {
+      const newAddon = { ...addonFormData, id: `add-${Date.now()}` };
+      setAddonsList((prev) => [...prev, newAddon]);
+    }
+    setIsAddonModalOpen(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_addons_list', JSON.stringify(addonsList));
+      syncToApiServer({ addons: addonsList });
+    }
+  };
+
+  const handleDeleteAddon = (id: string) => {
+    if (confirm('Are you sure you want to delete this add-on option?')) {
+      const updated = addonsList.filter((a) => a.id !== id);
+      setAddonsList(updated);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('bb_addons_list', JSON.stringify(updated));
+        syncToApiServer({ addons: updated });
+      }
+    }
+  };
 
   // Service Add/Edit Modal state
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
@@ -1098,6 +1171,114 @@ export default function AdminPage() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* SERVICE ADD-ONS CATALOG MANAGER */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6 mt-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-espresso/10 pb-4 gap-4">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                    Custom Enhancements
+                  </span>
+                  <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso mt-1">
+                    Service Add-Ons Catalog
+                  </h3>
+                  <p className="text-xs text-espresso/60 font-light">
+                    Create and edit styling options like shampoo detox, waist length, bohemian curls, and hair color.
+                  </p>
+                </div>
+                <button
+                  onClick={handleOpenAddAddon}
+                  className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" /> Add New Add-On
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {addonsList.map((add) => (
+                  <div key={add.id} className="bg-cream/20 p-4 rounded-2xl border border-espresso/10 flex flex-col justify-between space-y-3">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <h4 className="font-bold text-espresso text-sm">{add.name}</h4>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-espresso/70 mt-2">
+                        <span className="font-bold text-terracotta">+{formatPrice(add.price)}</span>
+                        <span>•</span>
+                        <span>+{formatDuration(add.duration_min)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-espresso/10">
+                      <button
+                        onClick={() => handleOpenEditAddon(add)}
+                        className="px-3 py-1 bg-white hover:bg-cream border border-espresso/10 rounded-lg text-xs font-semibold text-espresso transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        <Edit3 className="w-3 h-3 text-terracotta" /> Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAddon(add.id)}
+                        className="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* STAFF CALENDARS & SCHEDULE CONFIGURATION */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6 mt-8">
+              <div className="border-b border-espresso/10 pb-4">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                  Team Scheduling
+                </span>
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso mt-1">
+                  Separate Staff Calendars
+                </h3>
+                <p className="text-xs text-espresso/60 font-light">
+                  Configured calendar schedules and permissions for Sharon French (Lead Stylist) and Abigail Charles (Assistant).
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                {/* Sharon French Calendar */}
+                <div className="bg-cream/20 p-5 rounded-2xl border border-espresso/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full">
+                      Active Lead Calendar
+                    </span>
+                    <span className="font-mono text-[10px] text-espresso/50">Calendar ID: #3793472</span>
+                  </div>
+                  <h4 className="font-bold text-espresso text-base">Sharon French — Lead Stylist Calendar</h4>
+                  <p className="text-espresso/70 text-xs font-light leading-relaxed">
+                    Lead calendar for Knotless Braids, Fulani Tribal Styles, VIP Luxury Packages, and Loc Maintenance.
+                  </p>
+                  <div className="pt-2 border-t border-espresso/10 flex items-center justify-between text-espresso/80">
+                    <span>Working Hours: Tue – Sat (9:00 AM – 6:00 PM)</span>
+                    <span className="font-bold text-emerald-700">Owner Control (Passcode 592)</span>
+                  </div>
+                </div>
+
+                {/* Abigail Charles Calendar */}
+                <div className="bg-cream/20 p-5 rounded-2xl border border-espresso/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full">
+                      Active Assistant Calendar
+                    </span>
+                    <span className="font-mono text-[10px] text-espresso/50">Calendar ID: #13700462</span>
+                  </div>
+                  <h4 className="font-bold text-espresso text-base">Abigail Charles — Assistant Calendar</h4>
+                  <p className="text-espresso/70 text-xs font-light leading-relaxed">
+                    Assistant calendar for hair preps, wash detoxes, shampoo treatments, and braid takedown support.
+                  </p>
+                  <div className="pt-2 border-t border-espresso/10 flex items-center justify-between text-espresso/80">
+                    <span>Working Hours: Wed – Sun (10:00 AM – 5:00 PM)</span>
+                    <span className="font-bold text-amber-700">Assistant Login (Passcode 2026)</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -2882,6 +3063,85 @@ export default function AdminPage() {
                   className="px-6 py-2.5 bg-terracotta hover:bg-espresso text-cream font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm"
                 >
                   {serviceFormData.id ? 'Save Service Changes' : 'Publish Service'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      {/* Add / Edit Service Add-On Modal */}
+      {isAddonModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-espresso/10 pb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                  {addonFormData.id ? 'Edit Add-On Details' : 'Create New Add-On'}
+                </span>
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso mt-1">
+                  {addonFormData.id ? addonFormData.name : 'Add Service Enhancement'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsAddonModalOpen(false)}
+                className="text-espresso/40 hover:text-espresso p-1 rounded-full text-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveAddonForm} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Add-On Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Extra Waist Length"
+                  value={addonFormData.name}
+                  onChange={(e) => setAddonFormData({ ...addonFormData, name: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Price ($)</label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={addonFormData.price}
+                    onChange={(e) => setAddonFormData({ ...addonFormData, price: parseFloat(e.target.value) || 0 })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Extra Duration (Mins)</label>
+                  <input
+                    type="number"
+                    required
+                    min={5}
+                    step={5}
+                    value={addonFormData.duration_min}
+                    onChange={(e) => setAddonFormData({ ...addonFormData, duration_min: parseInt(e.target.value) || 15 })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3 border-t border-espresso/10">
+                <button
+                  type="button"
+                  onClick={() => setIsAddonModalOpen(false)}
+                  className="px-5 py-2.5 bg-cream/50 hover:bg-cream text-espresso font-semibold rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-terracotta hover:bg-espresso text-cream font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  {addonFormData.id ? 'Save Add-On' : 'Create Add-On'}
                 </button>
               </div>
             </form>

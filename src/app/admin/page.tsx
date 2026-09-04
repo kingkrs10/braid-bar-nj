@@ -499,13 +499,17 @@ export default function AdminPage() {
   };
 
   // Filter Bookings
-  const filteredBookings = bookings.filter((b) => {
+  const filteredBookings = bookings.filter((b: any) => {
     const matchesSearch =
       b.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       b.serviceName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       b.clientPhone.includes(searchQuery);
     const matchesStatus = statusFilter === 'All' || b.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesStaff =
+      staffCalendarFilter === 'All Staff' ||
+      (staffCalendarFilter === 'Sharon French' && (b.stylist === 'Sharon French' || !b.stylist)) ||
+      (staffCalendarFilter === 'Abigail Charles' && b.stylist === 'Abigail Charles');
+    return matchesSearch && matchesStatus && matchesStaff;
   });
 
   if (!isAuthenticated) {
@@ -1005,6 +1009,41 @@ export default function AdminPage() {
         {/* TAB 2: APPOINTMENTS */}
         {activeTab === 'appointments' && (
           <div className="space-y-6">
+            {/* Staff Calendar Selector Bar */}
+            <div className="bg-white p-5 rounded-2xl border border-espresso/10 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                  Calendar Schedule View
+                </span>
+                <h4 className="font-[family-name:var(--font-display)] text-base font-bold text-espresso mt-1">
+                  Staff &amp; Assistant Calendars
+                </h4>
+                <p className="text-xs text-espresso/60 font-light">Filter appointment book by Lead Stylist vs. Salon Assistant</p>
+              </div>
+              <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
+                {[
+                  { name: 'All Staff', role: 'All Appointments' },
+                  { name: 'Sharon French', role: 'Lead Stylist' },
+                  { name: 'Abigail Charles', role: 'Salon Assistant' },
+                ].map((staff) => (
+                  <button
+                    key={staff.name}
+                    type="button"
+                    onClick={() => setStaffCalendarFilter(staff.name)}
+                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+                      staffCalendarFilter === staff.name
+                        ? 'bg-espresso text-cream shadow-md'
+                        : 'bg-cream/40 hover:bg-cream text-espresso/70 border border-espresso/10'
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <span>{staff.name}</span>
+                    <span className="text-[9px] opacity-75 font-normal">({staff.role})</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Search and Filters */}
             <div className="bg-white p-4 rounded-2xl border border-espresso/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="relative w-full md:w-80">

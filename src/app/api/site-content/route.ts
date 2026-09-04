@@ -53,6 +53,12 @@ let siteContent = {
       bio: 'Assistant calendar for shampoo washes, deep conditioning, takedowns, and hair preps.',
     },
   ],
+  lookbook: [
+    { id: 'lb-1', title: 'Knotless Box Braids', tag: 'Knotless', img: 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80', desc: 'Seamless, tension-free parting with natural movement.' },
+    { id: 'lb-2', title: 'Fulani Tribal Braids', tag: 'Fulani', img: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80', desc: 'Custom cornrow patterns adorned with beads and cowrie accents.' },
+    { id: 'lb-3', title: 'Passion & Goddess Twists', tag: 'Twists', img: 'https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80', desc: 'Lightweight, bohemian texture crafted for longevity.' },
+    { id: 'lb-4', title: 'Signature Silk Press Blowout', tag: 'Silk Press', img: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80', desc: 'Mirror shine blowout and scalp care treatment.' },
+  ],
   lastUpdated: new Date().toISOString(),
 };
 
@@ -70,6 +76,7 @@ export async function POST(request: Request) {
     if (body.images) siteContent.images = { ...siteContent.images, ...body.images };
     if (body.addons) siteContent.addons = body.addons;
     if (body.staffCalendars) siteContent.staffCalendars = body.staffCalendars;
+    if (body.lookbook) siteContent.lookbook = body.lookbook;
     siteContent.lastUpdated = new Date().toISOString();
 
     return NextResponse.json({

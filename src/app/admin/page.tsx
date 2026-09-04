@@ -427,6 +427,54 @@ export default function AdminPage() {
     }
   };
 
+  // Lookbook Gallery State & File Upload
+  const [lookbookList, setLookbookList] = useState([
+    { id: 'lb-1', title: 'Knotless Box Braids', tag: 'Knotless', img: 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80', desc: 'Seamless, tension-free parting with natural movement.' },
+    { id: 'lb-2', title: 'Fulani Tribal Braids', tag: 'Fulani', img: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80', desc: 'Custom cornrow patterns adorned with beads and cowrie accents.' },
+    { id: 'lb-3', title: 'Passion & Goddess Twists', tag: 'Twists', img: 'https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80', desc: 'Lightweight, bohemian texture crafted for longevity.' },
+    { id: 'lb-4', title: 'Signature Silk Press Blowout', tag: 'Silk Press', img: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80', desc: 'Mirror shine blowout and scalp care treatment.' },
+  ]);
+
+  const handleFileUpload = (file: File, callback: (url: string) => void) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        callback(e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleAddLookbookPhoto = (title: string, tag: string, imgUrl: string, desc: string) => {
+    const newItem = { id: `lb-${Date.now()}`, title, tag, img: imgUrl, desc };
+    const updated = [newItem, ...lookbookList];
+    setLookbookList(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_lookbook_list', JSON.stringify(updated));
+      syncToApiServer({ lookbook: updated });
+    }
+  };
+
+  const handleUpdateLookbookPhoto = (id: string, newFields: Partial<(typeof lookbookList)[0]>) => {
+    const updated = lookbookList.map((item) => (item.id === id ? { ...item, ...newFields } : item));
+    setLookbookList(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_lookbook_list', JSON.stringify(updated));
+      syncToApiServer({ lookbook: updated });
+    }
+  };
+
+  const handleDeleteLookbookPhoto = (id: string) => {
+    if (confirm('Delete this lookbook photo card?')) {
+      const updated = lookbookList.filter((item) => item.id !== id);
+      setLookbookList(updated);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('bb_lookbook_list', JSON.stringify(updated));
+        syncToApiServer({ lookbook: updated });
+      }
+    }
+  };
+
   // Service Add/Edit Modal state
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [serviceFormData, setServiceFormData] = useState({
@@ -1426,33 +1474,31 @@ export default function AdminPage() {
             {/* Section C: Lookbook & Portfolio Gallery Manager */}
             <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
               <div className="flex items-center justify-between border-b border-espresso/10 pb-3">
-                <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-terracotta" /> 3. Lookbook &amp; Portfolio Gallery Cards
-                </h4>
+                <div>
+                  <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-terracotta" /> 3. Lookbook &amp; Portfolio Gallery Cards
+                  </h4>
+                  <p className="text-xs text-espresso/60 font-light">Upload photo cards directly from your device or phone to feature in your style gallery</p>
+                </div>
                 <button
+                  type="button"
                   onClick={() => {
-                    const newUrl = prompt('Enter image URL for new Lookbook photo:');
-                    if (newUrl) {
-                      const newTitle = prompt('Enter Title (e.g. Bohemian Knotless):', 'Bohemian Knotless') || 'New Style';
-                      const newTag = prompt('Enter Category Tag (e.g. Knotless):', 'Knotless') || 'Braids';
-                      alert(`🎉 Added "${newTitle}" to your Lookbook gallery!`);
-                    }
+                    const title = prompt('Enter Style Title (e.g. Medium Knotless):', 'New Style');
+                    if (!title) return;
+                    const tag = prompt('Enter Category Tag (e.g. Knotless, Fulani, Twists):', 'Knotless') || 'Braids';
+                    const desc = prompt('Enter Short Description:', 'Precision parting with natural shine.') || '';
+                    const url = prompt('Enter Image URL (or upload a file on the new card after creating):', 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80') || '';
+                    handleAddLookbookPhoto(title, tag, url, desc);
                   }}
-                  className="px-3.5 py-1.5 bg-cream/60 hover:bg-cream border border-espresso/10 text-espresso rounded-full text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-3.5 py-2 bg-terracotta hover:bg-espresso text-cream rounded-full text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
                 >
-                  <Plus className="w-3.5 h-3.5 text-terracotta" /> Add Lookbook Photo
+                  <Plus className="w-3.5 h-3.5" /> Add Lookbook Photo
                 </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {[
-                  { title: 'Knotless Box Braids', tag: 'Knotless', img: '/lookbook-knotless.jpg', desc: 'Seamless, tension-free parting with natural movement.' },
-                  { title: 'Fulani Tribal Braids', tag: 'Fulani', img: '/lookbook-fulani.jpg', desc: 'Custom cornrow patterns adorned with beads and cowrie accents.' },
-                  { title: 'Passion & Goddess Twists', tag: 'Twists', img: '/lookbook-twists.jpg', desc: 'Lightweight, bohemian texture crafted for longevity.' },
-                  { title: 'Salon Interior Lounge', tag: 'Studio', img: '/lookbook-salon.jpg', desc: 'Our cozy West Orange, NJ styling lounge.' },
-                  { title: 'Scalp Line Crown Detail', tag: 'Detail', img: '/lookbook-braids.jpg', desc: 'High-precision scalp line definition and glossy finish.' },
-                ].map((item, idx) => (
-                  <div key={idx} className="bg-cream/20 p-4 rounded-2xl border border-espresso/10 flex flex-col justify-between space-y-3">
+                {lookbookList.map((item) => (
+                  <div key={item.id} className="bg-cream/20 p-4 rounded-2xl border border-espresso/10 flex flex-col justify-between space-y-3">
                     <div>
                       <div className="aspect-[4/3] w-full rounded-xl overflow-hidden border border-espresso/10 bg-black/5 relative mb-3 group">
                         <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
@@ -1461,13 +1507,24 @@ export default function AdminPage() {
                         </span>
                       </div>
 
-                      <div className="space-y-2">
+                      <div className="space-y-2 text-xs">
                         <div>
                           <label className="block text-espresso/60 text-[10px] font-bold uppercase mb-0.5">Style Title</label>
                           <input
                             type="text"
-                            defaultValue={item.title}
+                            value={item.title}
+                            onChange={(e) => handleUpdateLookbookPhoto(item.id, { title: e.target.value })}
                             className="w-full px-3 py-1.5 bg-white border border-espresso/10 rounded-lg text-xs font-semibold text-espresso"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-espresso/60 text-[10px] font-bold uppercase mb-0.5">Category Tag</label>
+                          <input
+                            type="text"
+                            value={item.tag}
+                            onChange={(e) => handleUpdateLookbookPhoto(item.id, { tag: e.target.value })}
+                            className="w-full px-3 py-1.5 bg-white border border-espresso/10 rounded-lg text-xs font-medium text-espresso"
                           />
                         </div>
 
@@ -1475,22 +1532,39 @@ export default function AdminPage() {
                           <label className="block text-espresso/60 text-[10px] font-bold uppercase mb-0.5">Description</label>
                           <textarea
                             rows={2}
-                            defaultValue={item.desc}
+                            value={item.desc}
+                            onChange={(e) => handleUpdateLookbookPhoto(item.id, { desc: e.target.value })}
                             className="w-full px-3 py-1.5 bg-white border border-espresso/10 rounded-lg text-xs leading-relaxed"
                           />
                         </div>
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => {
-                        const newUrl = prompt(`Enter new image URL for "${item.title}":`, item.img);
-                        if (newUrl) alert(`Updated photo for "${item.title}"!`);
-                      }}
-                      className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      <Upload className="w-3.5 h-3.5" /> Replace Lookbook Photo
-                    </button>
+                    <div className="space-y-2 pt-2 border-t border-espresso/10">
+                      {/* Device File Upload */}
+                      <label className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                        <Upload className="w-3.5 h-3.5" /> 📁 Upload Photo from Device
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              handleFileUpload(file, (url) => handleUpdateLookbookPhoto(item.id, { img: url }));
+                            }
+                          }}
+                        />
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteLookbookPhoto(item.id)}
+                        className="w-full py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1 cursor-pointer"
+                      >
+                        <Trash2 className="w-3 h-3" /> Remove Card
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1617,69 +1691,56 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Section E: Image Assets Upload & Swap Manager */}
+            {/* Section E: Master Image Uploads & Media Assets Manager */}
             <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
-              <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso border-b border-espresso/10 pb-3 flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-terracotta" /> 5. Website Image Uploads &amp; Media Assets
-              </h4>
+              <div className="border-b border-espresso/10 pb-3">
+                <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-terracotta" /> 5. Website Image Uploads &amp; Media Assets
+                </h4>
+                <p className="text-xs text-espresso/60 font-light">Select image files directly from your computer or phone to replace any site photo</p>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {/* 1. Hero Background */}
-                <div className="bg-cream/20 p-4 rounded-xl border border-espresso/10 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-2">Hero Background Photo</span>
-                    <div className="aspect-video w-full rounded-lg overflow-hidden border border-espresso/10 bg-black/5 mb-3">
-                      <img src={siteImages.heroBg} alt="Hero Background" className="w-full h-full object-cover" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-xs">
+                {[
+                  { key: 'salonArch', title: 'Salon Sanctuary Half-Circle Arch Photo', note: 'Displayed above main headline in Brand Mission section', img: siteImages.salonArch || '/images/salon-reception-arch.jpg' },
+                  { key: 'heroBg', title: 'Hero Full-Bleed Background Photo', note: 'Main hero background photo at top of site', img: siteImages.heroBg || '/images/branding/hero-sitting.jpg' },
+                  { key: 'portfolioOval', title: 'Style Portfolio Oval Frame Photo', note: 'Left photo in Style Portfolio menu section', img: siteImages.portfolioOval || '/images/braids-twists.jpg' },
+                  { key: 'sharonPhoto', title: 'Sharon French (Lead Stylist Portrait)', note: 'Lead Stylist profile picture in Team section', img: siteImages.sharonPhoto || '/images/branding/profile-sharon-lead.png' },
+                  { key: 'abigailPhoto', title: 'Abigail Charles (Assistant Portrait)', note: 'Salon Assistant profile picture in Team section', img: siteImages.abigailPhoto || '/images/branding/profile-abigail-assistant.png' },
+                  { key: 'navLogo', title: 'Top Navigation Monogram Logo', note: 'Small monogram logo in header navigation', img: siteImages.navLogo || '/images/branding/logo-monogram-bb.png' },
+                ].map((asset) => (
+                  <div key={asset.key} className="bg-cream/20 p-4 rounded-xl border border-espresso/10 flex flex-col justify-between space-y-3">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-1">{asset.title}</span>
+                      <p className="text-[10px] text-espresso/60 mb-2 font-light">{asset.note}</p>
+                      <div className="aspect-video w-full rounded-lg overflow-hidden border border-espresso/10 bg-black/5 mb-2">
+                        <img src={asset.img} alt={asset.title} className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                        <Upload className="w-3.5 h-3.5" /> 📁 Upload Photo from Device
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              handleFileUpload(file, (url) => {
+                                const updated = { ...siteImages, [asset.key]: url };
+                                setSiteImages(updated);
+                                localStorage.setItem('bb_site_images', JSON.stringify(updated));
+                                syncToApiServer({ images: updated });
+                              });
+                            }
+                          }}
+                        />
+                      </label>
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      const newUrl = prompt('Enter new Image URL or upload replacement asset:', siteImages.heroBg);
-                      if (newUrl) setSiteImages({ ...siteImages, heroBg: newUrl });
-                    }}
-                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <Upload className="w-3.5 h-3.5" /> Upload Photo
-                  </button>
-                </div>
-
-                {/* 2. Top Nav Monogram */}
-                <div className="bg-cream/20 p-4 rounded-xl border border-espresso/10 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-2">Top Navigation Monogram</span>
-                    <div className="h-20 w-full rounded-lg overflow-hidden border border-espresso/10 bg-espresso/90 p-3 flex items-center justify-center mb-3">
-                      <img src={siteImages.navLogo} alt="Nav Monogram" className="h-full object-contain" />
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const newUrl = prompt('Enter new Logo PNG URL:', siteImages.navLogo);
-                      if (newUrl) setSiteImages({ ...siteImages, navLogo: newUrl });
-                    }}
-                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <Upload className="w-3.5 h-3.5" /> Upload Logo
-                  </button>
-                </div>
-
-                {/* 3. Main Stacked Logo */}
-                <div className="bg-cream/20 p-4 rounded-xl border border-espresso/10 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-2">Main Hero Stacked Logo</span>
-                    <div className="h-20 w-full rounded-lg overflow-hidden border border-espresso/10 bg-cream-dark p-2 flex items-center justify-center mb-3">
-                      <img src={siteImages.heroLogo} alt="Hero Stacked Logo" className="h-full object-contain" />
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const newUrl = prompt('Enter new Stacked Logo PNG URL:', siteImages.heroLogo);
-                      if (newUrl) setSiteImages({ ...siteImages, heroLogo: newUrl });
-                    }}
-                    className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <Upload className="w-3.5 h-3.5" /> Upload Logo
-                  </button>
-                </div>
+                ))}
               </div>
             </div>
           </div>

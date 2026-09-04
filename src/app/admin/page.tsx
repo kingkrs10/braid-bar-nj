@@ -197,14 +197,16 @@ export default function AdminPage() {
   };
 
   // Site Image Assets State
-  const [siteImages, setSiteImages] = useState({
-    heroBg: '/images/branding/apple_butter_boutique_hero_1783880355600.jpg',
+  const [siteImages, setSiteImages] = useState<Record<string, string>>({
+    heroBg: '/images/branding/hero-sitting.jpg',
+    salonArch: '/images/salon-reception-arch.jpg',
+    portfolioOval: '/images/braids-twists.jpg',
     sharonProfile: '/images/branding/profile-sharon-lead.png',
     sharonPhoto: '/images/branding/profile-sharon-lead.png',
     abigailProfile: '/images/branding/profile-abigail-assistant.png',
     abigailPhoto: '/images/branding/profile-abigail-assistant.png',
     navLogo: '/images/branding/logo-monogram-bb.png',
-    heroLogo: '/images/branding/logo-stacked-bb.png',
+    heroLogo: '/images/branding/logo-braidbar-stacked.png',
     galleryPattern: '/images/branding/pattern-waves-tan.png',
   });
 

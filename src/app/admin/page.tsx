@@ -1036,7 +1036,7 @@ export default function AdminPage() {
                         : 'bg-cream/40 hover:bg-cream text-espresso/70 border border-espresso/10'
                     }`}
                   >
-                    <User className="w-3.5 h-3.5" />
+                    <Users className="w-3.5 h-3.5" />
                     <span>{staff.name}</span>
                     <span className="text-[9px] opacity-75 font-normal">({staff.role})</span>
                   </button>

@@ -89,7 +89,18 @@ export default function AdminPage() {
 
   // Live state collections
   const [bookings, setBookings] = useState(initialBookings);
-  const [servicesList, setServicesList] = useState(initialServices);
+  const [servicesList, setServicesList] = useState<typeof initialServices>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_services_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return initialServices;
+  });
   const [productsList, setProductsList] = useState(initialProducts);
   const [applications, setApplications] = useState(initialApplications);
 
@@ -487,6 +498,7 @@ export default function AdminPage() {
     price: 250,
     deposit_amount: 50,
     description: '',
+    assignedCalendar: 'both' as 'cal-sharon' | 'cal-abigail' | 'both',
   });
 
   const handleOpenAddService = () => {
@@ -498,6 +510,7 @@ export default function AdminPage() {
       price: 250,
       deposit_amount: 50,
       description: '',
+      assignedCalendar: 'both',
     });
     setIsServiceModalOpen(true);
   };
@@ -511,6 +524,7 @@ export default function AdminPage() {
       price: srv.price,
       deposit_amount: srv.deposit_amount,
       description: srv.description || '',
+      assignedCalendar: srv.assignedCalendar || 'both',
     });
     setIsServiceModalOpen(true);
   };
@@ -519,9 +533,10 @@ export default function AdminPage() {
     e.preventDefault();
     if (!serviceFormData.name) return;
 
+    let updatedList: typeof servicesList;
     if (serviceFormData.id) {
-      setServicesList((prev) =>
-        prev.map((s) => (s.id === serviceFormData.id ? { ...s, ...serviceFormData } : s))
+      updatedList = servicesList.map((s) =>
+        s.id === serviceFormData.id ? { ...s, ...serviceFormData } : s
       );
     } else {
       const newService = {
@@ -529,10 +544,27 @@ export default function AdminPage() {
         id: `srv-${Date.now()}`,
         image_url: 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80',
       };
-      setServicesList((prev) => [newService, ...prev]);
+      updatedList = [newService, ...servicesList];
+    }
+    setServicesList(updatedList);
+    // ✅ Persist so changes survive page refresh
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_services_list', JSON.stringify(updatedList));
+      syncToApiServer({ services: updatedList });
     }
     setIsServiceModalOpen(false);
   };
+
+  const handleDeleteService = (id: string) => {
+    if (!confirm('Delete this service from the catalog? This cannot be undone.')) return;
+    const updated = servicesList.filter((s) => s.id !== id);
+    setServicesList(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_services_list', JSON.stringify(updated));
+      syncToApiServer({ services: updated });
+    }
+  };
+
 
   // Update Booking Status
   const handleUpdateBookingStatus = (id: string, newStatus: string) => {
@@ -1247,6 +1279,9 @@ export default function AdminPage() {
                       <span className="text-[10px] text-espresso/50 font-bold uppercase block">Service Investment</span>
                       <span className="text-xl font-bold text-espresso">{formatPrice(srv.price)}</span>
                       <span className="text-[10px] text-emerald-700 block font-medium">Deposit: {formatPrice(srv.deposit_amount)}</span>
+                      <span className="text-[10px] text-blue-600 block font-medium mt-0.5">
+                        📅 {(srv as any).assignedCalendar === 'cal-sharon' ? 'Sharon Only' : (srv as any).assignedCalendar === 'cal-abigail' ? 'Abigail Only' : 'Both Calendars'}
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -1255,6 +1290,12 @@ export default function AdminPage() {
                         className="px-3 py-1.5 bg-cream/50 hover:bg-cream border border-espresso/10 rounded-xl text-xs font-semibold text-espresso transition-colors flex items-center gap-1 cursor-pointer"
                       >
                         <Edit3 className="w-3.5 h-3.5 text-terracotta" /> Edit Service Details
+                      </button>
+                      <button
+                        onClick={() => handleDeleteService(srv.id)}
+                        className="px-3 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl text-xs font-semibold text-red-700 transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
                       </button>
                     </div>
                   </div>
@@ -3150,6 +3191,20 @@ export default function AdminPage() {
                   onChange={(e) => setServiceFormData({ ...serviceFormData, description: e.target.value })}
                   className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
                 />
+              </div>
+
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Assign to Calendar</label>
+                <select
+                  value={serviceFormData.assignedCalendar}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, assignedCalendar: e.target.value as any })}
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                >
+                  <option value="both">Both Calendars (Sharon &amp; Abigail)</option>
+                  <option value="cal-sharon">Sharon French — Lead Stylist Only</option>
+                  <option value="cal-abigail">Abigail Charles — Assistant Only</option>
+                </select>
+                <p className="text-[10px] text-espresso/50 mt-1">Controls which stylist's booking calendar this service appears under.</p>
               </div>
 
               <div className="pt-2 flex items-center justify-end gap-3 border-t border-espresso/10">

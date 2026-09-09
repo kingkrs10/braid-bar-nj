@@ -208,7 +208,7 @@ export default function AdminPage() {
   };
 
   // Site Image Assets State
-  const [siteImages, setSiteImages] = useState<Record<string, string>>({
+  const defaultSiteImages: Record<string, string> = {
     heroBg: '/images/branding/hero-sitting.jpg',
     salonArch: '/images/salon-reception-arch.jpg',
     portfolioOval: '/images/braids-twists.jpg',
@@ -219,6 +219,15 @@ export default function AdminPage() {
     navLogo: '/images/branding/logo-monogram-bb.png',
     heroLogo: '/images/branding/logo-braidbar-stacked.png',
     galleryPattern: '/images/branding/pattern-waves-tan.png',
+  };
+  const [siteImages, setSiteImages] = useState<Record<string, string>>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_site_images');
+      if (stored) {
+        try { return { ...defaultSiteImages, ...JSON.parse(stored) }; } catch (e) {}
+      }
+    }
+    return defaultSiteImages;
   });
 
   // Site Deployment & Hosting State
@@ -385,14 +394,25 @@ export default function AdminPage() {
   };
 
   // Add-Ons State & Modal
-  const [addonsList, setAddonsList] = useState<Array<{ id: string; name: string; price: number; duration_min: number }>>([
-    { id: 'add-1', name: 'Luxury Shampoo & Scalp Detox Wash', price: 35, duration_min: 30 },
-    { id: 'add-2', name: 'Extra Waist / Hip Extended Length', price: 40, duration_min: 45 },
-    { id: 'add-3', name: 'Bohemian Curly Ends (Human Hair)', price: 50, duration_min: 45 },
-    { id: 'add-4', name: 'Custom Hair Color Blending', price: 25, duration_min: 20 },
-    { id: 'add-5', name: 'Goddess Braid Accents', price: 30, duration_min: 30 },
-    { id: 'add-6', name: 'Braid Takedown & Comb Out Prep', price: 60, duration_min: 60 },
-  ]);
+  const [addonsList, setAddonsList] = useState<Array<{ id: string; name: string; price: number; duration_min: number }>>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_addons_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return [
+      { id: 'add-1', name: 'Luxury Shampoo & Scalp Detox Wash', price: 35, duration_min: 30 },
+      { id: 'add-2', name: 'Extra Waist / Hip Extended Length', price: 40, duration_min: 45 },
+      { id: 'add-3', name: 'Bohemian Curly Ends (Human Hair)', price: 50, duration_min: 45 },
+      { id: 'add-4', name: 'Custom Hair Color Blending', price: 25, duration_min: 20 },
+      { id: 'add-5', name: 'Goddess Braid Accents', price: 30, duration_min: 30 },
+      { id: 'add-6', name: 'Braid Takedown & Comb Out Prep', price: 60, duration_min: 60 },
+    ];
+  });
 
   const [isAddonModalOpen, setIsAddonModalOpen] = useState(false);
   const [addonFormData, setAddonFormData] = useState({
@@ -416,16 +436,19 @@ export default function AdminPage() {
     e.preventDefault();
     if (!addonFormData.name) return;
 
+    let updatedAddons: typeof addonsList;
     if (addonFormData.id) {
-      setAddonsList((prev) => prev.map((a) => (a.id === addonFormData.id ? { ...addonFormData } : a)));
+      updatedAddons = addonsList.map((a) => (a.id === addonFormData.id ? { ...addonFormData } : a));
     } else {
       const newAddon = { ...addonFormData, id: `add-${Date.now()}` };
-      setAddonsList((prev) => [...prev, newAddon]);
+      updatedAddons = [...addonsList, newAddon];
     }
+    setAddonsList(updatedAddons);
     setIsAddonModalOpen(false);
+    // ✅ Save the computed updatedAddons (not stale addonsList state)
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_addons_list', JSON.stringify(addonsList));
-      syncToApiServer({ addons: addonsList });
+      localStorage.setItem('bb_addons_list', JSON.stringify(updatedAddons));
+      syncToApiServer({ addons: updatedAddons });
     }
   };
 
@@ -441,12 +464,24 @@ export default function AdminPage() {
   };
 
   // Lookbook Gallery State & File Upload
-  const [lookbookList, setLookbookList] = useState([
-    { id: 'lb-1', title: 'Knotless Box Braids', tag: 'Knotless', img: 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80', desc: 'Seamless, tension-free parting with natural movement.' },
-    { id: 'lb-2', title: 'Fulani Tribal Braids', tag: 'Fulani', img: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80', desc: 'Custom cornrow patterns adorned with beads and cowrie accents.' },
-    { id: 'lb-3', title: 'Passion & Goddess Twists', tag: 'Twists', img: 'https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80', desc: 'Lightweight, bohemian texture crafted for longevity.' },
-    { id: 'lb-4', title: 'Signature Silk Press Blowout', tag: 'Silk Press', img: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80', desc: 'Mirror shine blowout and scalp care treatment.' },
-  ]);
+  const [lookbookList, setLookbookList] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_lookbook_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return [
+      { id: 'lb-1', title: 'Knotless Box Braids', tag: 'Knotless', img: 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80', desc: 'Seamless, tension-free parting with natural movement.' },
+      { id: 'lb-2', title: 'Fulani Tribal Braids', tag: 'Fulani', img: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80', desc: 'Custom cornrow patterns adorned with beads and cowrie accents.' },
+      { id: 'lb-3', title: 'Passion & Goddess Twists', tag: 'Twists', img: 'https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80', desc: 'Lightweight, bohemian texture crafted for longevity.' },
+      { id: 'lb-4', title: 'Signature Silk Press Blowout', tag: 'Silk Press', img: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80', desc: 'Mirror shine blowout and scalp care treatment.' },
+    ];
+  });
+
 
   const handleFileUpload = (file: File, callback: (url: string) => void) => {
     const reader = new FileReader();
@@ -1775,6 +1810,7 @@ export default function AdminPage() {
                                 const updated = { ...siteImages, [asset.key]: url };
                                 setSiteImages(updated);
                                 localStorage.setItem('bb_site_images', JSON.stringify(updated));
+                                window.dispatchEvent(new Event('bb_siteimages_updated'));
                                 syncToApiServer({ images: updated });
                               });
                             }

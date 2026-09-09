@@ -116,10 +116,12 @@ export default function HomePage() {
       loadSiteData();
       window.addEventListener('storage', loadSiteData);
       window.addEventListener('bb_sitetext_updated', loadSiteData);
+      window.addEventListener('bb_siteimages_updated', loadSiteData);
 
       return () => {
         window.removeEventListener('storage', loadSiteData);
         window.removeEventListener('bb_sitetext_updated', loadSiteData);
+        window.removeEventListener('bb_siteimages_updated', loadSiteData);
       };
     }
   }, []);
@@ -159,7 +161,7 @@ export default function HomePage() {
         {/* Full-bleed End-to-End Image */}
         <div className="absolute inset-0 w-full h-full">
           <img
-            src="/images/branding/hero-sitting.jpg"
+            src={siteImages.heroBg || '/images/branding/hero-sitting.jpg'}
             alt="Braid Bar Hero Background"
             className="w-full h-full object-cover object-[center_30%]"
           />

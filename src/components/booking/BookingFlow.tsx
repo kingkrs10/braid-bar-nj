@@ -59,12 +59,80 @@ export function BookingFlow() {
   const [lastName, setLastName] = useState('');
   const [hairColorPreference, setHairColorPreference] = useState('');
 
+  // Dynamic services & add-ons from localStorage
+  const [servicesList, setServicesList] = useState<typeof services>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_services_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return services;
+  });
+
+  const [addonsList, setAddonsList] = useState<typeof addons>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_addons_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return addons;
+  });
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleSync = () => {
+        const s = localStorage.getItem('bb_services_list');
+        if (s) {
+          try {
+            const p = JSON.parse(s);
+            if (Array.isArray(p) && p.length > 0) setServicesList(p);
+          } catch (e) {}
+        }
+        const a = localStorage.getItem('bb_addons_list');
+        if (a) {
+          try {
+            const p = JSON.parse(a);
+            if (Array.isArray(p) && p.length > 0) setAddonsList(p);
+          } catch (e) {}
+        }
+      };
+      window.addEventListener('storage', handleSync);
+      window.addEventListener('bb_services_updated', handleSync);
+      window.addEventListener('bb_addons_updated', handleSync);
+      return () => {
+        window.removeEventListener('storage', handleSync);
+        window.removeEventListener('bb_services_updated', handleSync);
+        window.removeEventListener('bb_addons_updated', handleSync);
+      };
+    }
+  }, []);
+
+  // Filter add-ons for the chosen service
+  const applicableAddons = useMemo(() => {
+    if (!selectedService) return addonsList;
+    return addonsList.filter((add: any) => {
+      if (!add.applicableTo || add.applicableTo === 'all') return true;
+      if (Array.isArray(add.applicableServiceIds) && add.applicableServiceIds.length > 0) {
+        return add.applicableServiceIds.includes(selectedService.id);
+      }
+      return true;
+    });
+  }, [addonsList, selectedService]);
+
   // Service catalog category states
   const [expandedCategory, setExpandedCategory] = useState<string | null>('VIP Services');
 
   const categories = useMemo(() => {
-    return Array.from(new Set(services.map((s) => s.category)));
-  }, []);
+    return Array.from(new Set(servicesList.map((s) => s.category)));
+  }, [servicesList]);
 
   const handleServiceSelectInsideWidget = (srv: typeof services[0]) => {
     setService(srv);
@@ -182,7 +250,7 @@ export function BookingFlow() {
                 <div className="flex flex-col gap-3">
                   {categories.map((cat) => {
                     const isExpanded = expandedCategory === cat;
-                    const catServices = services.filter((s) => s.category === cat);
+                    const catServices = servicesList.filter((s) => s.category === cat);
                     
                     return (
                       <div key={cat} className="border-2 border-espresso rounded-2xl overflow-hidden bg-white shadow-[3px_3px_0px_0px_#3C2415]">
@@ -204,6 +272,9 @@ export function BookingFlow() {
                                   <div className="flex items-center gap-4 mt-2 text-[10px] uppercase tracking-wider font-bold text-espresso/50">
                                     <span>⏱ {formatDuration(srv.duration_min)}</span>
                                     <span>💵 {formatPrice(srv.price)}</span>
+                                    {(srv as any).isPrivate && (
+                                      <span className="text-accent-gold bg-espresso px-2 py-0.5 rounded-full font-bold">🔒 Private 1-on-1</span>
+                                    )}
                                   </div>
                                 </div>
                                 <button
@@ -243,40 +314,56 @@ export function BookingFlow() {
 
                 {/* Add-ons list section */}
                 <div className="flex flex-col gap-4 mt-2">
-                  <h4 className="text-sm uppercase tracking-wider font-extrabold text-espresso/70">Available Add-ons</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {addons.map((add) => {
-                      const isSelected = selectedAddons.some((a) => a.id === add.id);
-                      return (
-                        <div
-                          key={add.id}
-                          onClick={() => toggleAddon(add)}
-                          className={`p-4 rounded-2xl border-2 border-espresso transition-all duration-200 cursor-pointer flex items-center justify-between select-none ${
-                            isSelected
-                              ? 'bg-espresso text-cream shadow-[3px_3px_0px_0px_#3C2415]'
-                              : 'bg-white hover:bg-baby-pink/15'
-                          }`}
-                        >
-                          <div className="flex flex-col gap-0.5">
-                            <span className="text-sm font-extrabold">{add.name}</span>
-                            <span className={`text-[10px] font-bold ${isSelected ? 'text-tangerine' : 'text-charcoal/45'}`}>
-                              +{formatDuration(add.duration_min)}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className={`text-xs font-black ${isSelected ? 'text-tangerine' : 'text-espresso'}`}>
-                              +{formatPrice(add.price)}
-                            </span>
-                            <div className={`w-5 h-5 rounded-lg flex items-center justify-center border-2 border-espresso ${
-                              isSelected ? 'bg-tangerine text-white' : 'bg-white'
-                            }`}>
-                              {isSelected && <Check className="w-3 h-3 stroke-[4]" />}
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm uppercase tracking-wider font-extrabold text-espresso/70">
+                      Available Add-ons for {selectedService.name}
+                    </h4>
+                    <span className="text-[10px] text-espresso/50 font-bold uppercase">
+                      {applicableAddons.length} option{applicableAddons.length === 1 ? '' : 's'}
+                    </span>
+                  </div>
+
+                  {applicableAddons.length === 0 ? (
+                    <div className="p-5 rounded-2xl bg-cream/40 border border-espresso/10 text-center">
+                      <p className="text-xs text-espresso/70 font-medium">
+                        ✨ All standard styling, wash prep, and tension-free care are fully included with this service.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {applicableAddons.map((add) => {
+                        const isSelected = selectedAddons.some((a) => a.id === add.id);
+                        return (
+                          <div
+                            key={add.id}
+                            onClick={() => toggleAddon(add)}
+                            className={`p-4 rounded-2xl border-2 border-espresso transition-all duration-200 cursor-pointer flex items-center justify-between select-none ${
+                              isSelected
+                                ? 'bg-espresso text-cream shadow-[3px_3px_0px_0px_#3C2415]'
+                                : 'bg-white hover:bg-baby-pink/15'
+                            }`}
+                          >
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-sm font-extrabold">{add.name}</span>
+                              <span className={`text-[10px] font-bold ${isSelected ? 'text-tangerine' : 'text-charcoal/45'}`}>
+                                +{formatDuration(add.duration_min)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className={`text-xs font-black ${isSelected ? 'text-tangerine' : 'text-espresso'}`}>
+                                +{formatPrice(add.price)}
+                              </span>
+                              <div className={`w-5 h-5 rounded-lg flex items-center justify-center border-2 border-espresso ${
+                                isSelected ? 'bg-tangerine text-white' : 'bg-white'
+                              }`}>
+                                {isSelected && <Check className="w-3 h-3 stroke-[4]" />}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 {/* Forward Navigation bar */}

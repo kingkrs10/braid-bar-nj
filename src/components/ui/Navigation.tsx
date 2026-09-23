@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Scissors } from 'lucide-react';
+import { Menu, X, Scissors, Instagram } from 'lucide-react';
 import { useUIStore } from '@/lib/store';
 import { cn, getWhatsAppLink } from '@/lib/utils';
 
@@ -69,7 +69,17 @@ export default function Navigation() {
           </nav>
 
           {/* Action Icons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Instagram Link */}
+            <a
+              href="https://www.instagram.com/braidbarnj"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Visit @braidbarnj on Instagram"
+              className="p-2 text-espresso/70 hover:text-terracotta transition-colors rounded-full hover:bg-cream-dark"
+            >
+              <Instagram className="w-4 h-4" />
+            </a>
 
             {/* CTA Book Button */}
             <Link
@@ -124,6 +134,16 @@ export default function Navigation() {
                 <Scissors className="w-4 h-4" />
                 Get Braided
               </Link>
+              <a
+                href="https://www.instagram.com/braidbarnj"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-espresso/70 hover:text-terracotta transition-colors py-2"
+              >
+                <Instagram className="w-4 h-4 text-terracotta" />
+                Follow @braidbarnj
+              </a>
             </div>
           </motion.div>
         )}

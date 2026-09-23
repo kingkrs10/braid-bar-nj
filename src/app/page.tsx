@@ -73,6 +73,22 @@ export default function HomePage() {
     portfolioOval: '/images/braids-twists.jpg',
   });
 
+  const [imageSettings, setImageSettings] = useState({
+    heroBgPosition: 'center 30%',
+    heroZoom: 'cover',
+    salonArchPosition: 'center',
+    salonArchHeight: 'standard',
+  });
+
+  const [lookbookList, setLookbookList] = useState<Array<{ id: string; title: string; tag: string; img: string; desc: string }>>([
+    { id: 'lb-1', title: 'Knotless Box Braids', tag: 'Knotless', img: 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80', desc: 'Seamless, tension-free parting with natural movement.' },
+    { id: 'lb-2', title: 'Fulani Tribal Braids', tag: 'Fulani', img: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80', desc: 'Custom cornrow patterns adorned with beads and cowrie accents.' },
+    { id: 'lb-3', title: 'Passion & Goddess Twists', tag: 'Twists', img: 'https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80', desc: 'Lightweight, bohemian texture crafted for longevity.' },
+    { id: 'lb-4', title: 'Signature Silk Press Blowout', tag: 'Silk Press', img: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80', desc: 'Mirror shine blowout and scalp care treatment.' },
+  ]);
+
+  const [galleryTab, setGalleryTab] = useState<'lookbook' | 'instagram'>('lookbook');
+
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedLive = localStorage.getItem('bb_site_live');
@@ -89,6 +105,8 @@ export default function HomePage() {
             const data = await res.json();
             if (data.data?.text) setSiteText((prev) => ({ ...prev, ...data.data.text }));
             if (data.data?.images) setSiteImages((prev) => ({ ...prev, ...data.data.images }));
+            if (data.data?.imageSettings) setImageSettings((prev) => ({ ...prev, ...data.data.imageSettings }));
+            if (data.data?.lookbook && Array.isArray(data.data.lookbook)) setLookbookList(data.data.lookbook);
           }
         } catch (err) {
           console.warn('Fallback to local storage for site content');
@@ -111,17 +129,38 @@ export default function HomePage() {
             console.error(e);
           }
         }
+        const savedImageSettings = localStorage.getItem('bb_image_settings');
+        if (savedImageSettings) {
+          try {
+            setImageSettings((prev) => ({ ...prev, ...JSON.parse(savedImageSettings) }));
+          } catch (e) {
+            console.error(e);
+          }
+        }
+        const savedLookbook = localStorage.getItem('bb_lookbook_list');
+        if (savedLookbook) {
+          try {
+            const parsed = JSON.parse(savedLookbook);
+            if (Array.isArray(parsed) && parsed.length > 0) setLookbookList(parsed);
+          } catch (e) {
+            console.error(e);
+          }
+        }
       };
 
       loadSiteData();
       window.addEventListener('storage', loadSiteData);
       window.addEventListener('bb_sitetext_updated', loadSiteData);
       window.addEventListener('bb_siteimages_updated', loadSiteData);
+      window.addEventListener('bb_image_settings_updated', loadSiteData);
+      window.addEventListener('bb_lookbook_updated', loadSiteData);
 
       return () => {
         window.removeEventListener('storage', loadSiteData);
         window.removeEventListener('bb_sitetext_updated', loadSiteData);
         window.removeEventListener('bb_siteimages_updated', loadSiteData);
+        window.removeEventListener('bb_image_settings_updated', loadSiteData);
+        window.removeEventListener('bb_lookbook_updated', loadSiteData);
       };
     }
   }, []);
@@ -159,11 +198,15 @@ export default function HomePage() {
           ============================================= */}
       <section className="relative w-full min-h-[100vh] flex items-center justify-center overflow-hidden">
         {/* Full-bleed End-to-End Image */}
-        <div className="absolute inset-0 w-full h-full">
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
           <img
             src={siteImages.heroBg || '/images/branding/hero-sitting.jpg'}
             alt="Braid Bar Hero Background"
-            className="w-full h-full object-cover object-[center_30%]"
+            className="w-full h-full object-cover transition-all duration-700"
+            style={{
+              objectPosition: imageSettings.heroBgPosition || 'center 30%',
+              transform: imageSettings.heroZoom === '110%' ? 'scale(1.1)' : 'scale(1.0)',
+            }}
           />
           {/* Solid dark wash backdrop overlay for text readability */}
           <div className="absolute inset-0 bg-[#000000]/45 z-10 mix-blend-multiply" />
@@ -254,12 +297,20 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
           {/* Half-Circle starting flush at scrolling bar bottom with bottom curve */}
           <div className="mb-10 group relative select-none w-full flex justify-center">
-            <div className="w-72 sm:w-96 md:w-[480px] h-44 sm:h-60 md:h-72 rounded-b-full overflow-hidden border-x border-b border-espresso/15 shadow-xl bg-cream-dark p-1 relative">
+            <div className={cn(
+              "w-72 sm:w-96 md:w-[480px] rounded-b-full overflow-hidden border-x border-b border-espresso/15 shadow-xl bg-cream-dark p-1 relative transition-all duration-500",
+              imageSettings.salonArchHeight === 'tall' 
+                ? 'h-52 sm:h-72 md:h-84' 
+                : imageSettings.salonArchHeight === 'compact' 
+                ? 'h-36 sm:h-48 md:h-56' 
+                : 'h-44 sm:h-60 md:h-72'
+            )}>
               <div className="w-full h-full rounded-b-full overflow-hidden">
                 <img
                   src={siteImages.salonArch || "/images/salon-reception-arch.jpg"}
                   alt="Braid Bar NJ Salon Sanctuary"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  style={{ objectPosition: imageSettings.salonArchPosition || 'center' }}
                 />
               </div>
             </div>
@@ -296,7 +347,7 @@ export default function HomePage() {
           <div className="md:col-span-5 flex flex-col gap-10">
             <div className="w-full aspect-[4/3] oval-frame border border-espresso/10 overflow-hidden bg-cream-dark shadow-sm">
               <img
-                src="/images/braids-twists.jpg"
+                src={siteImages.portfolioOval || "/images/braids-twists.jpg"}
                 alt="Braid Bar twists"
                 className="w-full h-full object-cover"
               />
@@ -469,18 +520,92 @@ export default function HomePage() {
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <span className="text-terracotta font-semibold text-xs uppercase tracking-[0.3em] mb-2 block">
-              The Gallery
+              The Gallery &amp; Lookbook
             </span>
             <h2 className="text-espresso font-[family-name:var(--font-display)] text-4xl font-bold mb-4">
-              Real-Time Work
+              Real-Time Work &amp; Lookbook
             </h2>
             <p className="text-espresso/70 text-sm max-w-xl mx-auto leading-relaxed font-light">
-              Browse actual protective styles straight from our @braidbarnj Instagram feed.
+              Explore our curated protective styling lookbook cards and live real-time styles directly from the salon.
             </p>
+
+            {/* Gallery Tabs Switcher */}
+            <div className="flex items-center justify-center gap-3 mt-6">
+              <button
+                onClick={() => setGalleryTab('lookbook')}
+                className={cn(
+                  'px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border',
+                  galleryTab === 'lookbook'
+                    ? 'bg-terracotta text-cream border-transparent shadow-sm'
+                    : 'bg-white hover:bg-cream-dark text-espresso/70 border-espresso/15'
+                )}
+              >
+                Featured Lookbook Styles ({lookbookList.length})
+              </button>
+              <button
+                onClick={() => setGalleryTab('instagram')}
+                className={cn(
+                  'px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border flex items-center gap-1.5',
+                  galleryTab === 'instagram'
+                    ? 'bg-terracotta text-cream border-transparent shadow-sm'
+                    : 'bg-white hover:bg-cream-dark text-espresso/70 border-espresso/15'
+                )}
+              >
+                <Instagram className="w-3.5 h-3.5" /> Live @braidbarnj Feed
+              </button>
+            </div>
           </div>
-          <InstaFeed />
+
+          {galleryTab === 'lookbook' ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {lookbookList.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white/90 backdrop-blur-xs p-4 rounded-3xl border border-espresso/10 shadow-sm flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div>
+                    <div className="w-full aspect-[3/4] rounded-2xl overflow-hidden border border-espresso/10 bg-cream-dark mb-4 relative">
+                      <img
+                        src={item.img}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      />
+                      <span className="absolute top-3 left-3 bg-cream/90 backdrop-blur-xs text-espresso text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-full border border-espresso/10 font-bold">
+                        {item.tag}
+                      </span>
+                    </div>
+                    <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso mb-1 group-hover:text-terracotta transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-espresso/70 font-light leading-relaxed line-clamp-2">
+                      {item.desc}
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-espresso/10 flex items-center justify-between">
+                    <Link
+                      href="/book"
+                      className="text-[10px] font-bold uppercase tracking-wider text-terracotta hover:text-espresso inline-flex items-center gap-1 transition-colors"
+                    >
+                      Book Style <ArrowRight className="w-3 h-3" />
+                    </Link>
+                    <a
+                      href="https://www.instagram.com/braidbarnj"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-espresso/40 hover:text-terracotta transition-colors"
+                      aria-label="View on Instagram"
+                    >
+                      <Instagram className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <InstaFeed />
+          )}
         </div>
       </AnimatedSection>
 

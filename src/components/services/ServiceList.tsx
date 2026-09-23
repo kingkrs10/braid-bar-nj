@@ -30,20 +30,53 @@ const categoryGradients: Record<string, string> = {
 
 export function ServiceList() {
   const { setService, setStep } = useBookingStore();
+  const [servicesList, setServicesList] = useState<typeof services>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_services_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return services;
+  });
+
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const loadServices = () => {
+        const stored = localStorage.getItem('bb_services_list');
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed) && parsed.length > 0) setServicesList(parsed);
+          } catch (e) {}
+        }
+      };
+      window.addEventListener('storage', loadServices);
+      window.addEventListener('bb_services_updated', loadServices);
+      return () => {
+        window.removeEventListener('storage', loadServices);
+        window.removeEventListener('bb_services_updated', loadServices);
+      };
+    }
+  }, []);
+
   const categories = useMemo(() => {
-    const uniqueCats = Array.from(new Set(services.map((s) => s.category)));
+    const uniqueCats = Array.from(new Set(servicesList.map((s) => s.category)));
     return [
       { id: 'all', name: 'All Styles' },
       ...uniqueCats.map((cat) => ({ id: cat, name: cat })),
     ];
-  }, []);
+  }, [servicesList]);
 
   const filteredServices = useMemo(() => {
-    if (activeCategory === 'all') return services;
-    return services.filter((s) => s.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === 'all') return servicesList;
+    return servicesList.filter((s) => s.category === activeCategory);
+  }, [activeCategory, servicesList]);
 
   const handleBookNow = (service: typeof services[0]) => {
     setService(service);
@@ -127,8 +160,15 @@ export function ServiceList() {
                   />
                   
                   {/* Category badge */}
-                  <div className="absolute top-3 left-3 bg-cream text-espresso text-[9px] uppercase tracking-wider px-3 py-1 rounded-full border border-espresso/10 font-medium">
-                    {service.category}
+                  <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
+                    <span className="bg-cream text-espresso text-[9px] uppercase tracking-wider px-3 py-1 rounded-full border border-espresso/10 font-medium">
+                      {service.category}
+                    </span>
+                    {(service as any).isPrivate && (
+                      <span className="bg-espresso/90 text-accent-gold text-[8px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-sm">
+                        🔒 Private 1-on-1
+                      </span>
+                    )}
                   </div>
 
                   {/* Price tag */}
@@ -138,7 +178,13 @@ export function ServiceList() {
                 </div>
 
                 {/* Card Content */}
-                <div className="p-6 flex flex-col gap-4 flex-grow">
+                <div className="p-6 flex flex-col gap-3 flex-grow">
+                  {(service as any).assignedCalendar && (service as any).assignedCalendar !== 'both' && (
+                    <div className="text-[10px] text-terracotta font-semibold uppercase tracking-wider">
+                      📅 {(service as any).assignedCalendar === 'cal-sharon' ? 'Stylist: Sharon French' : 'Stylist: Abigail Charles'}
+                    </div>
+                  )}
+
                   <h3 className="font-[family-name:var(--font-display)] text-base font-bold text-espresso leading-snug group-hover:text-terracotta transition-colors duration-200">
                     {service.name}
                   </h3>

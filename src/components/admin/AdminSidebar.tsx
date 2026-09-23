@@ -16,7 +16,9 @@ import {
   Image as ImageIcon,
   Rocket,
   Database,
-  BookOpen
+  BookOpen,
+  Users,
+  TrendingUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -39,6 +41,8 @@ export default function AdminSidebar({
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'manual', label: 'Owner Manual', icon: BookOpen },
     { id: 'appointments', label: 'Appointments', icon: Calendar, badge: upcomingBookingsCount },
+    { id: 'clients', label: 'Client Directory', icon: Users },
+    { id: 'reports', label: 'Revenue & Reports', icon: TrendingUp },
     { id: 'services', label: 'Service Catalog', icon: Scissors },
     { id: 'content', label: 'Site Text & Images', icon: FileText },
     { id: 'deployment', label: 'Site Deployment', icon: Rocket },

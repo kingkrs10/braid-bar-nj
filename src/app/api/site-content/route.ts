@@ -59,6 +59,50 @@ let siteContent = {
     { id: 'lb-3', title: 'Passion & Goddess Twists', tag: 'Twists', img: 'https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80', desc: 'Lightweight, bohemian texture crafted for longevity.' },
     { id: 'lb-4', title: 'Signature Silk Press Blowout', tag: 'Silk Press', img: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80', desc: 'Mirror shine blowout and scalp care treatment.' },
   ],
+  services: [] as any[],
+  categories: [
+    'VIP Services',
+    'Knotless Braids',
+    'Fulani & Custom',
+    'Locs & Twists',
+    'Wash & Prep',
+    'Crochet',
+    'Feed-Ins',
+    'Kids Styles',
+    'Maintenance',
+    "Men's Styles",
+    'Twist Styles'
+  ],
+  staffSchedules: [
+    {
+      id: 'cal-sharon',
+      name: 'Sharon French',
+      title: 'Founder & Lead Stylist',
+      calendarId: '#3793472',
+      role: 'owner',
+      days: ['Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      hours: '9:00 AM – 6:00 PM',
+      weeklyOverride: 'Standard salon floor hours',
+    },
+    {
+      id: 'cal-abigail',
+      name: 'Abigail Charles',
+      title: 'Salon Assistant & Stylist',
+      calendarId: '#13700462',
+      role: 'assistant',
+      days: ['Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      hours: '10:00 AM – 5:00 PM',
+      weeklyOverride: 'Preps, washes & braid removal support',
+    }
+  ],
+  doubleBooking: false,
+  imageSettings: {
+    heroBgPosition: 'center 30%',
+    heroZoom: 'cover',
+    salonArchPosition: 'center',
+    salonArchHeight: 'standard',
+  },
+  clients: [] as any[],
   lastUpdated: new Date().toISOString(),
 };
 
@@ -77,6 +121,12 @@ export async function POST(request: Request) {
     if (body.addons) siteContent.addons = body.addons;
     if (body.staffCalendars) siteContent.staffCalendars = body.staffCalendars;
     if (body.lookbook) siteContent.lookbook = body.lookbook;
+    if (body.services) siteContent.services = body.services;
+    if (body.categories) siteContent.categories = body.categories;
+    if (body.staffSchedules) siteContent.staffSchedules = body.staffSchedules;
+    if (body.doubleBooking !== undefined) siteContent.doubleBooking = body.doubleBooking;
+    if (body.imageSettings) siteContent.imageSettings = { ...siteContent.imageSettings, ...body.imageSettings };
+    if (body.clients) siteContent.clients = body.clients;
     siteContent.lastUpdated = new Date().toISOString();
 
     return NextResponse.json({

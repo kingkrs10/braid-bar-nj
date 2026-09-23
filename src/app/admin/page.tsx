@@ -51,7 +51,11 @@ import {
   Link2,
   BookOpen,
   Lock,
-  ArrowRight
+  ArrowRight,
+  Download,
+  Tag,
+  Sliders,
+  Check
 } from 'lucide-react';
 import { formatPrice, formatDuration, getWhatsAppLink } from '@/lib/utils';
 
@@ -394,7 +398,14 @@ export default function AdminPage() {
   };
 
   // Add-Ons State & Modal
-  const [addonsList, setAddonsList] = useState<Array<{ id: string; name: string; price: number; duration_min: number }>>(() => {
+  const [addonsList, setAddonsList] = useState<Array<{ 
+    id: string; 
+    name: string; 
+    price: number; 
+    duration_min: number;
+    applicableTo?: 'all' | 'specific';
+    applicableServiceIds?: string[];
+  }>>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('bb_addons_list');
       if (stored) {
@@ -405,12 +416,12 @@ export default function AdminPage() {
       }
     }
     return [
-      { id: 'add-1', name: 'Luxury Shampoo & Scalp Detox Wash', price: 35, duration_min: 30 },
-      { id: 'add-2', name: 'Extra Waist / Hip Extended Length', price: 40, duration_min: 45 },
-      { id: 'add-3', name: 'Bohemian Curly Ends (Human Hair)', price: 50, duration_min: 45 },
-      { id: 'add-4', name: 'Custom Hair Color Blending', price: 25, duration_min: 20 },
-      { id: 'add-5', name: 'Goddess Braid Accents', price: 30, duration_min: 30 },
-      { id: 'add-6', name: 'Braid Takedown & Comb Out Prep', price: 60, duration_min: 60 },
+      { id: 'add-1', name: 'Luxury Shampoo & Scalp Detox Wash', price: 35, duration_min: 30, applicableTo: 'all', applicableServiceIds: [] },
+      { id: 'add-2', name: 'Extra Waist / Hip Extended Length', price: 40, duration_min: 45, applicableTo: 'all', applicableServiceIds: [] },
+      { id: 'add-3', name: 'Bohemian Curly Ends (Human Hair)', price: 50, duration_min: 45, applicableTo: 'all', applicableServiceIds: [] },
+      { id: 'add-4', name: 'Custom Hair Color Blending', price: 25, duration_min: 20, applicableTo: 'all', applicableServiceIds: [] },
+      { id: 'add-5', name: 'Goddess Braid Accents', price: 30, duration_min: 30, applicableTo: 'all', applicableServiceIds: [] },
+      { id: 'add-6', name: 'Braid Takedown & Comb Out Prep', price: 60, duration_min: 60, applicableTo: 'all', applicableServiceIds: [] },
     ];
   });
 
@@ -420,15 +431,31 @@ export default function AdminPage() {
     name: '',
     price: 30,
     duration_min: 30,
+    applicableTo: 'all' as 'all' | 'specific',
+    applicableServiceIds: [] as string[],
   });
 
   const handleOpenAddAddon = () => {
-    setAddonFormData({ id: '', name: '', price: 30, duration_min: 30 });
+    setAddonFormData({ 
+      id: '', 
+      name: '', 
+      price: 30, 
+      duration_min: 30,
+      applicableTo: 'all',
+      applicableServiceIds: [],
+    });
     setIsAddonModalOpen(true);
   };
 
   const handleOpenEditAddon = (add: any) => {
-    setAddonFormData({ id: add.id, name: add.name, price: add.price, duration_min: add.duration_min });
+    setAddonFormData({ 
+      id: add.id, 
+      name: add.name, 
+      price: add.price, 
+      duration_min: add.duration_min,
+      applicableTo: add.applicableTo || 'all',
+      applicableServiceIds: add.applicableServiceIds || [],
+    });
     setIsAddonModalOpen(true);
   };
 
@@ -448,6 +475,7 @@ export default function AdminPage() {
     // ✅ Save the computed updatedAddons (not stale addonsList state)
     if (typeof window !== 'undefined') {
       localStorage.setItem('bb_addons_list', JSON.stringify(updatedAddons));
+      window.dispatchEvent(new Event('bb_addons_updated'));
       syncToApiServer({ addons: updatedAddons });
     }
   };
@@ -458,6 +486,7 @@ export default function AdminPage() {
       setAddonsList(updated);
       if (typeof window !== 'undefined') {
         localStorage.setItem('bb_addons_list', JSON.stringify(updated));
+        window.dispatchEvent(new Event('bb_addons_updated'));
         syncToApiServer({ addons: updated });
       }
     }
@@ -482,7 +511,6 @@ export default function AdminPage() {
     ];
   });
 
-
   const handleFileUpload = (file: File, callback: (url: string) => void) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -499,6 +527,7 @@ export default function AdminPage() {
     setLookbookList(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem('bb_lookbook_list', JSON.stringify(updated));
+      window.dispatchEvent(new Event('bb_lookbook_updated'));
       syncToApiServer({ lookbook: updated });
     }
   };
@@ -508,6 +537,7 @@ export default function AdminPage() {
     setLookbookList(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem('bb_lookbook_list', JSON.stringify(updated));
+      window.dispatchEvent(new Event('bb_lookbook_updated'));
       syncToApiServer({ lookbook: updated });
     }
   };
@@ -518,9 +548,344 @@ export default function AdminPage() {
       setLookbookList(updated);
       if (typeof window !== 'undefined') {
         localStorage.setItem('bb_lookbook_list', JSON.stringify(updated));
+        window.dispatchEvent(new Event('bb_lookbook_updated'));
         syncToApiServer({ lookbook: updated });
       }
     }
+  };
+
+  // Service Categories State & Management
+  const defaultCategories = [
+    'VIP Services',
+    'Knotless Braids',
+    'Fulani & Custom',
+    'Locs & Twists',
+    'Wash & Prep',
+    'Crochet',
+    'Feed-Ins',
+    'Kids Styles',
+    'Maintenance',
+    "Men's Styles",
+    'Twist Styles',
+  ];
+
+  const [categoriesList, setCategoriesList] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_categories_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return defaultCategories;
+  });
+
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+
+  const handleAddCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanName = newCategoryName.trim();
+    if (!cleanName) return;
+    if (categoriesList.includes(cleanName)) {
+      alert('This category title already exists!');
+      return;
+    }
+    const updated = [...categoriesList, cleanName];
+    setCategoriesList(updated);
+    setNewCategoryName('');
+    setIsCategoryModalOpen(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_categories_list', JSON.stringify(updated));
+      window.dispatchEvent(new Event('bb_categories_updated'));
+      syncToApiServer({ categories: updated });
+    }
+  };
+
+  const handleDeleteCategory = (catName: string) => {
+    if (!confirm(`Delete category "${catName}"? Existing services in this category will be preserved under "VIP Services".`)) return;
+    const updated = categoriesList.filter((c) => c !== catName);
+    setCategoriesList(updated);
+    const updatedServices = servicesList.map((s) => (s.category === catName ? { ...s, category: 'VIP Services' } : s));
+    setServicesList(updatedServices);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_categories_list', JSON.stringify(updated));
+      localStorage.setItem('bb_services_list', JSON.stringify(updatedServices));
+      window.dispatchEvent(new Event('bb_categories_updated'));
+      window.dispatchEvent(new Event('bb_services_updated'));
+      syncToApiServer({ categories: updated, services: updatedServices });
+    }
+  };
+
+  // Staff Schedules, Calendar Titles & Double Booking State
+  const defaultStaffSchedules = [
+    {
+      id: 'cal-sharon',
+      name: 'Sharon French',
+      title: 'Founder & Lead Stylist',
+      calendarId: '#3793472',
+      role: 'owner',
+      days: ['Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      hours: '9:00 AM – 6:00 PM',
+      weeklyOverride: 'Regular chair schedule',
+    },
+    {
+      id: 'cal-abigail',
+      name: 'Abigail Charles',
+      title: 'Salon Assistant & Stylist',
+      calendarId: '#13700462',
+      role: 'assistant',
+      days: ['Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      hours: '10:00 AM – 5:00 PM',
+      weeklyOverride: 'Preps, washes & braid removal support',
+    }
+  ];
+
+  const [staffSchedules, setStaffSchedules] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_staff_schedules');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return defaultStaffSchedules;
+  });
+
+  const [allowDoubleBooking, setAllowDoubleBooking] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('bb_allow_double_booking') === 'true';
+    }
+    return false;
+  });
+
+  const handleToggleDoubleBooking = (allowed: boolean) => {
+    setAllowDoubleBooking(allowed);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_allow_double_booking', allowed ? 'true' : 'false');
+      window.dispatchEvent(new Event('bb_double_booking_updated'));
+      syncToApiServer({ doubleBooking: allowed });
+    }
+  };
+
+  const [isStaffScheduleModalOpen, setIsStaffScheduleModalOpen] = useState(false);
+  const [scheduleFormData, setScheduleFormData] = useState({
+    id: '',
+    name: '',
+    title: '',
+    days: [] as string[],
+    hours: '',
+    weeklyOverride: '',
+  });
+
+  const handleOpenEditSchedule = (sched: typeof defaultStaffSchedules[0]) => {
+    setScheduleFormData({
+      id: sched.id,
+      name: sched.name,
+      title: sched.title,
+      days: [...sched.days],
+      hours: sched.hours,
+      weeklyOverride: sched.weeklyOverride || '',
+    });
+    setIsStaffScheduleModalOpen(true);
+  };
+
+  const handleSaveStaffSchedule = (e: React.FormEvent) => {
+    e.preventDefault();
+    const updated = staffSchedules.map((s) => (s.id === scheduleFormData.id ? { ...s, ...scheduleFormData } : s));
+    setStaffSchedules(updated);
+    setIsStaffScheduleModalOpen(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_staff_schedules', JSON.stringify(updated));
+      window.dispatchEvent(new Event('bb_staff_schedules_updated'));
+      syncToApiServer({ staffSchedules: updated });
+    }
+  };
+
+  // Image Crop & Visual Positioning Settings
+  const defaultImageSettings = {
+    heroBgPosition: 'center 30%',
+    heroZoom: 'cover',
+    salonArchPosition: 'center',
+    salonArchHeight: 'standard',
+  };
+
+  const [imageSettings, setImageSettings] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_image_settings');
+      if (stored) {
+        try {
+          return { ...defaultImageSettings, ...JSON.parse(stored) };
+        } catch (e) {}
+      }
+    }
+    return defaultImageSettings;
+  });
+
+  const handleUpdateImageSettings = (newSettings: Partial<typeof defaultImageSettings>) => {
+    const updated = { ...imageSettings, ...newSettings };
+    setImageSettings(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_image_settings', JSON.stringify(updated));
+      window.dispatchEvent(new Event('bb_image_settings_updated'));
+      syncToApiServer({ imageSettings: updated });
+    }
+  };
+
+  // Clients Directory CRM State
+  const initialClients = [
+    {
+      id: 'client-1',
+      name: 'Jasmine Thorne',
+      phone: '(973) 555-0192',
+      email: 'jasmine.t@example.com',
+      tag: 'VIP Client',
+      stylist: 'Sharon French',
+      totalSpent: 850,
+      visitsCount: 4,
+      lastVisit: '2026-09-14',
+      notes: 'Prefers tension-free Bohemian knotless with human hair curls. Scalp detox wash every visit.'
+    },
+    {
+      id: 'client-2',
+      name: 'Maya Robinson',
+      phone: '(201) 555-0144',
+      email: 'maya.r@example.com',
+      tag: 'Regular',
+      stylist: 'Sharon French',
+      totalSpent: 520,
+      visitsCount: 2,
+      lastVisit: '2026-09-02',
+      notes: 'Fulani braids with gold cowrie beads. Prefers gentle comb out.'
+    },
+    {
+      id: 'client-3',
+      name: 'Chloe Davis',
+      phone: '(973) 555-0188',
+      email: 'chloe.d@example.com',
+      tag: 'New Client',
+      stylist: 'Abigail Charles',
+      totalSpent: 120,
+      visitsCount: 1,
+      lastVisit: '2026-09-18',
+      notes: 'Silk press blowout & scalp deep conditioning.'
+    },
+    {
+      id: 'client-4',
+      name: 'Brianna Hayes',
+      phone: '(862) 555-0177',
+      email: 'b.hayes@example.com',
+      tag: 'VIP Client',
+      stylist: 'Sharon French',
+      totalSpent: 1100,
+      visitsCount: 5,
+      lastVisit: '2026-09-20',
+      notes: 'VIP Luxury package client. Loves herbal tea during installation.'
+    }
+  ];
+
+  const [clientsList, setClientsList] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_clients_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return initialClients;
+  });
+
+  const [clientSearchQuery, setClientSearchQuery] = useState('');
+  const [clientTagFilter, setClientTagFilter] = useState('All');
+  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
+  const [clientFormData, setClientFormData] = useState({
+    id: '',
+    name: '',
+    phone: '',
+    email: '',
+    tag: 'Regular',
+    stylist: 'Sharon French',
+    totalSpent: 250,
+    visitsCount: 1,
+    lastVisit: '2026-09-23',
+    notes: '',
+  });
+
+  const handleOpenAddClient = () => {
+    setClientFormData({
+      id: '',
+      name: '',
+      phone: '',
+      email: '',
+      tag: 'New Client',
+      stylist: 'Sharon French',
+      totalSpent: 0,
+      visitsCount: 0,
+      lastVisit: new Date().toISOString().split('T')[0],
+      notes: '',
+    });
+    setIsClientModalOpen(true);
+  };
+
+  const handleOpenEditClient = (c: any) => {
+    setClientFormData({ ...c });
+    setIsClientModalOpen(true);
+  };
+
+  const handleSaveClientForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!clientFormData.name) return;
+    let updated: typeof clientsList;
+    if (clientFormData.id) {
+      updated = clientsList.map((c) => (c.id === clientFormData.id ? { ...clientFormData } : c));
+    } else {
+      updated = [{ ...clientFormData, id: `client-${Date.now()}` }, ...clientsList];
+    }
+    setClientsList(updated);
+    setIsClientModalOpen(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_clients_list', JSON.stringify(updated));
+      syncToApiServer({ clients: updated });
+    }
+  };
+
+  const handleDeleteClient = (id: string) => {
+    if (!confirm('Remove this client from the directory?')) return;
+    const updated = clientsList.filter((c) => c.id !== id);
+    setClientsList(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bb_clients_list', JSON.stringify(updated));
+      syncToApiServer({ clients: updated });
+    }
+  };
+
+  const handleExportClientsCSV = () => {
+    const headers = ['Client Name', 'Phone', 'Email', 'Tag', 'Stylist', 'Total Spent ($)', 'Visits', 'Last Visit', 'Notes'];
+    const rows = clientsList.map((c) => [
+      `"${c.name}"`,
+      `"${c.phone}"`,
+      `"${c.email}"`,
+      `"${c.tag}"`,
+      `"${c.stylist}"`,
+      c.totalSpent,
+      c.visitsCount,
+      `"${c.lastVisit}"`,
+      `"${(c.notes || '').replace(/"/g, '""')}"`,
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `BraidBar_Clients_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Service Add/Edit Modal state
@@ -534,18 +899,22 @@ export default function AdminPage() {
     deposit_amount: 50,
     description: '',
     assignedCalendar: 'both' as 'cal-sharon' | 'cal-abigail' | 'both',
+    image_url: '',
+    isPrivate: false,
   });
 
   const handleOpenAddService = () => {
     setServiceFormData({
       id: '',
       name: '',
-      category: 'Knotless Braids',
+      category: categoriesList[0] || 'Knotless Braids',
       duration_min: 180,
       price: 250,
       deposit_amount: 50,
       description: '',
       assignedCalendar: 'both',
+      image_url: '',
+      isPrivate: false,
     });
     setIsServiceModalOpen(true);
   };
@@ -554,12 +923,14 @@ export default function AdminPage() {
     setServiceFormData({
       id: srv.id,
       name: srv.name,
-      category: srv.category,
+      category: srv.category || 'Knotless Braids',
       duration_min: srv.duration_min,
       price: srv.price,
       deposit_amount: srv.deposit_amount,
       description: srv.description || '',
       assignedCalendar: srv.assignedCalendar || 'both',
+      image_url: srv.image_url || '',
+      isPrivate: Boolean(srv.isPrivate),
     });
     setIsServiceModalOpen(true);
   };
@@ -577,7 +948,7 @@ export default function AdminPage() {
       const newService = {
         ...serviceFormData,
         id: `srv-${Date.now()}`,
-        image_url: 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80',
+        image_url: serviceFormData.image_url || 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80',
       };
       updatedList = [newService, ...servicesList];
     }
@@ -585,6 +956,7 @@ export default function AdminPage() {
     // ✅ Persist so changes survive page refresh
     if (typeof window !== 'undefined') {
       localStorage.setItem('bb_services_list', JSON.stringify(updatedList));
+      window.dispatchEvent(new Event('bb_services_updated'));
       syncToApiServer({ services: updatedList });
     }
     setIsServiceModalOpen(false);
@@ -596,6 +968,7 @@ export default function AdminPage() {
     setServicesList(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem('bb_services_list', JSON.stringify(updated));
+      window.dispatchEvent(new Event('bb_services_updated'));
       syncToApiServer({ services: updated });
     }
   };
@@ -1277,79 +1650,432 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* TAB: CLIENT DIRECTORY & CRM */}
+        {activeTab === 'clients' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm gap-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 text-terracotta text-[10px] font-bold uppercase tracking-widest bg-terracotta/10 px-2.5 py-1 rounded-full mb-1">
+                  <Users className="w-3 h-3" /> Client Relations
+                </div>
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso">Client Directory &amp; Relationship Manager</h3>
+                <p className="text-xs text-espresso/60 font-light">Categorize clients into VIP, Regular, or New, track appointment history and scalp notes, and export contacts.</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleExportClientsCSV}
+                  className="inline-flex items-center gap-1.5 bg-white hover:bg-cream border border-espresso/15 text-espresso px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5 text-terracotta" /> Export CSV
+                </button>
+                <button
+                  onClick={handleOpenAddClient}
+                  className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" /> Add Client
+                </button>
+              </div>
+            </div>
+
+            {/* Search & Tag Filter Pills */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-espresso/10 shadow-sm">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-espresso/40" />
+                <input
+                  type="text"
+                  placeholder="Search by client name, phone, or email..."
+                  value={clientSearchQuery}
+                  onChange={(e) => setClientSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-cream/20 border border-espresso/10 rounded-xl text-xs text-espresso placeholder:text-espresso/40 focus:outline-none focus:border-terracotta"
+                />
+              </div>
+
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                {['All', 'VIP Client', 'Regular', 'New Client'].map((tag) => {
+                  const isSelected = clientTagFilter === tag;
+                  const count = tag === 'All' ? clientsList.length : clientsList.filter((c) => c.tag === tag).length;
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => setClientTagFilter(tag)}
+                      className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap border ${
+                        isSelected
+                          ? 'bg-espresso text-cream border-espresso'
+                          : 'bg-white hover:bg-cream text-espresso/70 border-espresso/10'
+                      }`}
+                    >
+                      {tag} ({count})
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Clients CRM Table */}
+            <div className="bg-white rounded-2xl border border-espresso/10 shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-cream/40 border-b border-espresso/10 text-[10px] uppercase font-bold text-espresso/60 tracking-wider">
+                      <th className="py-3 px-4">Client Details</th>
+                      <th className="py-3 px-4">Category Tag</th>
+                      <th className="py-3 px-4">Preferred Stylist</th>
+                      <th className="py-3 px-4">Visits &amp; Spend</th>
+                      <th className="py-3 px-4">Last Visit</th>
+                      <th className="py-3 px-4">Private Notes</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-espresso/5 font-medium text-espresso/80">
+                    {clientsList
+                      .filter((c) => {
+                        const matchesTag = clientTagFilter === 'All' || c.tag === clientTagFilter;
+                        const q = clientSearchQuery.toLowerCase();
+                        const matchesQuery = !q || c.name.toLowerCase().includes(q) || c.phone.includes(q) || c.email.toLowerCase().includes(q);
+                        return matchesTag && matchesQuery;
+                      })
+                      .map((c) => (
+                        <tr key={c.id} className="hover:bg-cream/15 transition-colors">
+                          <td className="py-4 px-4">
+                            <span className="font-bold text-espresso text-sm block">{c.name}</span>
+                            <div className="flex items-center gap-3 text-[11px] text-espresso/60 mt-0.5">
+                              <span>{c.phone}</span>
+                              <span>•</span>
+                              <span>{c.email}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                c.tag === 'VIP Client'
+                                  ? 'bg-amber-100 text-amber-900 border border-amber-200'
+                                  : c.tag === 'Regular'
+                                  ? 'bg-emerald-100 text-emerald-900 border border-emerald-200'
+                                  : 'bg-blue-100 text-blue-900 border border-blue-200'
+                              }`}
+                            >
+                              {c.tag}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4 font-semibold text-espresso">
+                            {c.stylist}
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className="font-bold text-terracotta block">{formatPrice(c.totalSpent)}</span>
+                            <span className="text-[10px] text-espresso/50 font-normal">{c.visitsCount} appointment{c.visitsCount === 1 ? '' : 's'}</span>
+                          </td>
+                          <td className="py-4 px-4 text-espresso/70">
+                            {c.lastVisit}
+                          </td>
+                          <td className="py-4 px-4 max-w-xs">
+                            <p className="text-[11px] text-espresso/70 italic line-clamp-2">
+                              {c.notes || 'No notes added'}
+                            </p>
+                          </td>
+                          <td className="py-4 px-4 text-right space-x-2">
+                            <button
+                              onClick={() => handleOpenEditClient(c)}
+                              className="p-1.5 text-espresso/70 hover:text-terracotta hover:bg-cream/40 rounded-lg transition-colors cursor-pointer"
+                              title="Edit Client"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClient(c.id)}
+                              className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                              title="Delete Client"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                            <a
+                              href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[10px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-full font-medium"
+                            >
+                              <MessageSquare className="w-3 h-3" /> WhatsApp
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: REVENUE & REPORTS */}
+        {activeTab === 'reports' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm gap-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 text-terracotta text-[10px] font-bold uppercase tracking-widest bg-terracotta/10 px-2.5 py-1 rounded-full mb-1">
+                  <TrendingUp className="w-3 h-3" /> Financial Intelligence
+                </div>
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso">Monthly Revenue &amp; Financial Reports</h3>
+                <p className="text-xs text-espresso/60 font-light">Month-by-month financial summary, completed booking volume, deposits collected, and stylist breakdowns.</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    const headers = ['Month', 'Appointments', 'Deposits Secured ($)', 'Gross Revenue ($)', 'Sharon Share ($)', 'Abigail Share ($)'];
+                    const data = [
+                      ['January 2026', '14', '$700', '$3,450', '$2,900', '$550'],
+                      ['February 2026', '18', '$900', '$4,320', '$3,620', '$700'],
+                      ['March 2026', '22', '$1,100', '$5,400', '$4,500', '$900'],
+                      ['April 2026', '19', '$950', '$4,650', '$3,900', '$750'],
+                      ['May 2026', '24', '$1,200', '$5,880', '$4,920', '$960'],
+                      ['June 2026', '26', '$1,300', '$6,420', '$5,350', '$1,070'],
+                      ['July 2026', '28', '$1,400', '$6,900', '$5,750', '$1,150'],
+                      ['August 2026', '31', '$1,550', '$7,650', '$6,350', '$1,300'],
+                      ['September 2026', '25', '$1,250', '$6,250', '$5,150', '$1,100'],
+                    ];
+                    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...data.map((r) => r.map((c) => `"${c}"`).join(','))].join('\n');
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodedUri);
+                    link.setAttribute('download', `BraidBar_Revenue_Report_${new Date().getFullYear()}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                  className="inline-flex items-center gap-1.5 bg-terracotta hover:bg-espresso text-cream px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" /> Export Financial Report (CSV)
+                </button>
+              </div>
+            </div>
+
+            {/* KPI Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white p-5 rounded-2xl border border-espresso/10 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-espresso/50 tracking-wider">Gross YTD Revenue</span>
+                <p className="text-2xl font-black text-espresso font-[family-name:var(--font-display)] mt-1">$50,920.00</p>
+                <span className="text-[10px] text-emerald-700 font-bold mt-1 inline-flex items-center gap-1">↑ +14% vs prior period</span>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-espresso/10 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-espresso/50 tracking-wider">Total Appointments</span>
+                <p className="text-2xl font-black text-espresso font-[family-name:var(--font-display)] mt-1">207 Sessions</p>
+                <span className="text-[10px] text-espresso/60 font-medium mt-1 block">Full-service braids &amp; preps</span>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-espresso/10 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-espresso/50 tracking-wider">Deposits Collected ($50/ea)</span>
+                <p className="text-2xl font-black text-terracotta font-[family-name:var(--font-display)] mt-1">$10,350.00</p>
+                <span className="text-[10px] text-emerald-700 font-bold mt-1 block">100% upfront booking security</span>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-espresso/10 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-espresso/50 tracking-wider">Average Ticket Size</span>
+                <p className="text-2xl font-black text-espresso font-[family-name:var(--font-display)] mt-1">$245.99</p>
+                <span className="text-[10px] text-espresso/60 font-medium mt-1 block">Base style + add-on enhancements</span>
+              </div>
+            </div>
+
+            {/* Monthly Financial Breakdown Table */}
+            <div className="bg-white rounded-2xl border border-espresso/10 shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-espresso/10 flex items-center justify-between">
+                <h4 className="font-[family-name:var(--font-display)] text-base font-bold text-espresso">
+                  Monthly Performance Breakdown (2026)
+                </h4>
+                <span className="text-xs text-espresso/60 font-medium">Updated Real-Time</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-cream/40 border-b border-espresso/10 text-[10px] uppercase font-bold text-espresso/60 tracking-wider">
+                      <th className="py-3 px-4">Month</th>
+                      <th className="py-3 px-4">Completed Bookings</th>
+                      <th className="py-3 px-4">Deposits Secured</th>
+                      <th className="py-3 px-4">Gross Revenue</th>
+                      <th className="py-3 px-4">Sharon French (Lead)</th>
+                      <th className="py-3 px-4">Abigail Charles (Assistant)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-espresso/5 font-medium text-espresso/80">
+                    {[
+                      { month: 'September 2026 (Current)', bookings: 25, deposits: 1250, gross: 6250, sharon: 5150, abigail: 1100, isCurrent: true },
+                      { month: 'August 2026', bookings: 31, deposits: 1550, gross: 7650, sharon: 6350, abigail: 1300 },
+                      { month: 'July 2026', bookings: 28, deposits: 1400, gross: 6900, sharon: 5750, abigail: 1150 },
+                      { month: 'June 2026', bookings: 26, deposits: 1300, gross: 6420, sharon: 5350, abigail: 1070 },
+                      { month: 'May 2026', bookings: 24, deposits: 1200, gross: 5880, sharon: 4920, abigail: 960 },
+                      { month: 'April 2026', bookings: 19, deposits: 950, gross: 4650, sharon: 3900, abigail: 750 },
+                      { month: 'March 2026', bookings: 22, deposits: 1100, gross: 5400, sharon: 4500, abigail: 900 },
+                      { month: 'February 2026', bookings: 18, deposits: 900, gross: 4320, sharon: 3620, abigail: 700 },
+                      { month: 'January 2026', bookings: 14, deposits: 700, gross: 3450, sharon: 2900, abigail: 550 },
+                    ].map((row) => (
+                      <tr key={row.month} className={row.isCurrent ? 'bg-amber-50/50 font-bold' : 'hover:bg-cream/15'}>
+                        <td className="py-3.5 px-4 font-bold text-espresso flex items-center gap-2">
+                          {row.month}
+                          {row.isCurrent && (
+                            <span className="text-[9px] bg-terracotta text-cream px-2 py-0.5 rounded-full font-bold uppercase">Active</span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4">{row.bookings} sessions</td>
+                        <td className="py-3.5 px-4 text-emerald-700 font-bold">{formatPrice(row.deposits)}</td>
+                        <td className="py-3.5 px-4 font-bold text-espresso">{formatPrice(row.gross)}</td>
+                        <td className="py-3.5 px-4">{formatPrice(row.sharon)}</td>
+                        <td className="py-3.5 px-4">{formatPrice(row.abigail)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* TAB 3: SERVICES CATALOG & PRICING */}
         {activeTab === 'services' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-espresso/10 shadow-sm">
-              <div>
-                <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso">Services &amp; Pricing Catalog</h3>
-                <p className="text-xs text-espresso/60 font-light">Edit hair service prices, durations, and deposits</p>
-              </div>
-              <button
-                onClick={handleOpenAddService}
-                className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
-              >
-                <Plus className="w-4 h-4" /> Add Service
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {servicesList.map((srv) => (
-                <div key={srv.id} className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
-                        {srv.category}
-                      </span>
-                      <span className="text-xs font-bold text-espresso">{formatDuration(srv.duration_min)}</span>
-                    </div>
-                    <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso mb-2">{srv.name}</h4>
-                    <p className="text-xs text-espresso/70 font-light leading-relaxed line-clamp-3 mb-4">
-                      {srv.description}
-                    </p>
-                  </div>
-
-                  <div className="pt-4 border-t border-espresso/10 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] text-espresso/50 font-bold uppercase block">Service Investment</span>
-                      <span className="text-xl font-bold text-espresso">{formatPrice(srv.price)}</span>
-                      <span className="text-[10px] text-emerald-700 block font-medium">Deposit: {formatPrice(srv.deposit_amount)}</span>
-                      <span className="text-[10px] text-blue-600 block font-medium mt-0.5">
-                        📅 {(srv as any).assignedCalendar === 'cal-sharon' ? 'Sharon Only' : (srv as any).assignedCalendar === 'cal-abigail' ? 'Abigail Only' : 'Both Calendars'}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleOpenEditService(srv)}
-                        className="px-3 py-1.5 bg-cream/50 hover:bg-cream border border-espresso/10 rounded-xl text-xs font-semibold text-espresso transition-colors flex items-center gap-1 cursor-pointer"
-                      >
-                        <Edit3 className="w-3.5 h-3.5 text-terracotta" /> Edit Service Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteService(srv.id)}
-                        className="px-3 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl text-xs font-semibold text-red-700 transition-colors flex items-center gap-1 cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" /> Delete
-                      </button>
-                    </div>
-                  </div>
+          <div className="space-y-8">
+            {/* 1. SERVICE CATEGORY TITLES MANAGER */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-espresso/10 pb-4 gap-4">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                    Structure &amp; Organization
+                  </span>
+                  <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso mt-1">
+                    Service Categories &amp; Collections
+                  </h3>
+                  <p className="text-xs text-espresso/60 font-light">
+                    Add or remove category headers. Category titles dynamically organize your website menu and booking flow.
+                  </p>
                 </div>
-              ))}
+                <button
+                  onClick={() => {
+                    setNewCategoryName('');
+                    setIsCategoryModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-2 bg-espresso hover:bg-terracotta text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" /> Add Category Title
+                </button>
+              </div>
+
+              {/* Category Pills List */}
+              <div className="flex flex-wrap gap-2.5 pt-2">
+                {categoriesList.map((cat) => {
+                  const serviceCount = servicesList.filter((s) => s.category === cat).length;
+                  return (
+                    <div
+                      key={cat}
+                      className="inline-flex items-center gap-2 bg-cream/30 hover:bg-cream border border-espresso/15 px-3.5 py-2 rounded-xl text-xs font-medium text-espresso transition-colors group"
+                    >
+                      <Tag className="w-3.5 h-3.5 text-terracotta" />
+                      <span className="font-bold">{cat}</span>
+                      <span className="text-[10px] text-espresso/50 bg-white px-2 py-0.5 rounded-full border border-espresso/10 font-bold">
+                        {serviceCount}
+                      </span>
+                      {categoriesList.length > 1 && (
+                        <button
+                          onClick={() => handleDeleteCategory(cat)}
+                          title={`Delete "${cat}" category`}
+                          className="opacity-40 group-hover:opacity-100 hover:text-rose-600 transition-opacity ml-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* SERVICE ADD-ONS CATALOG MANAGER */}
-            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6 mt-8">
+            {/* 2. SERVICES & PRICING CATALOG */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-espresso/10 shadow-sm">
+                <div>
+                  <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso">Services &amp; Pricing Catalog</h3>
+                  <p className="text-xs text-espresso/60 font-light">Edit hair service prices, durations, photos, and calendar destinations</p>
+                </div>
+                <button
+                  onClick={handleOpenAddService}
+                  className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" /> Add Service
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {servicesList.map((srv) => (
+                  <div key={srv.id} className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm flex flex-col justify-between group hover:border-terracotta/40 transition-colors">
+                    <div>
+                      {/* Thumbnail & Badges */}
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="w-20 h-20 rounded-xl overflow-hidden border border-espresso/15 bg-cream-dark flex-shrink-0 relative">
+                          <img
+                            src={srv.image_url || '/images/branding/logo-monogram-bb.png'}
+                            alt={srv.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-0.5 rounded-full">
+                              {srv.category}
+                            </span>
+                            {(srv as any).isPrivate && (
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-accent-gold bg-espresso px-2 py-0.5 rounded-full">
+                                🔒 Private 1-on-1
+                              </span>
+                            )}
+                          </div>
+                          <h4 className="font-[family-name:var(--font-display)] text-base font-bold text-espresso leading-snug">
+                            {srv.name}
+                          </h4>
+                          <span className="text-xs font-bold text-espresso/60 mt-1 block">⏱ {formatDuration(srv.duration_min)}</span>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-espresso/70 font-light leading-relaxed line-clamp-2 mb-4">
+                        {srv.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 border-t border-espresso/10 flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] text-espresso/50 font-bold uppercase block">Investment</span>
+                        <span className="text-xl font-bold text-espresso">{formatPrice(srv.price)}</span>
+                        <span className="text-[10px] text-emerald-700 block font-medium">Deposit: {formatPrice(srv.deposit_amount)}</span>
+                        <span className="text-[10px] text-blue-600 block font-medium mt-0.5">
+                          📅 {(srv as any).assignedCalendar === 'cal-sharon' ? 'Sharon Only' : (srv as any).assignedCalendar === 'cal-abigail' ? 'Abigail Only' : 'Both Calendars'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleOpenEditService(srv)}
+                          className="px-3 py-1.5 bg-cream/50 hover:bg-cream border border-espresso/10 rounded-xl text-xs font-semibold text-espresso transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <Edit3 className="w-3.5 h-3.5 text-terracotta" /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteService(srv.id)}
+                          className="px-3 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl text-xs font-semibold text-red-700 transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 3. SERVICE ADD-ONS CATALOG MANAGER */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-espresso/10 pb-4 gap-4">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
                     Custom Enhancements
                   </span>
                   <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso mt-1">
-                    Service Add-Ons Catalog
+                    Service Add-Ons &amp; Extensions Catalog
                   </h3>
                   <p className="text-xs text-espresso/60 font-light">
-                    Create and edit styling options like shampoo detox, waist length, bohemian curls, and hair color.
+                    Add-ons can apply across all hairstyles or be separated to specific services only.
                   </p>
                 </div>
                 <button
@@ -1367,10 +2093,21 @@ export default function AdminPage() {
                       <div className="flex items-center justify-between mb-1">
                         <h4 className="font-bold text-espresso text-sm">{add.name}</h4>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-espresso/70 mt-2">
+                      <div className="flex items-center gap-3 text-xs text-espresso/70 mt-1">
                         <span className="font-bold text-terracotta">+{formatPrice(add.price)}</span>
                         <span>•</span>
                         <span>+{formatDuration(add.duration_min)}</span>
+                      </div>
+                      <div className="mt-2.5">
+                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${
+                          add.applicableTo === 'specific' && add.applicableServiceIds && add.applicableServiceIds.length > 0
+                            ? 'bg-amber-50 text-amber-900 border-amber-200'
+                            : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                        }`}>
+                          {add.applicableTo === 'specific' && add.applicableServiceIds && add.applicableServiceIds.length > 0
+                            ? `Specific: ${add.applicableServiceIds.length} service${add.applicableServiceIds.length === 1 ? '' : 's'}`
+                            : 'Applies to All Styles'}
+                        </span>
                       </div>
                     </div>
 
@@ -1393,56 +2130,98 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* STAFF CALENDARS & SCHEDULE CONFIGURATION */}
-            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6 mt-8">
+            {/* 4. DOUBLE BOOKING PREVENTION CONTROL */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-terracotta text-[10px] font-bold uppercase tracking-widest bg-terracotta/10 px-2.5 py-1 rounded-full mb-1">
+                    <Sliders className="w-3 h-3" /> Booking Concurrency
+                  </div>
+                  <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso">
+                    Double Booking Prevention Setting
+                  </h3>
+                  <p className="text-xs text-espresso/60 font-light mt-1 max-w-2xl leading-relaxed">
+                    Turn OFF to enforce strict single-client chair appointments (no overlapping clients). Turn ON if you want the flexibility to allow simultaneous bookings across stylists and assistants.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className={`text-xs font-bold uppercase tracking-wider ${
+                    allowDoubleBooking ? 'text-amber-700' : 'text-emerald-700'
+                  }`}>
+                    {allowDoubleBooking ? 'Double Booking Allowed' : 'Strict Single Client (No Double Booking)'}
+                  </span>
+                  <button
+                    onClick={() => handleToggleDoubleBooking(!allowDoubleBooking)}
+                    className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-sm ${
+                      allowDoubleBooking
+                        ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                        : 'bg-emerald-700 hover:bg-emerald-800 text-white'
+                    }`}
+                  >
+                    {allowDoubleBooking ? 'Disable Double Booking' : 'Enable Double Booking'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. STAFF CALENDARS & SCHEDULES CONFIGURATION */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
               <div className="border-b border-espresso/10 pb-4">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
-                  Team Scheduling
+                  Team Scheduling &amp; Working Hours
                 </span>
                 <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso mt-1">
-                  Separate Staff Calendars
+                  Separate Staff Calendars &amp; Weekly Working Hours
                 </h3>
                 <p className="text-xs text-espresso/60 font-light">
-                  Configured calendar schedules and permissions for Sharon French (Lead Stylist) and Abigail Charles (Assistant).
+                  Sharon can change stylist titles (e.g. Lead Stylist, Master Braider) and adjust the working days and hours each team member is available each week.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-                {/* Sharon French Calendar */}
-                <div className="bg-cream/20 p-5 rounded-2xl border border-espresso/10 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full">
-                      Active Lead Calendar
-                    </span>
-                    <span className="font-mono text-[10px] text-espresso/50">Calendar ID: #3793472</span>
-                  </div>
-                  <h4 className="font-bold text-espresso text-base">Sharon French — Lead Stylist Calendar</h4>
-                  <p className="text-espresso/70 text-xs font-light leading-relaxed">
-                    Lead calendar for Knotless Braids, Fulani Tribal Styles, VIP Luxury Packages, and Loc Maintenance.
-                  </p>
-                  <div className="pt-2 border-t border-espresso/10 flex items-center justify-between text-espresso/80">
-                    <span>Working Hours: Tue – Sat (9:00 AM – 6:00 PM)</span>
-                    <span className="font-bold text-emerald-700">Owner Control (Passcode 592)</span>
-                  </div>
-                </div>
+                {staffSchedules.map((sched) => (
+                  <div key={sched.id} className="bg-cream/20 p-5 rounded-2xl border border-espresso/10 space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                          sched.role === 'owner' ? 'text-emerald-800 bg-emerald-100' : 'text-amber-800 bg-amber-100'
+                        }`}>
+                          {sched.role === 'owner' ? 'Lead Stylist Calendar' : 'Assistant Calendar'}
+                        </span>
+                        <span className="font-mono text-[10px] text-espresso/50">Calendar ID: {sched.calendarId}</span>
+                      </div>
+                      <h4 className="font-bold text-espresso text-base">{sched.name} — {sched.title}</h4>
+                      <div className="space-y-1.5 text-espresso/80 mt-3 pt-2 border-t border-espresso/10">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-terracotta">Working Days:</span>
+                          <span>{sched.days.join(', ')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-terracotta">Hours:</span>
+                          <span>{sched.hours}</span>
+                        </div>
+                        {sched.weeklyOverride && (
+                          <div className="text-[11px] text-espresso/60 italic bg-white/70 p-2 rounded-lg border border-espresso/5 mt-1">
+                            📌 Weekly Note: {sched.weeklyOverride}
+                          </div>
+                        )}
+                      </div>
+                    </div>
 
-                {/* Abigail Charles Calendar */}
-                <div className="bg-cream/20 p-5 rounded-2xl border border-espresso/10 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full">
-                      Active Assistant Calendar
-                    </span>
-                    <span className="font-mono text-[10px] text-espresso/50">Calendar ID: #13700462</span>
+                    <div className="pt-3 border-t border-espresso/10 flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-espresso/60">
+                        {sched.role === 'owner' ? 'Passcode: 592' : 'Passcode: 2026'}
+                      </span>
+                      <button
+                        onClick={() => handleOpenEditSchedule(sched)}
+                        className="px-3.5 py-1.5 bg-espresso hover:bg-terracotta text-cream rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" /> Adjust Hours &amp; Title
+                      </button>
+                    </div>
                   </div>
-                  <h4 className="font-bold text-espresso text-base">Abigail Charles — Assistant Calendar</h4>
-                  <p className="text-espresso/70 text-xs font-light leading-relaxed">
-                    Assistant calendar for hair preps, wash detoxes, shampoo treatments, and braid takedown support.
-                  </p>
-                  <div className="pt-2 border-t border-espresso/10 flex items-center justify-between text-espresso/80">
-                    <span>Working Hours: Wed – Sun (10:00 AM – 5:00 PM)</span>
-                    <span className="font-bold text-amber-700">Assistant Login (Passcode 2026)</span>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -1820,6 +2599,99 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Section F: Photo Alignment, Crop & Visual Sizing Controls */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
+              <div className="border-b border-espresso/10 pb-3">
+                <div className="inline-flex items-center gap-1.5 text-terracotta text-[10px] font-bold uppercase tracking-widest bg-terracotta/10 px-2.5 py-1 rounded-full mb-1">
+                  <Sliders className="w-3 h-3" /> Visual Framing
+                </div>
+                <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
+                  6. Photo Alignment, Crop &amp; Sizing Controls
+                </h4>
+                <p className="text-xs text-espresso/60 font-light">Fine-tune the crop, vertical focus, and display sizing for the bleed background and salon arch photos</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                {/* Hero Bleed Background Alignment */}
+                <div className="bg-cream/20 p-5 rounded-2xl border border-espresso/10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-espresso text-sm">Hero Bleed Background Photo</span>
+                    <span className="text-[10px] uppercase font-bold text-terracotta bg-terracotta/10 px-2 py-0.5 rounded-full">Top Banner</span>
+                  </div>
+                  <p className="text-[11px] text-espresso/70 leading-relaxed font-light">
+                    Adjust which part of the sitting model or salon image remains centered on desktop and mobile screens.
+                  </p>
+
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <label className="block text-espresso/80 font-bold mb-1">Vertical Focus / Alignment</label>
+                      <select
+                        value={imageSettings.heroBgPosition}
+                        onChange={(e) => handleUpdateImageSettings({ heroBgPosition: e.target.value })}
+                        className="w-full px-3 py-2 bg-white border border-espresso/15 rounded-xl font-medium text-espresso"
+                      >
+                        <option value="center 30%">Center (30% from top - Recommended)</option>
+                        <option value="top">Top Focus (Show hair crowns &amp; heads)</option>
+                        <option value="center">Dead Center</option>
+                        <option value="bottom">Bottom Focus</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-espresso/80 font-bold mb-1">Zoom &amp; Fit Scale</label>
+                      <select
+                        value={imageSettings.heroZoom}
+                        onChange={(e) => handleUpdateImageSettings({ heroZoom: e.target.value })}
+                        className="w-full px-3 py-2 bg-white border border-espresso/15 rounded-xl font-medium text-espresso"
+                      >
+                        <option value="cover">Standard Full Bleed (Cover 100%)</option>
+                        <option value="110%">Subtle Zoomed In (110% Drama Effect)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Salon Sanctuary Arch Alignment & Height */}
+                <div className="bg-cream/20 p-5 rounded-2xl border border-espresso/10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-espresso text-sm">Salon Sanctuary Half-Circle Arch</span>
+                    <span className="text-[10px] uppercase font-bold text-terracotta bg-terracotta/10 px-2 py-0.5 rounded-full">Mission Section</span>
+                  </div>
+                  <p className="text-[11px] text-espresso/70 leading-relaxed font-light">
+                    Adjust the crop position inside the half-circle frame and adjust frame height.
+                  </p>
+
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <label className="block text-espresso/80 font-bold mb-1">Arch Photo Focus</label>
+                      <select
+                        value={imageSettings.salonArchPosition}
+                        onChange={(e) => handleUpdateImageSettings({ salonArchPosition: e.target.value })}
+                        className="w-full px-3 py-2 bg-white border border-espresso/15 rounded-xl font-medium text-espresso"
+                      >
+                        <option value="center">Center Focus (Balanced salon interior)</option>
+                        <option value="top">Top Focus (Show upper styling stations &amp; lights)</option>
+                        <option value="bottom">Bottom Focus (Show reception counter &amp; chairs)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-espresso/80 font-bold mb-1">Arch Frame Height</label>
+                      <select
+                        value={imageSettings.salonArchHeight}
+                        onChange={(e) => handleUpdateImageSettings({ salonArchHeight: e.target.value })}
+                        className="w-full px-3 py-2 bg-white border border-espresso/15 rounded-xl font-medium text-espresso"
+                      >
+                        <option value="standard">Standard Editorial Height (280px)</option>
+                        <option value="tall">Tall Arch Height (340px - Shows more photo)</option>
+                        <option value="compact">Compact Arch Height (220px)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -3131,7 +4003,7 @@ export default function AdminPage() {
       {/* Add / Edit Service Modal */}
       {isServiceModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white max-w-lg w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
+          <div className="bg-white max-w-lg w-full max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between border-b border-espresso/10 pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
@@ -3143,7 +4015,7 @@ export default function AdminPage() {
               </div>
               <button
                 onClick={() => setIsServiceModalOpen(false)}
-                className="text-espresso/40 hover:text-espresso p-1 rounded-full text-lg"
+                className="text-espresso/40 hover:text-espresso p-1 rounded-full text-lg cursor-pointer"
               >
                 ✕
               </button>
@@ -3170,11 +4042,11 @@ export default function AdminPage() {
                     onChange={(e) => setServiceFormData({ ...serviceFormData, category: e.target.value })}
                     className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
                   >
-                    <option value="VIP Services">VIP Services</option>
-                    <option value="Knotless Braids">Knotless Braids</option>
-                    <option value="Fulani & Custom">Fulani & Custom</option>
-                    <option value="Locs & Twists">Locs & Twists</option>
-                    <option value="Wash & Prep">Wash & Prep</option>
+                    {categoriesList.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -3229,6 +4101,45 @@ export default function AdminPage() {
                 />
               </div>
 
+              {/* Service Photo / Thumbnail */}
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Service Photo / Thumbnail</label>
+                <div className="flex items-center gap-3">
+                  <div className="w-16 h-16 rounded-xl border border-espresso/15 bg-cream/40 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                    {serviceFormData.image_url ? (
+                      <img src={serviceFormData.image_url} alt="Service preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <Sparkles className="w-6 h-6 text-espresso/30" />
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-1.5">
+                    <input
+                      type="text"
+                      placeholder="Image URL or upload below..."
+                      value={serviceFormData.image_url}
+                      onChange={(e) => setServiceFormData({ ...serviceFormData, image_url: e.target.value })}
+                      className="w-full px-3 py-1.5 bg-cream/30 border border-espresso/15 rounded-lg text-xs font-mono text-espresso focus:outline-none focus:border-terracotta"
+                    />
+                    <label className="inline-flex items-center gap-1.5 px-3 py-1 bg-espresso/5 hover:bg-espresso/10 text-espresso text-[11px] font-semibold rounded-lg cursor-pointer transition-colors border border-espresso/10">
+                      <Upload className="w-3.5 h-3.5 text-terracotta" /> Upload Image from Device
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            handleFileUpload(file, (url) => {
+                              setServiceFormData({ ...serviceFormData, image_url: url });
+                            });
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-espresso/80 font-bold mb-1">Assign to Calendar</label>
                 <select
@@ -3243,6 +4154,23 @@ export default function AdminPage() {
                 <p className="text-[10px] text-espresso/50 mt-1">Controls which stylist's booking calendar this service appears under.</p>
               </div>
 
+              {/* Private 1-on-1 Studio Option */}
+              <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3.5 flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="isPrivate"
+                  checked={serviceFormData.isPrivate}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, isPrivate: e.target.checked })}
+                  className="mt-0.5 rounded text-terracotta focus:ring-terracotta h-4 w-4"
+                />
+                <label htmlFor="isPrivate" className="cursor-pointer text-xs select-none">
+                  <span className="font-bold text-espresso block">🔒 Private 1-on-1 Studio Experience (Studio Buyout)</span>
+                  <span className="text-[11px] text-espresso/70 leading-relaxed block mt-0.5">
+                    Locks the salon for a completely private appointment with no other clients in the building during service.
+                  </span>
+                </label>
+              </div>
+
               <div className="pt-2 flex items-center justify-end gap-3 border-t border-espresso/10">
                 <button
                   type="button"
@@ -3253,7 +4181,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-terracotta hover:bg-espresso text-cream font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm"
+                  className="px-6 py-2.5 bg-terracotta hover:bg-espresso text-cream font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm cursor-pointer"
                 >
                   {serviceFormData.id ? 'Save Service Changes' : 'Publish Service'}
                 </button>
@@ -3262,10 +4190,11 @@ export default function AdminPage() {
           </div>
         </div>
       )}
+
       {/* Add / Edit Service Add-On Modal */}
       {isAddonModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
+          <div className="bg-white max-w-md w-full max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between border-b border-espresso/10 pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
@@ -3323,6 +4252,65 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* Add-on Applicability Selector */}
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Applies To</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAddonFormData({ ...addonFormData, applicableTo: 'all' })}
+                    className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all text-center cursor-pointer ${
+                      addonFormData.applicableTo === 'all'
+                        ? 'bg-terracotta text-cream border-terracotta shadow-xs'
+                        : 'bg-cream/30 border-espresso/15 text-espresso/70 hover:bg-cream/60'
+                    }`}
+                  >
+                    All Hair Services
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAddonFormData({ ...addonFormData, applicableTo: 'specific' })}
+                    className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all text-center cursor-pointer ${
+                      addonFormData.applicableTo === 'specific'
+                        ? 'bg-terracotta text-cream border-terracotta shadow-xs'
+                        : 'bg-cream/30 border-espresso/15 text-espresso/70 hover:bg-cream/60'
+                    }`}
+                  >
+                    Specific Services Only
+                  </button>
+                </div>
+              </div>
+
+              {addonFormData.applicableTo === 'specific' && (
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Select Eligible Services</label>
+                  <div className="max-h-44 overflow-y-auto p-2 bg-cream/30 border border-espresso/15 rounded-xl space-y-1.5">
+                    {servicesList.map((srv) => {
+                      const isChecked = addonFormData.applicableServiceIds?.includes(srv.id);
+                      return (
+                        <label key={srv.id} className="flex items-center gap-2 p-1.5 hover:bg-white rounded-lg cursor-pointer text-xs">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={(e) => {
+                              const currentIds = addonFormData.applicableServiceIds || [];
+                              const newIds = e.target.checked
+                                ? [...currentIds, srv.id]
+                                : currentIds.filter((id) => id !== srv.id);
+                              setAddonFormData({ ...addonFormData, applicableServiceIds: newIds });
+                            }}
+                            className="rounded text-terracotta focus:ring-terracotta h-3.5 w-3.5"
+                          />
+                          <span className="text-espresso font-medium truncate">{srv.name}</span>
+                          <span className="text-[10px] text-espresso/50 ml-auto">{srv.category}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[10px] text-espresso/50 mt-1">This add-on will only appear when booking the checked styles.</p>
+                </div>
+              )}
+
               <div className="pt-2 flex items-center justify-end gap-3 border-t border-espresso/10">
                 <button
                   type="button"
@@ -3336,6 +4324,306 @@ export default function AdminPage() {
                   className="px-6 py-2.5 bg-terracotta hover:bg-espresso text-cream font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm cursor-pointer"
                 >
                   {addonFormData.id ? 'Save Add-On' : 'Create Add-On'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Category Modal */}
+      {isCategoryModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-espresso/10 pb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                  Category Management
+                </span>
+                <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso mt-1">
+                  Add Service Category
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsCategoryModalOpen(false)}
+                className="text-espresso/40 hover:text-espresso p-1 rounded-full text-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleAddCategory} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">New Category Title</label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  placeholder="e.g. Boho Extensions &amp; Weaves"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3 border-t border-espresso/10">
+                <button
+                  type="button"
+                  onClick={() => setIsCategoryModalOpen(false)}
+                  className="px-4 py-2 bg-cream/50 hover:bg-cream text-espresso font-semibold rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-terracotta hover:bg-espresso text-cream font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  Add Category
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Staff Schedule & Titles Modal */}
+      {isStaffScheduleModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-espresso/10 pb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                  Calendar &amp; Hours
+                </span>
+                <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso mt-1">
+                  Edit {scheduleFormData.name}&apos;s Schedule
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsStaffScheduleModalOpen(false)}
+                className="text-espresso/40 hover:text-espresso p-1 rounded-full text-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStaffSchedule} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Stylist Calendar Title / Role</label>
+                <input
+                  type="text"
+                  required
+                  value={scheduleFormData.title}
+                  onChange={(e) => setScheduleFormData({ ...scheduleFormData, title: e.target.value })}
+                  placeholder="e.g. Founder &amp; Lead Stylist"
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                />
+                <p className="text-[10px] text-espresso/50 mt-1">Changes the title displayed on the booking calendar selector.</p>
+              </div>
+
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1.5">Working Days</label>
+                <div className="grid grid-cols-7 gap-1.5">
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => {
+                    const isSelected = scheduleFormData.days.includes(day);
+                    return (
+                      <button
+                        type="button"
+                        key={day}
+                        onClick={() => {
+                          const newDays = isSelected
+                            ? scheduleFormData.days.filter((d) => d !== day)
+                            : [...scheduleFormData.days, day];
+                          setScheduleFormData({ ...scheduleFormData, days: newDays });
+                        }}
+                        className={`py-2 rounded-xl text-center font-bold text-xs transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-espresso text-cream shadow-xs'
+                            : 'bg-cream/40 text-espresso/40 hover:bg-cream/80'
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Standard Working Hours</label>
+                <input
+                  type="text"
+                  required
+                  value={scheduleFormData.hours}
+                  onChange={(e) => setScheduleFormData({ ...scheduleFormData, hours: e.target.value })}
+                  placeholder="e.g. 9:00 AM – 6:00 PM"
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                />
+              </div>
+
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Weekly Notes / Availability Override</label>
+                <textarea
+                  rows={2}
+                  value={scheduleFormData.weeklyOverride}
+                  onChange={(e) => setScheduleFormData({ ...scheduleFormData, weeklyOverride: e.target.value })}
+                  placeholder="e.g. Unavailable Friday afternoon for supply pickup; open extra Sunday."
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                />
+                <p className="text-[10px] text-espresso/50 mt-1">Sharon can adjust this each week to inform clients or set custom shifts.</p>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3 border-t border-espresso/10">
+                <button
+                  type="button"
+                  onClick={() => setIsStaffScheduleModalOpen(false)}
+                  className="px-4 py-2 bg-cream/50 hover:bg-cream text-espresso font-semibold rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-terracotta hover:bg-espresso text-cream font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  Save Schedule
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add / Edit Client Modal */}
+      {isClientModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-lg w-full max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-espresso/10 pb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                  Client CRM Profile
+                </span>
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso mt-1">
+                  {clientFormData.id ? `Edit ${clientFormData.name}` : 'Add New Client'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsClientModalOpen(false)}
+                className="text-espresso/40 hover:text-espresso p-1 rounded-full text-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveClientForm} className="space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Client Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Jasmine Thorne"
+                    value={clientFormData.name}
+                    onChange={(e) => setClientFormData({ ...clientFormData, name: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Client Status Tag</label>
+                  <select
+                    value={clientFormData.tag}
+                    onChange={(e) => setClientFormData({ ...clientFormData, tag: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  >
+                    <option value="VIP Client">VIP Client</option>
+                    <option value="Regular">Regular</option>
+                    <option value="New Client">New Client</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="(973) 555-0100"
+                    value={clientFormData.phone}
+                    onChange={(e) => setClientFormData({ ...clientFormData, phone: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="client@example.com"
+                    value={clientFormData.email}
+                    onChange={(e) => setClientFormData({ ...clientFormData, email: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Preferred Stylist</label>
+                  <select
+                    value={clientFormData.stylist}
+                    onChange={(e) => setClientFormData({ ...clientFormData, stylist: e.target.value })}
+                    className="w-full px-3 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  >
+                    <option value="Sharon French">Sharon French</option>
+                    <option value="Abigail Charles">Abigail Charles</option>
+                    <option value="No Preference">No Preference</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Total Spent ($)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={clientFormData.totalSpent}
+                    onChange={(e) => setClientFormData({ ...clientFormData, totalSpent: parseFloat(e.target.value) || 0 })}
+                    className="w-full px-3 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Visits Count</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={clientFormData.visitsCount}
+                    onChange={(e) => setClientFormData({ ...clientFormData, visitsCount: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Hair Preferences, Formulas &amp; Private Notes</label>
+                <textarea
+                  rows={3}
+                  placeholder="Notes on scalp sensitivity, curl pattern preferences, parting styles, tea/drink choices..."
+                  value={clientFormData.notes}
+                  onChange={(e) => setClientFormData({ ...clientFormData, notes: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3 border-t border-espresso/10">
+                <button
+                  type="button"
+                  onClick={() => setIsClientModalOpen(false)}
+                  className="px-5 py-2.5 bg-cream/50 hover:bg-cream text-espresso font-semibold rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-terracotta hover:bg-espresso text-cream font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                >
+                  {clientFormData.id ? 'Save Profile' : 'Add Client'}
                 </button>
               </div>
             </form>

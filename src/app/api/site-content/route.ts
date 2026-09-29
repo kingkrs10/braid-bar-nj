@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
 
-// Server-persisted Master Site Content store
-let siteContent = {
+// Primary and fallback storage paths
+const PRIMARY_PATH = path.join(process.cwd(), 'src/data/site-content.json');
+const TMP_PATH = path.join(os.tmpdir(), 'bb_site_content.json');
+
+// Default fallback data if files are unreadable
+const defaultSiteContent = {
   text: {
     heroBadge: '560 Valley Road, West Orange, NJ',
     heroHeadline: 'Crafted Braids, Elevated Care.',
@@ -26,12 +33,12 @@ let siteContent = {
     heroLogo: '/images/branding/logo-braidbar-stacked.png',
   },
   addons: [
-    { id: 'add-1', name: 'Luxury Shampoo & Scalp Detox Wash', price: 35, duration_min: 30 },
-    { id: 'add-2', name: 'Extra Waist / Hip Extended Length', price: 40, duration_min: 45 },
-    { id: 'add-3', name: 'Bohemian Curly Ends (Human Hair)', price: 50, duration_min: 45 },
-    { id: 'add-4', name: 'Custom Hair Color Blending', price: 25, duration_min: 20 },
-    { id: 'add-5', name: 'Goddess Braid Accents', price: 30, duration_min: 30 },
-    { id: 'add-6', name: 'Braid Takedown & Comb Out Prep', price: 60, duration_min: 60 },
+    { id: 'add-1', name: 'Luxury Shampoo & Scalp Detox Wash', price: 35, duration_min: 30, applicableTo: 'all', applicableServiceIds: [] },
+    { id: 'add-2', name: 'Extra Waist / Hip Extended Length', price: 40, duration_min: 45, applicableTo: 'all', applicableServiceIds: [] },
+    { id: 'add-3', name: 'Bohemian Curly Ends (Human Hair)', price: 50, duration_min: 45, applicableTo: 'all', applicableServiceIds: [] },
+    { id: 'add-4', name: 'Custom Hair Color Blending', price: 25, duration_min: 20, applicableTo: 'all', applicableServiceIds: [] },
+    { id: 'add-5', name: 'Goddess Braid Accents', price: 30, duration_min: 30, applicableTo: 'all', applicableServiceIds: [] },
+    { id: 'add-6', name: 'Braid Takedown & Comb Out Prep', price: 60, duration_min: 60, applicableTo: 'all', applicableServiceIds: [] },
   ],
   staffCalendars: [
     {
@@ -71,7 +78,7 @@ let siteContent = {
     'Kids Styles',
     'Maintenance',
     "Men's Styles",
-    'Twist Styles'
+    'Twist Styles',
   ],
   staffSchedules: [
     {
@@ -93,7 +100,7 @@ let siteContent = {
       days: ['Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       hours: '10:00 AM – 5:00 PM',
       weeklyOverride: 'Preps, washes & braid removal support',
-    }
+    },
   ],
   doubleBooking: false,
   imageSettings: {
@@ -106,35 +113,106 @@ let siteContent = {
   lastUpdated: new Date().toISOString(),
 };
 
+// In-memory cache for ultra-fast response
+let cachedData: typeof defaultSiteContent | null = null;
+
+function loadFromDisk(): typeof defaultSiteContent {
+  // 1. Try primary repo file
+  try {
+    if (fs.existsSync(PRIMARY_PATH)) {
+      const raw = fs.readFileSync(PRIMARY_PATH, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        return { ...defaultSiteContent, ...parsed };
+      }
+    }
+  } catch (err) {
+    console.warn('[Site Content API] Could not read primary disk file:', err);
+  }
+
+  // 2. Try temp file
+  try {
+    if (fs.existsSync(TMP_PATH)) {
+      const raw = fs.readFileSync(TMP_PATH, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        return { ...defaultSiteContent, ...parsed };
+      }
+    }
+  } catch (err) {
+    console.warn('[Site Content API] Could not read temp disk file:', err);
+  }
+
+  return defaultSiteContent;
+}
+
+function saveToDisk(data: typeof defaultSiteContent) {
+  const serialized = JSON.stringify(data, null, 2);
+
+  // 1. Try to save to primary file
+  try {
+    const dir = path.dirname(PRIMARY_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(PRIMARY_PATH, serialized, 'utf-8');
+  } catch (err) {
+    // Expected on read-only serverless lambdas
+    console.warn('[Site Content API] Notice: Primary disk write not allowed (serverless read-only):', err);
+  }
+
+  // 2. Try to save to temp directory (almost always writable on serverless)
+  try {
+    fs.writeFileSync(TMP_PATH, serialized, 'utf-8');
+  } catch (err) {
+    console.warn('[Site Content API] Temp disk write failed:', err);
+  }
+}
+
 export async function GET() {
+  if (!cachedData) {
+    cachedData = loadFromDisk();
+  }
+
   return NextResponse.json({
     success: true,
-    data: siteContent,
+    data: cachedData,
   });
 }
 
 export async function POST(request: Request) {
   try {
+    if (!cachedData) {
+      cachedData = loadFromDisk();
+    }
+
     const body = await request.json();
-    if (body.text) siteContent.text = { ...siteContent.text, ...body.text };
-    if (body.images) siteContent.images = { ...siteContent.images, ...body.images };
-    if (body.addons) siteContent.addons = body.addons;
-    if (body.staffCalendars) siteContent.staffCalendars = body.staffCalendars;
-    if (body.lookbook) siteContent.lookbook = body.lookbook;
-    if (body.services) siteContent.services = body.services;
-    if (body.categories) siteContent.categories = body.categories;
-    if (body.staffSchedules) siteContent.staffSchedules = body.staffSchedules;
-    if (body.doubleBooking !== undefined) siteContent.doubleBooking = body.doubleBooking;
-    if (body.imageSettings) siteContent.imageSettings = { ...siteContent.imageSettings, ...body.imageSettings };
-    if (body.clients) siteContent.clients = body.clients;
-    siteContent.lastUpdated = new Date().toISOString();
+
+    // Deep merge incoming updates
+    if (body.text) cachedData.text = { ...cachedData.text, ...body.text };
+    if (body.images) cachedData.images = { ...cachedData.images, ...body.images };
+    if (body.addons && Array.isArray(body.addons)) cachedData.addons = body.addons;
+    if (body.staffCalendars && Array.isArray(body.staffCalendars)) cachedData.staffCalendars = body.staffCalendars;
+    if (body.lookbook && Array.isArray(body.lookbook)) cachedData.lookbook = body.lookbook;
+    if (body.services && Array.isArray(body.services) && body.services.length > 0) cachedData.services = body.services;
+    if (body.categories && Array.isArray(body.categories)) cachedData.categories = body.categories;
+    if (body.staffSchedules && Array.isArray(body.staffSchedules)) cachedData.staffSchedules = body.staffSchedules;
+    if (body.doubleBooking !== undefined) cachedData.doubleBooking = Boolean(body.doubleBooking);
+    if (body.imageSettings) cachedData.imageSettings = { ...cachedData.imageSettings, ...body.imageSettings };
+    if (body.clients && Array.isArray(body.clients)) cachedData.clients = body.clients;
+
+    cachedData.lastUpdated = new Date().toISOString();
+
+    // Persist to disk so restarts never lose data
+    saveToDisk(cachedData);
 
     return NextResponse.json({
       success: true,
-      message: 'Site content updated and saved globally!',
-      data: siteContent,
+      message: 'Site content persisted and saved globally across restarts!',
+      data: cachedData,
     });
   } catch (error) {
+    console.error('[Site Content API] Failed to update site content:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update site content' },
       { status: 500 }

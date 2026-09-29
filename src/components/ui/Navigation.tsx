@@ -6,10 +6,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Scissors, Instagram } from 'lucide-react';
 import { useUIStore } from '@/lib/store';
 import { cn, getWhatsAppLink } from '@/lib/utils';
+import { handleImageFallback } from '@/lib/image-optimizer';
 
 export default function Navigation() {
   const { isMobileMenuOpen, toggleMobileMenu, setMobileMenuOpen } = useUIStore();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [logoUrl, setLogoUrl] = useState('/images/branding/logo-monogram-bb.png');
 
   const whatsappUrl = getWhatsAppLink({
     serviceName: 'Hair Styling Session',
@@ -23,7 +25,25 @@ export default function Navigation() {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    const syncLogo = () => {
+      try {
+        const stored = localStorage.getItem('bb_site_images');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.navLogo) setLogoUrl(parsed.navLogo);
+        }
+      } catch {}
+    };
+    syncLogo();
+    window.addEventListener('storage', syncLogo);
+    window.addEventListener('bb_siteimages_updated', syncLogo);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('storage', syncLogo);
+      window.removeEventListener('bb_siteimages_updated', syncLogo);
+    };
   }, []);
 
   const navLinks = [
@@ -49,9 +69,10 @@ export default function Navigation() {
           {/* Logo — BB Monogram Logo */}
           <Link href="/" className="flex items-center select-none group py-0.5">
             <img
-              src="/images/branding/logo-monogram-bb.png"
+              src={logoUrl}
               alt="Braid Bar Logo"
               className="h-8 md:h-10 w-auto object-contain filter drop-shadow-sm transition-transform group-hover:scale-105"
+              onError={(e) => handleImageFallback(e, '/images/branding/logo-monogram-bb.png')}
             />
           </Link>
 

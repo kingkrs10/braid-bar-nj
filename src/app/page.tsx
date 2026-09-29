@@ -21,6 +21,7 @@ import { SplashPage } from '@/components/ui/SplashPage';
 import HeroCanvas from '@/components/hero/HeroCanvas';
 import { getWhatsAppLink, cn } from '@/lib/utils';
 import { ComingSoonPage } from '@/components/ui/ComingSoonPage';
+import { handleImageFallback } from '@/lib/image-optimizer';
 
 /* Animated Section Reveal Wrapper */
 function AnimatedSection({
@@ -71,6 +72,8 @@ export default function HomePage() {
     heroBg: '/images/branding/hero-sitting.jpg',
     salonArch: '/images/salon-reception-arch.jpg',
     portfolioOval: '/images/braids-twists.jpg',
+    sharonPhoto: '/images/branding/profile-sharon-lead.png',
+    abigailPhoto: '/images/branding/profile-abigail-assistant.png',
   });
 
   const [imageSettings, setImageSettings] = useState({
@@ -207,6 +210,7 @@ export default function HomePage() {
               objectPosition: imageSettings.heroBgPosition || 'center 30%',
               transform: imageSettings.heroZoom === '110%' ? 'scale(1.1)' : 'scale(1.0)',
             }}
+            onError={(e) => handleImageFallback(e, '/images/branding/hero-sitting.jpg')}
           />
           {/* Solid dark wash backdrop overlay for text readability */}
           <div className="absolute inset-0 bg-[#000000]/45 z-10 mix-blend-multiply" />
@@ -236,6 +240,7 @@ export default function HomePage() {
                 src="/images/branding/logo-braidbar-stacked.png" 
                 alt="Braid Bar Logo" 
                 className="h-24 sm:h-36 md:h-48 w-auto object-contain filter drop-shadow-lg"
+                onError={(e) => handleImageFallback(e, '/images/branding/logo-braidbar-stacked.png')}
               />
             </div>
 
@@ -311,6 +316,7 @@ export default function HomePage() {
                   alt="Braid Bar NJ Salon Sanctuary"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   style={{ objectPosition: imageSettings.salonArchPosition || 'center' }}
+                  onError={(e) => handleImageFallback(e, "/images/salon-reception-arch.jpg")}
                 />
               </div>
             </div>
@@ -350,6 +356,7 @@ export default function HomePage() {
                 src={siteImages.portfolioOval || "/images/braids-twists.jpg"}
                 alt="Braid Bar twists"
                 className="w-full h-full object-cover"
+                onError={(e) => handleImageFallback(e, "/images/braids-twists.jpg")}
               />
             </div>
 
@@ -391,6 +398,7 @@ export default function HomePage() {
                 src="/images/braids-fulani.jpg"
                 alt="Braid Bar lookbook style"
                 className="w-full h-full object-cover"
+                onError={(e) => handleImageFallback(e, "/images/braids-fulani.jpg")}
               />
             </div>
 
@@ -454,9 +462,10 @@ export default function HomePage() {
             <div className="flex flex-col gap-6">
               <div className="aspect-[4/5] w-full rounded-2xl overflow-hidden border border-espresso/10 bg-cream-dark shadow-sm">
                 <img 
-                  src="/images/branding/profile-sharon-lead.png"
+                  src={siteImages.sharonPhoto || "/images/branding/profile-sharon-lead.png"}
                   alt="Sharon French - Founder & Lead Stylist" 
                   className="w-full h-full object-cover object-[center_20%]"
+                  onError={(e) => handleImageFallback(e, "/images/branding/profile-sharon-lead.png")}
                 />
               </div>
               <div>
@@ -475,9 +484,10 @@ export default function HomePage() {
             <div className="flex flex-col gap-6">
               <div className="aspect-[4/5] w-full rounded-2xl overflow-hidden border border-espresso/10 bg-cream-dark shadow-sm">
                 <img 
-                  src="/images/branding/profile-abigail-assistant.png"
+                  src={siteImages.abigailPhoto || "/images/branding/profile-abigail-assistant.png"}
                   alt="Abigail Charles - Salon Assistant & Stylist" 
                   className="w-full h-full object-cover object-[center_20%]"
+                  onError={(e) => handleImageFallback(e, "/images/branding/profile-abigail-assistant.png")}
                 />
               </div>
               <div>
@@ -571,6 +581,7 @@ export default function HomePage() {
                         src={item.img}
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                        onError={(e) => handleImageFallback(e, 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80')}
                       />
                       <span className="absolute top-3 left-3 bg-cream/90 backdrop-blur-xs text-espresso text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-full border border-espresso/10 font-bold">
                         {item.tag}

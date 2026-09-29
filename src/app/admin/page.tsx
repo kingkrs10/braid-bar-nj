@@ -58,6 +58,7 @@ import {
   Check
 } from 'lucide-react';
 import { formatPrice, formatDuration, getWhatsAppLink } from '@/lib/utils';
+import { uploadImageFile, safeStorageSet, safeStorageGet, handleImageFallback } from '@/lib/image-optimizer';
 
 // Live Bookings Collection (Starts empty & ready for live clients)
 const initialBookings: Array<{
@@ -206,8 +207,32 @@ export default function AdminPage() {
   const handleSaveSiteText = (updatedText: typeof defaultSiteText) => {
     setSiteText(updatedText);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_site_text', JSON.stringify(updatedText));
+      safeStorageSet('bb_site_text', JSON.stringify(updatedText));
       window.dispatchEvent(new Event('bb_sitetext_updated'));
+      syncToApiServer({ text: updatedText });
+    }
+  };
+
+  const handleSaveAllSiteContent = (updatedText?: typeof defaultSiteText) => {
+    const textToSave = updatedText || siteText;
+    setSiteText(textToSave);
+    if (typeof window !== 'undefined') {
+      safeStorageSet('bb_site_text', JSON.stringify(textToSave));
+      safeStorageSet('bb_site_images', JSON.stringify(siteImages));
+      safeStorageSet('bb_image_settings', JSON.stringify(imageSettings));
+      safeStorageSet('bb_lookbook_list', JSON.stringify(lookbookList));
+
+      window.dispatchEvent(new Event('bb_sitetext_updated'));
+      window.dispatchEvent(new Event('bb_siteimages_updated'));
+      window.dispatchEvent(new Event('bb_image_settings_updated'));
+      window.dispatchEvent(new Event('bb_lookbook_updated'));
+
+      syncToApiServer({
+        text: textToSave,
+        images: siteImages,
+        imageSettings,
+        lookbook: lookbookList,
+      });
     }
   };
 
@@ -511,14 +536,28 @@ export default function AdminPage() {
     ];
   });
 
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleUploadFileAsync = async (
+    file: File,
+    category: string,
+    callback: (url: string) => void
+  ) => {
+    setIsUploadingImage(true);
+    try {
+      const optimizedUrl = await uploadImageFile(file, category);
+      callback(optimizedUrl);
+    } catch (err) {
+      console.error('Upload failed:', err);
+      alert('Could not process this image file. Please try another image.');
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  // Backward compatibility alias for any component still calling handleFileUpload
   const handleFileUpload = (file: File, callback: (url: string) => void) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        callback(e.target.result as string);
-      }
-    };
-    reader.readAsDataURL(file);
+    handleUploadFileAsync(file, 'general', callback);
   };
 
   const handleAddLookbookPhoto = (title: string, tag: string, imgUrl: string, desc: string) => {
@@ -526,7 +565,7 @@ export default function AdminPage() {
     const updated = [newItem, ...lookbookList];
     setLookbookList(updated);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_lookbook_list', JSON.stringify(updated));
+      safeStorageSet('bb_lookbook_list', JSON.stringify(updated));
       window.dispatchEvent(new Event('bb_lookbook_updated'));
       syncToApiServer({ lookbook: updated });
     }
@@ -536,7 +575,7 @@ export default function AdminPage() {
     const updated = lookbookList.map((item) => (item.id === id ? { ...item, ...newFields } : item));
     setLookbookList(updated);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_lookbook_list', JSON.stringify(updated));
+      safeStorageSet('bb_lookbook_list', JSON.stringify(updated));
       window.dispatchEvent(new Event('bb_lookbook_updated'));
       syncToApiServer({ lookbook: updated });
     }
@@ -547,7 +586,7 @@ export default function AdminPage() {
       const updated = lookbookList.filter((item) => item.id !== id);
       setLookbookList(updated);
       if (typeof window !== 'undefined') {
-        localStorage.setItem('bb_lookbook_list', JSON.stringify(updated));
+        safeStorageSet('bb_lookbook_list', JSON.stringify(updated));
         window.dispatchEvent(new Event('bb_lookbook_updated'));
         syncToApiServer({ lookbook: updated });
       }
@@ -714,7 +753,7 @@ export default function AdminPage() {
     salonArchHeight: 'standard',
   };
 
-  const [imageSettings, setImageSettings] = useState(() => {
+  const [imageSettings, setImageSettings] = useState<typeof defaultImageSettings>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('bb_image_settings');
       if (stored) {
@@ -955,7 +994,7 @@ export default function AdminPage() {
     setServicesList(updatedList);
     // ✅ Persist so changes survive page refresh
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_services_list', JSON.stringify(updatedList));
+      safeStorageSet('bb_services_list', JSON.stringify(updatedList));
       window.dispatchEvent(new Event('bb_services_updated'));
       syncToApiServer({ services: updatedList });
     }
@@ -967,11 +1006,80 @@ export default function AdminPage() {
     const updated = servicesList.filter((s) => s.id !== id);
     setServicesList(updated);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_services_list', JSON.stringify(updated));
+      safeStorageSet('bb_services_list', JSON.stringify(updated));
       window.dispatchEvent(new Event('bb_services_updated'));
       syncToApiServer({ services: updated });
     }
   };
+
+  // Self-Healing Initial Hydration & Auto-Reconciliation from Server (/api/site-content)
+  React.useEffect(() => {
+    const hydrateAndSelfHeal = async () => {
+      try {
+        const res = await fetch('/api/site-content');
+        if (res.ok) {
+          const json = await res.json();
+          const serverData = json.data;
+          if (!serverData) return;
+
+          if (serverData.text) {
+            setSiteText((prev) => ({ ...prev, ...serverData.text }));
+            safeStorageSet('bb_site_text', JSON.stringify(serverData.text));
+          }
+
+          if (serverData.images) {
+            setSiteImages((prev) => {
+              const merged = { ...defaultSiteImages, ...prev, ...serverData.images };
+              safeStorageSet('bb_site_images', JSON.stringify(merged));
+              return merged;
+            });
+          }
+
+          if (serverData.imageSettings) {
+            setImageSettings((prev: typeof defaultImageSettings) => {
+              const merged = { ...prev, ...serverData.imageSettings };
+              safeStorageSet('bb_image_settings', JSON.stringify(merged));
+              return merged;
+            });
+          }
+
+          if (Array.isArray(serverData.lookbook) && serverData.lookbook.length > 0) {
+            setLookbookList(serverData.lookbook);
+            safeStorageSet('bb_lookbook_list', JSON.stringify(serverData.lookbook));
+          }
+
+          if (Array.isArray(serverData.services) && serverData.services.length > 0) {
+            setServicesList(serverData.services);
+            safeStorageSet('bb_services_list', JSON.stringify(serverData.services));
+          }
+
+          if (Array.isArray(serverData.categories) && serverData.categories.length > 0) {
+            setCategoriesList(serverData.categories);
+            safeStorageSet('bb_categories_list', JSON.stringify(serverData.categories));
+          }
+
+          if (Array.isArray(serverData.staffSchedules) && serverData.staffSchedules.length > 0) {
+            setStaffSchedules(serverData.staffSchedules);
+            safeStorageSet('bb_staff_schedules', JSON.stringify(serverData.staffSchedules));
+          }
+
+          if (serverData.doubleBooking !== undefined) {
+            setAllowDoubleBooking(Boolean(serverData.doubleBooking));
+            safeStorageSet('bb_allow_double_booking', serverData.doubleBooking ? 'true' : 'false');
+          }
+
+          if (Array.isArray(serverData.clients) && serverData.clients.length > 0) {
+            setClientsList(serverData.clients);
+            safeStorageSet('bb_clients_list', JSON.stringify(serverData.clients));
+          }
+        }
+      } catch (err) {
+        console.warn('[Admin Portal] Initial hydration failed, falling back to local storage:', err);
+      }
+    };
+
+    hydrateAndSelfHeal();
+  }, []);
 
 
   // Update Booking Status
@@ -1018,6 +1126,7 @@ export default function AdminPage() {
               src="/images/branding/logo-monogram-bb.png"
               alt="Braid Bar Monogram Logo"
               className="h-16 w-auto object-contain filter drop-shadow-sm"
+              onError={(e) => handleImageFallback(e, '/images/branding/logo-monogram-bb.png')}
             />
             <div className="inline-flex items-center gap-1.5 bg-terracotta/10 text-terracotta px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
               <Lock className="w-3.5 h-3.5" /> Staff &amp; Owner Security Authorization
@@ -2009,6 +2118,7 @@ export default function AdminPage() {
                             src={srv.image_url || '/images/branding/logo-monogram-bb.png'}
                             alt={srv.name}
                             className="w-full h-full object-cover"
+                            onError={(e) => handleImageFallback(e, '/images/branding/logo-monogram-bb.png')}
                           />
                         </div>
                         <div className="flex-1">
@@ -2240,7 +2350,7 @@ export default function AdminPage() {
               </div>
               <button
                 onClick={() => {
-                  handleSaveSiteText(siteText);
+                  handleSaveAllSiteContent(siteText);
                   handleTriggerDeploy();
                   alert('✨ All website text, headlines, slogans, and image assets saved & published live!');
                 }}
@@ -2358,7 +2468,12 @@ export default function AdminPage() {
                   <div key={item.id} className="bg-cream/20 p-4 rounded-2xl border border-espresso/10 flex flex-col justify-between space-y-3">
                     <div>
                       <div className="aspect-[4/3] w-full rounded-xl overflow-hidden border border-espresso/10 bg-black/5 relative mb-3 group">
-                        <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
+                        <img 
+                          src={item.img} 
+                          alt={item.title} 
+                          className="w-full h-full object-cover" 
+                          onError={(e) => handleImageFallback(e, 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80')}
+                        />
                         <span className="absolute top-2 left-2 bg-espresso/90 text-cream text-[9px] font-bold uppercase px-2 py-0.5 rounded-full">
                           {item.tag}
                         </span>
@@ -2400,15 +2515,17 @@ export default function AdminPage() {
                     <div className="space-y-2 pt-2 border-t border-espresso/10">
                       {/* Device File Upload */}
                       <label className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                        <Upload className="w-3.5 h-3.5" /> 📁 Upload Photo from Device
+                        {isUploadingImage ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                        {isUploadingImage ? 'Optimizing & Saving...' : '📁 Upload Photo from Device'}
                         <input
                           type="file"
                           accept="image/*"
+                          disabled={isUploadingImage}
                           className="hidden"
-                          onChange={(e) => {
+                          onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {
-                              handleFileUpload(file, (url) => handleUpdateLookbookPhoto(item.id, { img: url }));
+                              await handleUploadFileAsync(file, 'lookbook', (url) => handleUpdateLookbookPhoto(item.id, { img: url }));
                             }
                           }}
                         />
@@ -2441,6 +2558,7 @@ export default function AdminPage() {
                       src={siteImages.sharonPhoto}
                       alt="Sharon French"
                       className="w-14 h-14 rounded-full object-cover border-2 border-terracotta"
+                      onError={(e) => handleImageFallback(e, '/images/branding/profile-sharon-lead.png')}
                     />
                     <div>
                       <h5 className="font-bold text-espresso text-sm">Sharon French</h5>
@@ -2449,23 +2567,42 @@ export default function AdminPage() {
                   </div>
 
                   <div>
-                    <label className="block text-espresso/70 font-semibold mb-1">Headshot Photo URL</label>
+                    <label className="block text-espresso/70 font-semibold mb-1">Headshot Photo (URL or Device Upload)</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={siteImages.sharonPhoto}
-                        onChange={(e) => setSiteImages({ ...siteImages, sharonPhoto: e.target.value })}
+                        onChange={(e) => {
+                          const updated = { ...siteImages, sharonPhoto: e.target.value };
+                          setSiteImages(updated);
+                          safeStorageSet('bb_site_images', JSON.stringify(updated));
+                          window.dispatchEvent(new Event('bb_siteimages_updated'));
+                          syncToApiServer({ images: updated });
+                        }}
                         className="flex-1 px-3 py-1.5 bg-white border border-espresso/10 rounded-lg text-xs"
                       />
-                      <button
-                        onClick={() => {
-                          const newUrl = prompt('Enter Sharon Headshot Photo URL:', siteImages.sharonPhoto);
-                          if (newUrl) setSiteImages({ ...siteImages, sharonPhoto: newUrl });
-                        }}
-                        className="px-3 py-1.5 bg-espresso text-cream rounded-lg text-xs font-semibold cursor-pointer"
-                      >
+                      <label className="px-3 py-1.5 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold cursor-pointer flex items-center gap-1 transition-all">
+                        {isUploadingImage ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
                         Upload
-                      </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          disabled={isUploadingImage}
+                          className="hidden"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              await handleUploadFileAsync(file, 'sharonPhoto', (url) => {
+                                const updated = { ...siteImages, sharonPhoto: url };
+                                setSiteImages(updated);
+                                safeStorageSet('bb_site_images', JSON.stringify(updated));
+                                window.dispatchEvent(new Event('bb_siteimages_updated'));
+                                syncToApiServer({ images: updated });
+                              });
+                            }
+                          }}
+                        />
+                      </label>
                     </div>
                   </div>
 
@@ -2497,6 +2634,7 @@ export default function AdminPage() {
                       src={siteImages.abigailPhoto}
                       alt="Abigail Charles"
                       className="w-14 h-14 rounded-full object-cover border-2 border-terracotta"
+                      onError={(e) => handleImageFallback(e, '/images/branding/profile-abigail-assistant.png')}
                     />
                     <div>
                       <h5 className="font-bold text-espresso text-sm">Abigail Charles</h5>
@@ -2505,23 +2643,42 @@ export default function AdminPage() {
                   </div>
 
                   <div>
-                    <label className="block text-espresso/70 font-semibold mb-1">Headshot Photo URL</label>
+                    <label className="block text-espresso/70 font-semibold mb-1">Headshot Photo (URL or Device Upload)</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={siteImages.abigailPhoto}
-                        onChange={(e) => setSiteImages({ ...siteImages, abigailPhoto: e.target.value })}
+                        onChange={(e) => {
+                          const updated = { ...siteImages, abigailPhoto: e.target.value };
+                          setSiteImages(updated);
+                          safeStorageSet('bb_site_images', JSON.stringify(updated));
+                          window.dispatchEvent(new Event('bb_siteimages_updated'));
+                          syncToApiServer({ images: updated });
+                        }}
                         className="flex-1 px-3 py-1.5 bg-white border border-espresso/10 rounded-lg text-xs"
                       />
-                      <button
-                        onClick={() => {
-                          const newUrl = prompt('Enter Abigail Headshot Photo URL:', siteImages.abigailPhoto);
-                          if (newUrl) setSiteImages({ ...siteImages, abigailPhoto: newUrl });
-                        }}
-                        className="px-3 py-1.5 bg-espresso text-cream rounded-lg text-xs font-semibold cursor-pointer"
-                      >
+                      <label className="px-3 py-1.5 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold cursor-pointer flex items-center gap-1 transition-all">
+                        {isUploadingImage ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
                         Upload
-                      </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          disabled={isUploadingImage}
+                          className="hidden"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              await handleUploadFileAsync(file, 'abigailPhoto', (url) => {
+                                const updated = { ...siteImages, abigailPhoto: url };
+                                setSiteImages(updated);
+                                safeStorageSet('bb_site_images', JSON.stringify(updated));
+                                window.dispatchEvent(new Event('bb_siteimages_updated'));
+                                syncToApiServer({ images: updated });
+                              });
+                            }
+                          }}
+                        />
+                      </label>
                     </div>
                   </div>
 
@@ -2570,25 +2727,32 @@ export default function AdminPage() {
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta block mb-1">{asset.title}</span>
                       <p className="text-[10px] text-espresso/60 mb-2 font-light">{asset.note}</p>
-                      <div className="aspect-video w-full rounded-lg overflow-hidden border border-espresso/10 bg-black/5 mb-2">
-                        <img src={asset.img} alt={asset.title} className="w-full h-full object-cover" />
+                      <div className="aspect-video w-full rounded-lg overflow-hidden border border-espresso/10 bg-black/5 mb-2 relative">
+                        <img 
+                          src={asset.img} 
+                          alt={asset.title} 
+                          className="w-full h-full object-cover" 
+                          onError={(e) => handleImageFallback(e, defaultSiteImages[asset.key] || '/images/branding/hero-sitting.jpg')}
+                        />
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <label className="w-full py-2 bg-espresso hover:bg-terracotta text-cream rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                        <Upload className="w-3.5 h-3.5" /> 📁 Upload Photo from Device
+                        {isUploadingImage ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                        {isUploadingImage ? 'Optimizing & Saving...' : '📁 Upload Photo from Device'}
                         <input
                           type="file"
                           accept="image/*"
+                          disabled={isUploadingImage}
                           className="hidden"
-                          onChange={(e) => {
+                          onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {
-                              handleFileUpload(file, (url) => {
+                              await handleUploadFileAsync(file, asset.key, (url) => {
                                 const updated = { ...siteImages, [asset.key]: url };
                                 setSiteImages(updated);
-                                localStorage.setItem('bb_site_images', JSON.stringify(updated));
+                                safeStorageSet('bb_site_images', JSON.stringify(updated));
                                 window.dispatchEvent(new Event('bb_siteimages_updated'));
                                 syncToApiServer({ images: updated });
                               });
@@ -4107,7 +4271,12 @@ export default function AdminPage() {
                 <div className="flex items-center gap-3">
                   <div className="w-16 h-16 rounded-xl border border-espresso/15 bg-cream/40 overflow-hidden flex-shrink-0 flex items-center justify-center">
                     {serviceFormData.image_url ? (
-                      <img src={serviceFormData.image_url} alt="Service preview" className="w-full h-full object-cover" />
+                      <img 
+                        src={serviceFormData.image_url} 
+                        alt="Service preview" 
+                        className="w-full h-full object-cover" 
+                        onError={(e) => handleImageFallback(e, 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80')}
+                      />
                     ) : (
                       <Sparkles className="w-6 h-6 text-espresso/30" />
                     )}
@@ -4121,16 +4290,18 @@ export default function AdminPage() {
                       className="w-full px-3 py-1.5 bg-cream/30 border border-espresso/15 rounded-lg text-xs font-mono text-espresso focus:outline-none focus:border-terracotta"
                     />
                     <label className="inline-flex items-center gap-1.5 px-3 py-1 bg-espresso/5 hover:bg-espresso/10 text-espresso text-[11px] font-semibold rounded-lg cursor-pointer transition-colors border border-espresso/10">
-                      <Upload className="w-3.5 h-3.5 text-terracotta" /> Upload Image from Device
+                      {isUploadingImage ? <RefreshCw className="w-3.5 h-3.5 text-terracotta animate-spin" /> : <Upload className="w-3.5 h-3.5 text-terracotta" />}
+                      {isUploadingImage ? 'Optimizing...' : 'Upload Image from Device'}
                       <input
                         type="file"
                         accept="image/*"
+                        disabled={isUploadingImage}
                         className="hidden"
-                        onChange={(e) => {
+                        onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            handleFileUpload(file, (url) => {
-                              setServiceFormData({ ...serviceFormData, image_url: url });
+                            await handleUploadFileAsync(file, 'service', (url) => {
+                              setServiceFormData((prev) => ({ ...prev, image_url: url }));
                             });
                           }
                         }}

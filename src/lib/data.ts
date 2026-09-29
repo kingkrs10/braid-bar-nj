@@ -36,7 +36,7 @@ export const services: Service[] = [
     "description": "Crochet Box Braids or Twist\n\nA low-maintenance, protective style that promotes healthy hair growth while allowing your scalp to breathe.\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nPlease Note:\nHair is not provided. Please check your local beauty supply store. For more hair options Amazon has a large variety of hair colors and options. \n\nHair is not provided,",
     "duration_min": 90,
     "price": 150,
-    "deposit_amount": 38,
+    "deposit_amount": 50,
     "category": "Crochet",
     "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18980676.jpeg?1678372330"
   },
@@ -46,7 +46,7 @@ export const services: Service[] = [
     "description": "Crochet Weave\nA low-maintenance, protective style that promotes healthy hair growth while allowing your scalp to breathe.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nPlease Note:\nHair is not provided. Please check your local beauty supply store. For more hair options Amazon has a large variety of hair colors and options.",
     "duration_min": 150,
     "price": 175,
-    "deposit_amount": 44,
+    "deposit_amount": 50,
     "category": "Crochet",
     "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18980630.jpeg?1684462316"
   },
@@ -66,7 +66,7 @@ export const services: Service[] = [
     "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
     "duration_min": 60,
     "price": 60,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Feed-Ins",
     "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-13734724.jpeg?1585548331"
   },
@@ -76,7 +76,7 @@ export const services: Service[] = [
     "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
     "duration_min": 90,
     "price": 80,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Feed-Ins",
     "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971011.jpeg?1728488258"
   },
@@ -86,7 +86,7 @@ export const services: Service[] = [
     "description": "Feed-in braids are the perfect style for protecting your natural hair.\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (one pack for 2-4 braids and two packs of hair for 5 or more braids).",
     "duration_min": 120,
     "price": 95,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Feed-Ins",
     "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
   },
@@ -96,7 +96,7 @@ export const services: Service[] = [
     "description": "Small Fulani Braids. Knotless braids in the back and cornrows in the front.\n\n*Style pictured has a “Creative Design”\n\nPrep:\nPlease book your wash \"add-on\" or arrive with your hair washed, blow-dried, and flake-free for the best results.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}",
     "duration_min": 420,
     "price": 325,
-    "deposit_amount": 81,
+    "deposit_amount": 50,
     "category": "Fulani Braids",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -106,7 +106,7 @@ export const services: Service[] = [
     "description": "Medium Fulani Braids.  Knotless braids in the back and cornrows in the front.\n\nPrep:\nPlease book your wash \"add-on\" or arrive with your hair washed, blow-dried, and flake-free for the best results.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}",
     "duration_min": 360,
     "price": 275,
-    "deposit_amount": 69,
+    "deposit_amount": 50,
     "category": "Fulani Braids",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -116,7 +116,7 @@ export const services: Service[] = [
     "description": "Large Fulani Braids. Knotless braids in the back and cornrows in the front.\n\nPrep:\nPlease book your wash \"add-on\" or arrive with your hair washed, blow-dried, and flake-free for the best results.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}\n\nStyle pictured has “Creative Design” add-on.",
     "duration_min": 300,
     "price": 250,
-    "deposit_amount": 63,
+    "deposit_amount": 50,
     "category": "Fulani Braids",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -136,7 +136,7 @@ export const services: Service[] = [
     "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRows:\n5 front, 3 back\n2-3 curls on each braid.\n\nPrep:\nHair can be washed and blown dry prior to service or you can book your wash \"add-on\". \n\nHair: 100% Human hair 3 individual packs. Hair curls or pattern is client preference. Braiding Hair is available for purchase under “add-ons”",
     "duration_min": 390,
     "price": 350,
-    "deposit_amount": 88,
+    "deposit_amount": 50,
     "category": "Human Hair Knotless",
     "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
   },
@@ -146,7 +146,7 @@ export const services: Service[] = [
     "description": "Lightweight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRows:\n6 front, 3 back\n5-6 curls on each braid.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair: 100% Human hair ygwigs.com {3 individual packs} body wave or similar brand Depending on the volume of curls you want. Must be 18-24 inches",
     "duration_min": 600,
     "price": 450,
-    "deposit_amount": 113,
+    "deposit_amount": 50,
     "category": "Human Hair Knotless",
     "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
   },
@@ -156,7 +156,7 @@ export const services: Service[] = [
     "description": "Kids prices are for ages 10 and under.\n\nLight-weight. Pain free.\n\nRows:\n4 front, 2 back\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair {2 packs}",
     "duration_min": 240,
     "price": 175,
-    "deposit_amount": 44,
+    "deposit_amount": 50,
     "category": "Kids Styles",
     "image_url": "https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80"
   },
@@ -166,7 +166,7 @@ export const services: Service[] = [
     "description": "Miracle Knots is a viral crochet hairstyle that offers a quick and easy way to achieve a boho braids look without the long installation time or high cost of traditional methods.\n\nKids prices are for ages 10 and under.\n\nLight weight. Pain free.\n\nRows:\n5 front, 3 back\n\nPrep:\nHair must be washed and blown dry prior to service unless shampoo service was booked. Scalp must be clean + flake free.\n\nHair:\nFeather Human Crochet Hair {3 packs}",
     "duration_min": 180,
     "price": 175,
-    "deposit_amount": 44,
+    "deposit_amount": 50,
     "category": "Kids Styles",
     "image_url": "https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80"
   },
@@ -186,7 +186,7 @@ export const services: Service[] = [
     "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {Medium}:\nNot recommended for short or fine hair textures\nRows:\n5 front, 2 back\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair:\nHair is available for purchase.  \nRuwa hair preferred or most pre-stretched brands {3 indi",
     "duration_min": 330,
     "price": 235,
-    "deposit_amount": 59,
+    "deposit_amount": 50,
     "category": "Knotless Braids",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -196,7 +196,7 @@ export const services: Service[] = [
     "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nRows:\n5 front, 3 back\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {3 individual packs}",
     "duration_min": 420,
     "price": 250,
-    "deposit_amount": 63,
+    "deposit_amount": 50,
     "category": "Knotless Braids",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -206,7 +206,7 @@ export const services: Service[] = [
     "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {Large}: Not recommended for short or fine hair textures\nRows:\n3 front, 2 back\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". \n\nHair:\nHair is available for purchase.\nRuwa hair preferred or most pre-stretched brands.",
     "duration_min": 240,
     "price": 210,
-    "deposit_amount": 53,
+    "deposit_amount": 50,
     "category": "Knotless Braids",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -216,7 +216,7 @@ export const services: Service[] = [
     "description": "Get your locs started today!\n\nComb coil locs with box or free parts. Low maintenance. The duration of the starter loc phase can vary depending on hair type, texture, and individual growth rate, potentially lasting a few weeks to several months. The duration of the starter loc phase can vary depending on hair type, texture, and individual growth rate, potentially lasting four weeks.\n\n“Starter locs” this option should be selected until locs begin to fuse together.",
     "duration_min": 180,
     "price": 150,
-    "deposit_amount": 38,
+    "deposit_amount": 50,
     "category": "Locs",
     "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
   },
@@ -226,7 +226,7 @@ export const services: Service[] = [
     "description": "Start your micro loc journey today. Please book a consultation BEFORE booking this service. Clients' hair density will determine if you are a good candidate for this hairstyle. This style can take 18 to 24 hours so it will be broken out into two sessions.\n\nPrice does vary depending on hair length. It’s $100 extra per inch.",
     "duration_min": 720,
     "price": 600,
-    "deposit_amount": 150,
+    "deposit_amount": 50,
     "category": "Locs",
     "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
   },
@@ -236,7 +236,7 @@ export const services: Service[] = [
     "description": "A style refresh with track tightening and shampoo included.",
     "duration_min": 90,
     "price": 75,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Maintenance",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -246,7 +246,7 @@ export const services: Service[] = [
     "description": "Loc retwist which includes shampoo and twist. No style.",
     "duration_min": 120,
     "price": 95,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Maintenance",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -256,7 +256,7 @@ export const services: Service[] = [
     "description": "Get your locs started today!\n\nComb coil locs with box or free parts. Low maintenance. The duration of the starter loc phase can vary depending on hair type, texture, and individual growth rate, potentially lasting a few weeks to several months. The duration of the starter loc phase can vary depending on hair type, texture, and individual growth rate, potentially lasting four weeks.\n\n“Starter locs” this option should be selected until locs begin to fuse together.",
     "duration_min": 180,
     "price": 125,
-    "deposit_amount": 31,
+    "deposit_amount": 50,
     "category": "Maintenance",
     "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
   },
@@ -266,7 +266,7 @@ export const services: Service[] = [
     "description": "No hair added. Creative design (cris cross, zig zag).\n\nPrep:\nPlease come with hair washed and blown dry, or you can book your wash \"add-on\". A clean and flake free scalp produces best results.",
     "duration_min": 120,
     "price": 120,
-    "deposit_amount": 30,
+    "deposit_amount": 50,
     "category": "Men's Styles",
     "image_url": "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80"
   },
@@ -276,7 +276,7 @@ export const services: Service[] = [
     "description": "Simple cornrow protective style with no hair added.\n\nA additional fee may be added for designs or small braids.\n\nPrep:\nPlease come with hair washed and blown dry, or you can book your wash \"add-on\". A clean and flake free scalp produces best results.",
     "duration_min": 90,
     "price": 90,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Men's Styles",
     "image_url": "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80"
   },
@@ -286,7 +286,7 @@ export const services: Service[] = [
     "description": "Protective style with no hair added.\n\nAn additional fee may be added for designs or small braids.\n\nPrep:\nPlease come with hair washed and blown dry, or you can book your wash \"add-on\". A clean and flake free scalp produces best results.",
     "duration_min": 60,
     "price": 55,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Men's Styles",
     "image_url": "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80"
   },
@@ -296,7 +296,7 @@ export const services: Service[] = [
     "description": "Sew-in Weave. Crown of your natural hair is left out to give the most natural look and feel. Wear it up or down. Currently only providing curly weaves. No straighten services available at this time.  \n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your washed \"add-on\". Scalp must be clean + flake free.\n\nHair: 100% Human Hair 2 bundles of hair. Curls or pattern is client preference.",
     "duration_min": 180,
     "price": 225,
-    "deposit_amount": 56,
+    "deposit_amount": 50,
     "category": "WEAVE",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -316,7 +316,7 @@ export const services: Service[] = [
     "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {jumbo]:\nNot recommended for short or fine hair textures\nRows:\n4 front, 2 back\nPrep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase.\nRuwa hair preferred or most pre-stretched brands.",
     "duration_min": 240,
     "price": 175,
-    "deposit_amount": 44,
+    "deposit_amount": 50,
     "category": "STYLIST// Abby Charles",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -326,7 +326,7 @@ export const services: Service[] = [
     "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {jumbo]:\nNot recommended for short or fine hair textures\nRows:\n4 front, 2 back\nPrep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase.\nRuwa hair preferred or most pre-stretched brands.",
     "duration_min": 200,
     "price": 150,
-    "deposit_amount": 38,
+    "deposit_amount": 50,
     "category": "STYLIST// Abby Charles",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -336,7 +336,7 @@ export const services: Service[] = [
     "description": "Light-weight. Pain free.\n\nKnotless braids are a breath of fresh air, a far cry from traditional box braids. Forgiving on the scalp and safe on your edges. All textures are welcome and work well with this method. \n\nKnotless Braids {jumbo]:\nNot recommended for short or fine hair textures\nRows:\n3 front, 1 back\nPrep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free.\n\nHair:\nHair is available for purchase.\nRuwa hair preferred or most pre-stretched brands",
     "duration_min": 240,
     "price": 150,
-    "deposit_amount": 38,
+    "deposit_amount": 50,
     "category": "STYLIST// Abby Charles",
     "image_url": "https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80"
   },
@@ -346,7 +346,7 @@ export const services: Service[] = [
     "description": "Shampoo, deep conditioning, steam treatment, and blow dry. Clients' natural hair will be put into 2 simple cornrows.",
     "duration_min": 120,
     "price": 125,
-    "deposit_amount": 31,
+    "deposit_amount": 50,
     "category": "Takedown",
     "image_url": "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80"
   },
@@ -356,7 +356,7 @@ export const services: Service[] = [
     "description": "Shampoo, deep conditioning, steam treatment, and blow dry. Clients' natural hair will be put into 2 simple cornrows.",
     "duration_min": 120,
     "price": 100,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Takedown",
     "image_url": "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80"
   },
@@ -366,7 +366,7 @@ export const services: Service[] = [
     "description": "Shampoo, deep conditioning, steam treatment, and blow dry. Clients' natural hair will be put into 2 simple cornrows.",
     "duration_min": 180,
     "price": 150,
-    "deposit_amount": 38,
+    "deposit_amount": 50,
     "category": "Takedown",
     "image_url": "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80"
   },
@@ -376,7 +376,7 @@ export const services: Service[] = [
     "description": "Mini Twist with your natural hair and no hair added. Starts at $150 depending on length Done with small parts 3 rows in the back and 6 rows on each side in the front. A consultation is suggested before this style is rendered. Light weight. Tension free style. A good alternative to braids. Versatile protective style.\nPrep:\nHair must be washed and blown dry prior to service. Scalp must be clean + flake free. you can also select a Shampoo Service.",
     "duration_min": 180,
     "price": 150,
-    "deposit_amount": 38,
+    "deposit_amount": 50,
     "category": "Twist Styles",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -386,7 +386,7 @@ export const services: Service[] = [
     "description": "A simple, lightweight, protective style, perfect for the summer time, or anytime. \n\nHair Prep:\nHair can be washed and blown dry prior to appointment, or you can book your wash \"add-on\". A clean, flake free scalp produces best results. \n\nHair Recommended:\nQVR Afro Kinky Bulk \nhttps://qvr.com/products/qvr-natural-black-afro-kinky-bulk-hair-extensions-for-braiding-dreadlock-human-hair\n4 packs\n*Hair Not provided*",
     "duration_min": 480,
     "price": 350,
-    "deposit_amount": 88,
+    "deposit_amount": 50,
     "category": "Twist Styles",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -396,7 +396,7 @@ export const services: Service[] = [
     "description": "Passion Twist are Light-weight. Tension free style. A good alternative to braids. Versatile protective style.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nHair:\nWe do not provide hair.\nSpring Twist hair [3 packs] -OR-\nPassion Twist- Lulutress Water wave [6 packs]",
     "duration_min": 300,
     "price": 225,
-    "deposit_amount": 56,
+    "deposit_amount": 50,
     "category": "Twist Styles",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -406,7 +406,7 @@ export const services: Service[] = [
     "description": "Keep it Sleek and Simple with this style!\n\nThis style is two buns with one under the crown of the head and one on your nape.\n\n//PRICE// varies depending on style $65 is a starting price. \n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean.\n\n(Salon does not provide hair for this style)\nRuwa hair {1 pack} for this style\nAdded an addition? Please bring a additional pack.",
     "duration_min": 30,
     "price": 100,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Updo's + Ponytails + Simple Styles",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -416,7 +416,7 @@ export const services: Service[] = [
     "description": "Butterfly Braids.\n2 feed-in braids with curls added to the ends.\n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean + flake free.\n\nPrice:\n\nHair:\nHair is available for purchase, please select color(s) located under “add-on’s”.\nRuwa hair preferred or most pre-stretched brands {1 individual pack} \n2-packs of sewn in hair. Any brand of your choice as long as the hair is on a track.",
     "duration_min": 90,
     "price": 90,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Updo's + Ponytails + Simple Styles",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -426,7 +426,7 @@ export const services: Service[] = [
     "description": "Keep it Sleek and Simple with this style!\n\nThis style is one bun that can be on you nape (as pictured) or a cute top knot!\n\nDouble up on this fun style. Make it two buns instead of one click “add on”.\n\n//PRICE// varies depending on style $65 is a starting price. \n\nPrep:\nHair can be washed and blown dry prior to service, or you can book your wash \"add-on\". Scalp must be clean.\n\n(Salon does not provide hair for this style)\nRuwa hair {1 pack} for one bun\nAdded a addition? Please bring a additional pack.",
     "duration_min": 60,
     "price": 80,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Updo's + Ponytails + Simple Styles",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   },
@@ -436,11 +436,35 @@ export const services: Service[] = [
     "description": "Book your in-person consultation today! Short hair? Long hair? Do you have questions or concerns regarding a service? \n\nRecommended for Microloc services. $50 will be deducted from your final service once you book your appointment.\n\nPlease book a consultation prior to booking an appointment. The $50 fee will be deducted from your service once you book.",
     "duration_min": 30,
     "price": 50,
-    "deposit_amount": 25,
+    "deposit_amount": 50,
     "category": "Welcome",
     "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
   }
 ];
+
+/**
+ * Normalizes service deposits across the catalog:
+ * - VIP Services maintain their dedicated deposit ($100 for Kanekalon, $150 for Human Hair)
+ * - All other services across-the-board are strictly normalized to $50
+ */
+export function normalizeServiceDeposits<T extends Service = Service>(
+  serviceList: any[]
+): T[] {
+  if (!Array.isArray(serviceList)) return [];
+  return serviceList.map((s) => {
+    const isVip = s.category === 'VIP Services' || s.name?.toLowerCase().includes('vip');
+    if (isVip) {
+      return {
+        ...s,
+        deposit_amount: s.deposit_amount && s.deposit_amount >= 100 ? s.deposit_amount : (s.name?.includes('Human Hair') ? 150 : 100),
+      } as T;
+    }
+    return {
+      ...s,
+      deposit_amount: 50,
+    } as T;
+  });
+}
 
 /* =============================================
    Service Add-ons Catalog (Scraped from Acuity)

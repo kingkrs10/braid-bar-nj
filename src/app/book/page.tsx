@@ -42,7 +42,7 @@ export default function BookPage() {
           </h1>
 
           <p className="text-espresso/70 text-sm md:text-base font-light max-w-2xl mx-auto leading-relaxed">
-            Select your desired protective style, date, and appointment time slot below. A 25% booking deposit secures your VIP chair in West Orange, NJ.
+            Select your desired protective style, date, and appointment time slot below. A $50 booking deposit ($100–$150 for VIP Luxury Experiences) secures your chair in West Orange, NJ.
           </p>
 
           <div className="flex flex-wrap justify-center items-center gap-6 text-xs text-espresso/60 pt-2 font-medium">

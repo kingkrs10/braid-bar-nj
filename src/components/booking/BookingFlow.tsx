@@ -5,7 +5,7 @@ import { DayPicker } from 'react-day-picker';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronDown, ChevronUp, Calendar, User, ShoppingBag, Scissors, ArrowRight, MessageSquare, Plus, Check } from 'lucide-react';
 import { useBookingStore } from '@/lib/store';
-import { services, addons } from '@/lib/data';
+import { services, addons, normalizeServiceDeposits } from '@/lib/data';
 import { formatPrice, formatDuration, getWhatsAppLink } from '@/lib/utils';
 import { TimeSlotGrid } from './TimeSlotGrid';
 import { Checkout } from './Checkout';
@@ -59,18 +59,18 @@ export function BookingFlow() {
   const [lastName, setLastName] = useState('');
   const [hairColorPreference, setHairColorPreference] = useState('');
 
-  // Dynamic services & add-ons from localStorage
+  // Dynamic services & add-ons from localStorage & API
   const [servicesList, setServicesList] = useState<typeof services>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('bb_services_list');
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) return normalizeServiceDeposits(parsed);
         } catch (e) {}
       }
     }
-    return services;
+    return normalizeServiceDeposits(services);
   });
 
   const [addonsList, setAddonsList] = useState<typeof addons>(() => {
@@ -93,7 +93,7 @@ export function BookingFlow() {
         if (s) {
           try {
             const p = JSON.parse(s);
-            if (Array.isArray(p) && p.length > 0) setServicesList(p);
+            if (Array.isArray(p) && p.length > 0) setServicesList(normalizeServiceDeposits(p));
           } catch (e) {}
         }
         const a = localStorage.getItem('bb_addons_list');
@@ -104,6 +104,19 @@ export function BookingFlow() {
           } catch (e) {}
         }
       };
+
+      // Background reconcile with persistent server
+      fetch('/api/site-content')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json?.data?.services && Array.isArray(json.data.services) && json.data.services.length > 0) {
+            const norm = normalizeServiceDeposits(json.data.services);
+            setServicesList(norm);
+            localStorage.setItem('bb_services_list', JSON.stringify(norm));
+          }
+        })
+        .catch(() => {});
+
       window.addEventListener('storage', handleSync);
       window.addEventListener('bb_services_updated', handleSync);
       window.addEventListener('bb_addons_updated', handleSync);

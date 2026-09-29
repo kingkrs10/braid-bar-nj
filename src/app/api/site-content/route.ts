@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import { services as defaultCatalogServices, normalizeServiceDeposits } from '@/lib/data';
 
 // Primary and fallback storage paths
 const PRIMARY_PATH = path.join(process.cwd(), 'src/data/site-content.json');
@@ -66,7 +67,7 @@ const defaultSiteContent = {
     { id: 'lb-3', title: 'Passion & Goddess Twists', tag: 'Twists', img: 'https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80', desc: 'Lightweight, bohemian texture crafted for longevity.' },
     { id: 'lb-4', title: 'Signature Silk Press Blowout', tag: 'Silk Press', img: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80', desc: 'Mirror shine blowout and scalp care treatment.' },
   ],
-  services: [] as any[],
+  services: normalizeServiceDeposits(defaultCatalogServices),
   categories: [
     'VIP Services',
     'Knotless Braids',
@@ -117,13 +118,15 @@ const defaultSiteContent = {
 let cachedData: typeof defaultSiteContent | null = null;
 
 function loadFromDisk(): typeof defaultSiteContent {
+  let content = defaultSiteContent;
+
   // 1. Try primary repo file
   try {
     if (fs.existsSync(PRIMARY_PATH)) {
       const raw = fs.readFileSync(PRIMARY_PATH, 'utf-8');
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
-        return { ...defaultSiteContent, ...parsed };
+        content = { ...defaultSiteContent, ...parsed };
       }
     }
   } catch (err) {
@@ -136,14 +139,21 @@ function loadFromDisk(): typeof defaultSiteContent {
       const raw = fs.readFileSync(TMP_PATH, 'utf-8');
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
-        return { ...defaultSiteContent, ...parsed };
+        content = { ...content, ...parsed };
       }
     }
   } catch (err) {
     console.warn('[Site Content API] Could not read temp disk file:', err);
   }
 
-  return defaultSiteContent;
+  // Auto-heal & enforce deposit policy ($50 standard across-the-board, $100-$150 VIP)
+  if (Array.isArray(content.services) && content.services.length > 0) {
+    content.services = normalizeServiceDeposits(content.services);
+  } else {
+    content.services = normalizeServiceDeposits(defaultCatalogServices);
+  }
+
+  return content;
 }
 
 function saveToDisk(data: typeof defaultSiteContent) {
@@ -194,7 +204,9 @@ export async function POST(request: Request) {
     if (body.addons && Array.isArray(body.addons)) cachedData.addons = body.addons;
     if (body.staffCalendars && Array.isArray(body.staffCalendars)) cachedData.staffCalendars = body.staffCalendars;
     if (body.lookbook && Array.isArray(body.lookbook)) cachedData.lookbook = body.lookbook;
-    if (body.services && Array.isArray(body.services) && body.services.length > 0) cachedData.services = body.services;
+    if (body.services && Array.isArray(body.services) && body.services.length > 0) {
+      cachedData.services = normalizeServiceDeposits(body.services);
+    }
     if (body.categories && Array.isArray(body.categories)) cachedData.categories = body.categories;
     if (body.staffSchedules && Array.isArray(body.staffSchedules)) cachedData.staffSchedules = body.staffSchedules;
     if (body.doubleBooking !== undefined) cachedData.doubleBooking = Boolean(body.doubleBooking);

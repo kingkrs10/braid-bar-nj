@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Clock, Star } from 'lucide-react';
-import { services } from '@/lib/data';
+import { services, normalizeServiceDeposits } from '@/lib/data';
 import { useBookingStore } from '@/lib/store';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import { cn } from '@/lib/utils';
@@ -36,11 +36,11 @@ export function ServiceList() {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) return normalizeServiceDeposits(parsed);
         } catch (e) {}
       }
     }
-    return services;
+    return normalizeServiceDeposits(services);
   });
 
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -52,10 +52,23 @@ export function ServiceList() {
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed) && parsed.length > 0) setServicesList(parsed);
+            if (Array.isArray(parsed) && parsed.length > 0) setServicesList(normalizeServiceDeposits(parsed));
           } catch (e) {}
         }
       };
+
+      // Background reconcile with persistent server
+      fetch('/api/site-content')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json?.data?.services && Array.isArray(json.data.services) && json.data.services.length > 0) {
+            const norm = normalizeServiceDeposits(json.data.services);
+            setServicesList(norm);
+            localStorage.setItem('bb_services_list', JSON.stringify(norm));
+          }
+        })
+        .catch(() => {});
+
       window.addEventListener('storage', loadServices);
       window.addEventListener('bb_services_updated', loadServices);
       return () => {

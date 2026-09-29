@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
-import { services as initialServices, products as initialProducts } from '@/lib/data';
+import { services as initialServices, products as initialProducts, normalizeServiceDeposits } from '@/lib/data';
 import { 
   CLIENT_CHOSEN_AMAZON_PRODUCTS, 
   DEFAULT_AMAZON_SHOP_TEXT, 
@@ -100,12 +100,15 @@ export default function AdminPage() {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return normalizeServiceDeposits(parsed);
+          }
         } catch (e) {}
       }
     }
-    return initialServices;
+    return normalizeServiceDeposits(initialServices);
   });
+  const [depositPolicy, setDepositPolicy] = useState<string>(() => safeStorageGet('bb_deposit_policy', 'standard-50') || 'standard-50');
   const [productsList, setProductsList] = useState(initialProducts);
   const [applications, setApplications] = useState(initialApplications);
 
@@ -959,13 +962,18 @@ export default function AdminPage() {
   };
 
   const handleOpenEditService = (srv: any) => {
+    const isVip = srv.category === 'VIP Services' || srv.name?.toLowerCase().includes('vip');
+    const depositAmt = srv.deposit_amount && srv.deposit_amount > 0 
+      ? srv.deposit_amount 
+      : (isVip ? (srv.name?.includes('Human Hair') ? 150 : 100) : 50);
+
     setServiceFormData({
       id: srv.id,
       name: srv.name,
       category: srv.category || 'Knotless Braids',
       duration_min: srv.duration_min,
       price: srv.price,
-      deposit_amount: srv.deposit_amount,
+      deposit_amount: depositAmt,
       description: srv.description || '',
       assignedCalendar: srv.assignedCalendar || 'both',
       image_url: srv.image_url || '',
@@ -978,14 +986,20 @@ export default function AdminPage() {
     e.preventDefault();
     if (!serviceFormData.name) return;
 
+    const isVip = serviceFormData.category === 'VIP Services' || serviceFormData.name?.toLowerCase().includes('vip');
+    const finalDeposit = Number(serviceFormData.deposit_amount) > 0
+      ? Number(serviceFormData.deposit_amount)
+      : (isVip ? (serviceFormData.name?.includes('Human Hair') ? 150 : 100) : 50);
+
     let updatedList: typeof servicesList;
     if (serviceFormData.id) {
       updatedList = servicesList.map((s) =>
-        s.id === serviceFormData.id ? { ...s, ...serviceFormData } : s
+        s.id === serviceFormData.id ? { ...s, ...serviceFormData, deposit_amount: finalDeposit } : s
       );
     } else {
       const newService = {
         ...serviceFormData,
+        deposit_amount: finalDeposit,
         id: `srv-${Date.now()}`,
         image_url: serviceFormData.image_url || 'https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80',
       };
@@ -999,6 +1013,17 @@ export default function AdminPage() {
       syncToApiServer({ services: updatedList });
     }
     setIsServiceModalOpen(false);
+  };
+
+  const handleApplyStandardDeposits = () => {
+    const updated = normalizeServiceDeposits(servicesList);
+    setServicesList(updated);
+    if (typeof window !== 'undefined') {
+      safeStorageSet('bb_services_list', JSON.stringify(updated));
+      window.dispatchEvent(new Event('bb_services_updated'));
+      syncToApiServer({ services: updated });
+    }
+    alert('Standard $50 deposit applied across all 41 non-VIP styles ($100–$150 for VIP Luxury Experiences) and saved globally!');
   };
 
   const handleDeleteService = (id: string) => {
@@ -1049,8 +1074,9 @@ export default function AdminPage() {
           }
 
           if (Array.isArray(serverData.services) && serverData.services.length > 0) {
-            setServicesList(serverData.services);
-            safeStorageSet('bb_services_list', JSON.stringify(serverData.services));
+            const normalized = normalizeServiceDeposits(serverData.services);
+            setServicesList(normalized);
+            safeStorageSet('bb_services_list', JSON.stringify(normalized));
           }
 
           if (Array.isArray(serverData.categories) && serverData.categories.length > 0) {
@@ -1493,7 +1519,7 @@ export default function AdminPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>25% deposit is collected automatically</span>
+                    <span>$50 standard deposit ($100–$150 for VIP) is collected automatically</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -1583,7 +1609,7 @@ export default function AdminPage() {
                     <ShieldCheck className="w-4 h-4 text-emerald-600" /> Payment &amp; Deposit Workflow (Stripe, Cash App Pay, Zelle)
                   </h5>
                   <p>
-                    Clients pay a 25% deposit at booking to lock in their appointment. In your <strong>Data &amp; Subscriptions</strong> tab, you can view your connected payment processors:
+                    Clients pay a $50 standard deposit ($100–$150 for VIP Luxury Experiences) at booking to lock in their appointment. In your <strong>Data &amp; Subscriptions</strong> tab, you can view your connected payment processors:
                   </p>
                   <ul className="list-disc pl-5 space-y-1 text-espresso/70">
                     <li><strong>Stripe / Apple Pay / Credit Cards</strong>: 2.9% + $0.30 fee per transaction. Direct payout to your bank account in 1–2 business days.</li>
@@ -2104,6 +2130,27 @@ export default function AdminPage() {
                   className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
                 >
                   <Plus className="w-4 h-4" /> Add Service
+                </button>
+              </div>
+
+              {/* Standard Deposit Policy Action Banner */}
+              <div className="bg-emerald-50/90 border border-emerald-200 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 text-emerald-800 text-xs font-bold uppercase tracking-wider">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" /> Standard Salon Deposit Policy
+                  </div>
+                  <p className="text-xs text-emerald-950 font-medium">
+                    All non-VIP services are standardized to <strong>$50 flat deposit</strong> across-the-board. VIP Luxury Experiences retain their private <strong>$100–$150 deposit</strong>.
+                  </p>
+                  <p className="text-[11px] text-emerald-800/80">
+                    Active Catalog: {servicesList.length} services • {servicesList.filter(s => s.category !== 'VIP Services' && !s.name?.toLowerCase().includes('vip')).length} styles at $50 deposit • {servicesList.filter(s => s.category === 'VIP Services' || s.name?.toLowerCase().includes('vip')).length} VIP luxury experiences ($100–$150)
+                  </p>
+                </div>
+                <button
+                  onClick={handleApplyStandardDeposits}
+                  className="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center gap-2 cursor-pointer shrink-0"
+                >
+                  <Sparkles className="w-4 h-4" /> Enforce $50 Flat Deposit Across Catalog
                 </button>
               </div>
 
@@ -4143,17 +4190,31 @@ export default function AdminPage() {
 
                 <div>
                   <label className="block text-espresso/70 font-semibold mb-1">Deposit Requirement Policy</label>
-                  <select className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs focus:outline-none focus:border-terracotta">
+                  <select 
+                    value={depositPolicy || 'standard-50'}
+                    onChange={(e) => {
+                      setDepositPolicy(e.target.value);
+                      safeStorageSet('bb_deposit_policy', e.target.value);
+                    }}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs focus:outline-none focus:border-terracotta"
+                  >
+                    <option value="standard-50">$50 Standard Flat Deposit ($100–$150 VIP Luxury)</option>
                     <option value="25%">25% Non-Refundable Booking Deposit</option>
                     <option value="50%">50% Deposit</option>
                     <option value="100%">100% Full Prepayment</option>
                   </select>
+                  <p className="text-[10px] text-espresso/50 mt-1">
+                    Enforces $50 booking deposit across all non-VIP services. VIP packages require $100–$150.
+                  </p>
                 </div>
 
                 <div className="pt-4">
                   <button
-                    onClick={() => alert('Settings saved successfully!')}
-                    className="bg-terracotta hover:bg-espresso text-cream font-semibold px-6 py-3 rounded-full text-xs uppercase tracking-wider transition-all shadow-md"
+                    onClick={() => {
+                      safeStorageSet('bb_deposit_policy', depositPolicy || 'standard-50');
+                      alert('Salon settings saved successfully!');
+                    }}
+                    className="bg-terracotta hover:bg-espresso text-cream font-semibold px-6 py-3 rounded-full text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
                   >
                     Save Salon Settings
                   </button>

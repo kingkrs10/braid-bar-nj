@@ -176,7 +176,13 @@ export const useBookingStore = create<BookingStore>((set, get) => ({
   },
 
   getDepositAmount: () => {
-    return Number(get().selectedService?.deposit_amount || 0);
+    const service = get().selectedService;
+    if (!service) return 0;
+    if (service.deposit_amount && Number(service.deposit_amount) > 0) {
+      return Number(service.deposit_amount);
+    }
+    const isVip = service.category === 'VIP Services' || service.name?.toLowerCase().includes('vip');
+    return isVip ? (service.name?.includes('Human Hair') ? 150 : 100) : 50;
   },
 }));
 

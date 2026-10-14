@@ -150,7 +150,7 @@
       "duration_min": 90,
       "price": 150,
       "deposit_amount": 50,
-      "category": "Crochet",
+      "category": "Crochet & Sew Ins",
       "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18980676.jpeg?1678372330"
     },
     {
@@ -160,7 +160,7 @@
       "duration_min": 150,
       "price": 175,
       "deposit_amount": 50,
-      "category": "Crochet",
+      "category": "Crochet & Sew Ins",
       "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18980630.jpeg?1684462316"
     },
     {
@@ -170,7 +170,7 @@
       "duration_min": 180,
       "price": 200,
       "deposit_amount": 50,
-      "category": "Crochet",
+      "category": "Crochet & Sew Ins",
       "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -180,7 +180,7 @@
       "duration_min": 60,
       "price": 60,
       "deposit_amount": 50,
-      "category": "Feed-Ins",
+      "category": "Fulani & Feed-Ins",
       "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-13734724.jpeg?1585548331"
     },
     {
@@ -190,7 +190,7 @@
       "duration_min": 90,
       "price": 80,
       "deposit_amount": 50,
-      "category": "Feed-Ins",
+      "category": "Fulani & Feed-Ins",
       "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971011.jpeg?1728488258"
     },
     {
@@ -200,8 +200,85 @@
       "duration_min": 120,
       "price": 95,
       "deposit_amount": 50,
-      "category": "Feed-Ins",
+      "category": "Fulani & Feed-Ins",
       "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
+    },
+    {
+      "id": "srv-feedin-6",
+      "name": "6 Feed-in Braids",
+      "description": "Feed-in braids are the perfect style for protecting your natural hair (6 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+      "duration_min": 120,
+      "price": 110,
+      "deposit_amount": 50,
+      "category": "Fulani & Feed-Ins",
+      "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194",
+      "assignedCalendar": "both"
+    },
+    {
+      "id": "srv-feedin-8",
+      "name": "8 Feed-in Braids",
+      "description": "Feed-in braids are the perfect style for protecting your natural hair (8 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+      "duration_min": 150,
+      "price": 130,
+      "deposit_amount": 50,
+      "category": "Fulani & Feed-Ins",
+      "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194",
+      "assignedCalendar": "both"
+    },
+    {
+      "id": "srv-feedin-10",
+      "name": "10 Feed-in Braids",
+      "description": "Feed-in braids are the perfect style for protecting your natural hair (10 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+      "duration_min": 180,
+      "price": 150,
+      "deposit_amount": 50,
+      "category": "Fulani & Feed-Ins",
+      "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194",
+      "assignedCalendar": "both"
+    },
+    {
+      "id": "srv-feedin-12",
+      "name": "12 Feed-in Braids",
+      "description": "Feed-in braids are the perfect style for protecting your natural hair (12 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+      "duration_min": 210,
+      "price": 175,
+      "deposit_amount": 50,
+      "category": "Fulani & Feed-Ins",
+      "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194",
+      "assignedCalendar": "both"
+    },
+    {
+      "id": "srv-feedin-14",
+      "name": "14 Feed-in Braids",
+      "description": "Feed-in braids are the perfect style for protecting your natural hair (14 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+      "duration_min": 240,
+      "price": 200,
+      "deposit_amount": 50,
+      "category": "Fulani & Feed-Ins",
+      "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194",
+      "assignedCalendar": "both"
+    },
+    {
+      "id": "srv-feedin-16",
+      "name": "16 Feed-in Braids",
+      "description": "Feed-in braids are the perfect style for protecting your natural hair (16 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+      "duration_min": 270,
+      "price": 225,
+      "deposit_amount": 50,
+      "category": "Fulani & Feed-Ins",
+      "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194",
+      "assignedCalendar": "both"
+    },
+    {
+      "id": "srv-feedin-18",
+      "name": "18 Feed-in Braids",
+      "description": "Feed-in braids are the perfect style for protecting your natural hair (18 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+      "duration_min": 300,
+      "price": 250,
+      "deposit_amount": 50,
+      "category": "Fulani & Feed-Ins",
+      "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194",
+      "assignedCalendar": "both"
     },
     {
       "id": "srv-18980442",
@@ -210,7 +287,7 @@
       "duration_min": 420,
       "price": 325,
       "deposit_amount": 50,
-      "category": "Fulani Braids",
+      "category": "Fulani & Feed-Ins",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -220,7 +297,7 @@
       "duration_min": 360,
       "price": 275,
       "deposit_amount": 50,
-      "category": "Fulani Braids",
+      "category": "Fulani & Feed-Ins",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -230,7 +307,7 @@
       "duration_min": 300,
       "price": 250,
       "deposit_amount": 50,
-      "category": "Fulani Braids",
+      "category": "Fulani & Feed-Ins",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -240,7 +317,7 @@
       "duration_min": 240,
       "price": 200,
       "deposit_amount": 50,
-      "category": "Human Hair Knotless",
+      "category": "Knotless Braids",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -250,7 +327,7 @@
       "duration_min": 390,
       "price": 350,
       "deposit_amount": 50,
-      "category": "Human Hair Knotless",
+      "category": "Knotless Braids",
       "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -260,7 +337,7 @@
       "duration_min": 600,
       "price": 450,
       "deposit_amount": 50,
-      "category": "Human Hair Knotless",
+      "category": "Knotless Braids",
       "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -330,7 +407,7 @@
       "duration_min": 180,
       "price": 150,
       "deposit_amount": 50,
-      "category": "Locs",
+      "category": "Locs & Twist",
       "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -340,7 +417,7 @@
       "duration_min": 720,
       "price": 600,
       "deposit_amount": 50,
-      "category": "Locs",
+      "category": "Locs & Twist",
       "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -350,7 +427,7 @@
       "duration_min": 90,
       "price": 75,
       "deposit_amount": 50,
-      "category": "Maintenance",
+      "category": "Maintenance & Take Down",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -360,7 +437,7 @@
       "duration_min": 120,
       "price": 95,
       "deposit_amount": 50,
-      "category": "Maintenance",
+      "category": "Maintenance & Take Down",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -370,7 +447,7 @@
       "duration_min": 180,
       "price": 125,
       "deposit_amount": 50,
-      "category": "Maintenance",
+      "category": "Maintenance & Take Down",
       "image_url": "https://images.unsplash.com/photo-1629731629152-dd58d8ffc5a7?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -380,7 +457,7 @@
       "duration_min": 120,
       "price": 120,
       "deposit_amount": 50,
-      "category": "Men's Styles",
+      "category": "Mens Styles",
       "image_url": "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -390,7 +467,7 @@
       "duration_min": 90,
       "price": 90,
       "deposit_amount": 50,
-      "category": "Men's Styles",
+      "category": "Mens Styles",
       "image_url": "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -400,7 +477,7 @@
       "duration_min": 60,
       "price": 55,
       "deposit_amount": 50,
-      "category": "Men's Styles",
+      "category": "Mens Styles",
       "image_url": "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -410,7 +487,7 @@
       "duration_min": 180,
       "price": 225,
       "deposit_amount": 50,
-      "category": "WEAVE",
+      "category": "Crochet & Sew Ins",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -420,7 +497,7 @@
       "duration_min": 150,
       "price": 200,
       "deposit_amount": 50,
-      "category": "WEAVE",
+      "category": "Crochet & Sew Ins",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -430,7 +507,7 @@
       "duration_min": 240,
       "price": 175,
       "deposit_amount": 50,
-      "category": "STYLIST// Abby Charles",
+      "category": "Knotless Braids",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -440,7 +517,7 @@
       "duration_min": 200,
       "price": 150,
       "deposit_amount": 50,
-      "category": "STYLIST// Abby Charles",
+      "category": "Knotless Braids",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -450,7 +527,7 @@
       "duration_min": 240,
       "price": 150,
       "deposit_amount": 50,
-      "category": "STYLIST// Abby Charles",
+      "category": "Knotless Braids",
       "image_url": "https://images.unsplash.com/photo-1595642527925-4d41cb781653?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -460,7 +537,7 @@
       "duration_min": 120,
       "price": 125,
       "deposit_amount": 50,
-      "category": "Takedown",
+      "category": "Maintenance & Take Down",
       "image_url": "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -470,7 +547,7 @@
       "duration_min": 120,
       "price": 100,
       "deposit_amount": 50,
-      "category": "Takedown",
+      "category": "Maintenance & Take Down",
       "image_url": "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -480,7 +557,7 @@
       "duration_min": 180,
       "price": 150,
       "deposit_amount": 50,
-      "category": "Takedown",
+      "category": "Maintenance & Take Down",
       "image_url": "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -490,7 +567,7 @@
       "duration_min": 180,
       "price": 150,
       "deposit_amount": 50,
-      "category": "Twist Styles",
+      "category": "Locs & Twist",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -500,7 +577,7 @@
       "duration_min": 480,
       "price": 350,
       "deposit_amount": 50,
-      "category": "Twist Styles",
+      "category": "Locs & Twist",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -510,7 +587,7 @@
       "duration_min": 300,
       "price": 225,
       "deposit_amount": 50,
-      "category": "Twist Styles",
+      "category": "Locs & Twist",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -520,7 +597,7 @@
       "duration_min": 30,
       "price": 100,
       "deposit_amount": 50,
-      "category": "Updo's + Ponytails + Simple Styles",
+      "category": "Locs & Twist",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -530,7 +607,7 @@
       "duration_min": 90,
       "price": 90,
       "deposit_amount": 50,
-      "category": "Updo's + Ponytails + Simple Styles",
+      "category": "Locs & Twist",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -540,7 +617,7 @@
       "duration_min": 60,
       "price": 80,
       "deposit_amount": 50,
-      "category": "Updo's + Ponytails + Simple Styles",
+      "category": "Locs & Twist",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     },
     {
@@ -550,22 +627,19 @@
       "duration_min": 30,
       "price": 50,
       "deposit_amount": 50,
-      "category": "Welcome",
+      "category": "VIP Services",
       "image_url": "https://images.unsplash.com/photo-1605497746445-97d1b0a9e94e?auto=format&fit=crop&w=600&q=80"
     }
   ],
   "categories": [
     "VIP Services",
     "Knotless Braids",
-    "Fulani & Custom",
-    "Locs & Twists",
-    "Wash & Prep",
-    "Crochet",
-    "Feed-Ins",
+    "Fulani & Feed-Ins",
+    "Locs & Twist",
+    "Crochet & Sew Ins",
     "Kids Styles",
-    "Maintenance",
-    "Men's Styles",
-    "Twist Styles"
+    "Maintenance & Take Down",
+    "Mens Styles"
   ],
   "staffSchedules": [
     {
@@ -609,6 +683,6 @@
     "salonArchHeight": "standard"
   },
   "clients": [],
-  "lastUpdated": "2026-09-29T04:13:50.128Z",
+  "lastUpdated": "2026-10-14T17:21:55.236Z",
   "depositPolicy": "standard-50"
 }

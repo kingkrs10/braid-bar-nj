@@ -43,6 +43,28 @@ export function ServiceList() {
     return normalizeServiceDeposits(services);
   });
 
+  const [categoriesList, setCategoriesList] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_categories_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return [
+      'VIP Services',
+      'Knotless Braids',
+      'Fulani & Feed-Ins',
+      'Locs & Twist',
+      'Crochet & Sew Ins',
+      'Kids Styles',
+      'Maintenance & Take Down',
+      'Mens Styles',
+    ];
+  });
+
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   React.useEffect(() => {
@@ -53,6 +75,13 @@ export function ServiceList() {
           try {
             const parsed = JSON.parse(stored);
             if (Array.isArray(parsed) && parsed.length > 0) setServicesList(normalizeServiceDeposits(parsed));
+          } catch (e) {}
+        }
+        const storedCats = localStorage.getItem('bb_categories_list');
+        if (storedCats) {
+          try {
+            const parsed = JSON.parse(storedCats);
+            if (Array.isArray(parsed) && parsed.length > 0) setCategoriesList(parsed);
           } catch (e) {}
         }
       };
@@ -72,25 +101,30 @@ export function ServiceList() {
             setServicesList(norm);
             localStorage.setItem('bb_services_list', JSON.stringify(norm));
           }
+          if (Array.isArray(json.data.categories) && json.data.categories.length > 0) {
+            setCategoriesList(json.data.categories);
+            localStorage.setItem('bb_categories_list', JSON.stringify(json.data.categories));
+          }
         })
         .catch(() => {});
 
       window.addEventListener('storage', loadServices);
       window.addEventListener('bb_services_updated', loadServices);
+      window.addEventListener('bb_categories_updated', loadServices);
       return () => {
         window.removeEventListener('storage', loadServices);
         window.removeEventListener('bb_services_updated', loadServices);
+        window.removeEventListener('bb_categories_updated', loadServices);
       };
     }
   }, []);
 
   const categories = useMemo(() => {
-    const uniqueCats = Array.from(new Set(servicesList.map((s) => s.category)));
     return [
       { id: 'all', name: 'All Styles' },
-      ...uniqueCats.map((cat) => ({ id: cat, name: cat })),
+      ...categoriesList.map((cat) => ({ id: cat, name: cat })),
     ];
-  }, [servicesList]);
+  }, [categoriesList]);
 
   const filteredServices = useMemo(() => {
     if (activeCategory === 'all') return servicesList;

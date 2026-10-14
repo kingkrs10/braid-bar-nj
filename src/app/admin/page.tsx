@@ -577,19 +577,16 @@ export default function AdminPage() {
     }
   };
 
-  // Service Categories State & Management
+  // Service Categories State & Management (Abby's 8 Official Collections)
   const defaultCategories = [
     'VIP Services',
     'Knotless Braids',
-    'Fulani & Custom',
-    'Locs & Twists',
-    'Wash & Prep',
-    'Crochet',
-    'Feed-Ins',
+    'Fulani & Feed-Ins',
+    'Locs & Twist',
+    'Crochet & Sew Ins',
     'Kids Styles',
-    'Maintenance',
-    "Men's Styles",
-    'Twist Styles',
+    'Maintenance & Take Down',
+    'Mens Styles',
   ];
 
   const [categoriesList, setCategoriesList] = useState<string[]>(() => {
@@ -620,11 +617,14 @@ export default function AdminPage() {
     setCategoriesList(updated);
     setNewCategoryName('');
     setIsCategoryModalOpen(false);
+    const nowIso = new Date().toISOString();
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_categories_list', JSON.stringify(updated));
+      safeStorageSet('bb_categories_list', JSON.stringify(updated));
+      safeStorageSet('bb_last_updated', nowIso);
       window.dispatchEvent(new Event('bb_categories_updated'));
-      syncToApiServer({ categories: updated });
+      syncToApiServer({ categories: updated, lastUpdated: nowIso });
     }
+    setHasUnsavedChanges(true);
   };
 
   const handleDeleteCategory = (catName: string) => {
@@ -633,13 +633,16 @@ export default function AdminPage() {
     setCategoriesList(updated);
     const updatedServices = servicesList.map((s) => (s.category === catName ? { ...s, category: 'VIP Services' } : s));
     setServicesList(updatedServices);
+    const nowIso = new Date().toISOString();
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_categories_list', JSON.stringify(updated));
-      localStorage.setItem('bb_services_list', JSON.stringify(updatedServices));
+      safeStorageSet('bb_categories_list', JSON.stringify(updated));
+      safeStorageSet('bb_services_list', JSON.stringify(updatedServices));
+      safeStorageSet('bb_last_updated', nowIso);
       window.dispatchEvent(new Event('bb_categories_updated'));
       window.dispatchEvent(new Event('bb_services_updated'));
-      syncToApiServer({ categories: updated, services: updatedServices });
+      syncToApiServer({ categories: updated, services: updatedServices, lastUpdated: nowIso });
     }
+    setHasUnsavedChanges(true);
   };
 
   // Staff Schedules, Calendar Titles & Double Booking State

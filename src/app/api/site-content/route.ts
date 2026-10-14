@@ -71,15 +71,12 @@ const defaultSiteContent = {
   categories: [
     'VIP Services',
     'Knotless Braids',
-    'Fulani & Custom',
-    'Locs & Twists',
-    'Wash & Prep',
-    'Crochet',
-    'Feed-Ins',
+    'Fulani & Feed-Ins',
+    'Locs & Twist',
+    'Crochet & Sew Ins',
     'Kids Styles',
-    'Maintenance',
-    "Men's Styles",
-    'Twist Styles',
+    'Maintenance & Take Down',
+    'Mens Styles',
   ],
   staffSchedules: [
     {

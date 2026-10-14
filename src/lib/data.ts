@@ -87,7 +87,77 @@ export const services: Service[] = [
     "duration_min": 120,
     "price": 95,
     "deposit_amount": 50,
-    "category": "Feed-Ins",
+    "category": "Fulani & Feed-Ins",
+    "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
+  },
+  {
+    "id": "srv-feedin-6",
+    "name": "6 Feed-in Braids",
+    "description": "Feed-in braids are the perfect style for protecting your natural hair (6 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+    "duration_min": 120,
+    "price": 110,
+    "deposit_amount": 50,
+    "category": "Fulani & Feed-Ins",
+    "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
+  },
+  {
+    "id": "srv-feedin-8",
+    "name": "8 Feed-in Braids",
+    "description": "Feed-in braids are the perfect style for protecting your natural hair (8 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+    "duration_min": 150,
+    "price": 130,
+    "deposit_amount": 50,
+    "category": "Fulani & Feed-Ins",
+    "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
+  },
+  {
+    "id": "srv-feedin-10",
+    "name": "10 Feed-in Braids",
+    "description": "Feed-in braids are the perfect style for protecting your natural hair (10 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+    "duration_min": 180,
+    "price": 150,
+    "deposit_amount": 50,
+    "category": "Fulani & Feed-Ins",
+    "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
+  },
+  {
+    "id": "srv-feedin-12",
+    "name": "12 Feed-in Braids",
+    "description": "Feed-in braids are the perfect style for protecting your natural hair (12 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+    "duration_min": 210,
+    "price": 175,
+    "deposit_amount": 50,
+    "category": "Fulani & Feed-Ins",
+    "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
+  },
+  {
+    "id": "srv-feedin-14",
+    "name": "14 Feed-in Braids",
+    "description": "Feed-in braids are the perfect style for protecting your natural hair (14 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+    "duration_min": 240,
+    "price": 200,
+    "deposit_amount": 50,
+    "category": "Fulani & Feed-Ins",
+    "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
+  },
+  {
+    "id": "srv-feedin-16",
+    "name": "16 Feed-in Braids",
+    "description": "Feed-in braids are the perfect style for protecting your natural hair (16 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+    "duration_min": 270,
+    "price": 225,
+    "deposit_amount": 50,
+    "category": "Fulani & Feed-Ins",
+    "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
+  },
+  {
+    "id": "srv-feedin-18",
+    "name": "18 Feed-in Braids",
+    "description": "Feed-in braids are the perfect style for protecting your natural hair (18 braids).\n\nPrep Instructions:\nHair must be washed and blow-dried before your appointment unless a shampoo service has been selected.\n\nOptional Additions (must be selected separately):\nExtended length\nCreative braid designs\nSmall braids between feed-in braids\nGoddess\n\nRuwa Hair is available for purchase in salon. Pre-stretched brands are preferred (two packs of hair for 5 or more braids).",
+    "duration_min": 300,
+    "price": 250,
+    "deposit_amount": 50,
+    "category": "Fulani & Feed-Ins",
     "image_url": "https://cdn-s.acuityscheduling.com/appointmentType-18971010.jpeg?1674709194"
   },
   {

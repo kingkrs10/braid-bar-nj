@@ -86,6 +86,28 @@ export function BookingFlow() {
     return addons;
   });
 
+  const [categoriesList, setCategoriesList] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_categories_list');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return [
+      'VIP Services',
+      'Knotless Braids',
+      'Fulani & Feed-Ins',
+      'Locs & Twist',
+      'Crochet & Sew Ins',
+      'Kids Styles',
+      'Maintenance & Take Down',
+      'Mens Styles',
+    ];
+  });
+
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const handleSync = () => {
@@ -101,6 +123,13 @@ export function BookingFlow() {
           try {
             const p = JSON.parse(a);
             if (Array.isArray(p) && p.length > 0) setAddonsList(p);
+          } catch (e) {}
+        }
+        const c = localStorage.getItem('bb_categories_list');
+        if (c) {
+          try {
+            const p = JSON.parse(c);
+            if (Array.isArray(p) && p.length > 0) setCategoriesList(p);
           } catch (e) {}
         }
       };
@@ -125,16 +154,22 @@ export function BookingFlow() {
             setAddonsList(json.data.addons);
             localStorage.setItem('bb_addons_list', JSON.stringify(json.data.addons));
           }
+          if (Array.isArray(json.data.categories) && json.data.categories.length > 0) {
+            setCategoriesList(json.data.categories);
+            localStorage.setItem('bb_categories_list', JSON.stringify(json.data.categories));
+          }
         })
         .catch(() => {});
 
       window.addEventListener('storage', handleSync);
       window.addEventListener('bb_services_updated', handleSync);
       window.addEventListener('bb_addons_updated', handleSync);
+      window.addEventListener('bb_categories_updated', handleSync);
       return () => {
         window.removeEventListener('storage', handleSync);
         window.removeEventListener('bb_services_updated', handleSync);
         window.removeEventListener('bb_addons_updated', handleSync);
+        window.removeEventListener('bb_categories_updated', handleSync);
       };
     }
   }, []);
@@ -155,8 +190,8 @@ export function BookingFlow() {
   const [expandedCategory, setExpandedCategory] = useState<string | null>('VIP Services');
 
   const categories = useMemo(() => {
-    return Array.from(new Set(servicesList.map((s) => s.category)));
-  }, [servicesList]);
+    return categoriesList;
+  }, [categoriesList]);
 
   const handleServiceSelectInsideWidget = (srv: typeof services[0]) => {
     setService(srv);

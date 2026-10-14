@@ -609,5 +609,6 @@
     "salonArchHeight": "standard"
   },
   "clients": [],
-  "lastUpdated": "2026-09-29T04:13:50.128Z"
+  "lastUpdated": "2026-09-29T04:13:50.128Z",
+  "depositPolicy": "standard-50"
 }

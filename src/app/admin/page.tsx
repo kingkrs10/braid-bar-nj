@@ -217,26 +217,7 @@ export default function AdminPage() {
   };
 
   const handleSaveAllSiteContent = (updatedText?: typeof defaultSiteText) => {
-    const textToSave = updatedText || siteText;
-    setSiteText(textToSave);
-    if (typeof window !== 'undefined') {
-      safeStorageSet('bb_site_text', JSON.stringify(textToSave));
-      safeStorageSet('bb_site_images', JSON.stringify(siteImages));
-      safeStorageSet('bb_image_settings', JSON.stringify(imageSettings));
-      safeStorageSet('bb_lookbook_list', JSON.stringify(lookbookList));
-
-      window.dispatchEvent(new Event('bb_sitetext_updated'));
-      window.dispatchEvent(new Event('bb_siteimages_updated'));
-      window.dispatchEvent(new Event('bb_image_settings_updated'));
-      window.dispatchEvent(new Event('bb_lookbook_updated'));
-
-      syncToApiServer({
-        text: textToSave,
-        images: siteImages,
-        imageSettings,
-        lookbook: lookbookList,
-      });
-    }
+    handleSaveAllSiteChanges(updatedText);
   };
 
   // Site Image Assets State
@@ -1037,6 +1018,204 @@ export default function AdminPage() {
     }
   };
 
+  // Master Simultaneous Save & Data Preservation State
+  const [isSavingAll, setIsSavingAll] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bb_last_updated');
+      if (stored) {
+        try {
+          return new Date(stored).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } catch (e) {}
+      }
+    }
+    return null;
+  });
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [saveSuccessNotice, setSaveSuccessNotice] = useState(false);
+
+  // Unified Simultaneous Save: Persists all 11 domains at once
+  const handleSaveAllSiteChanges = async (overrideText?: typeof defaultSiteText) => {
+    setIsSavingAll(true);
+    const nowIso = new Date().toISOString();
+    const textToSave = overrideText || siteText;
+    if (overrideText) {
+      setSiteText(overrideText);
+    }
+    const normalizedServices = normalizeServiceDeposits(servicesList);
+    setServicesList(normalizedServices);
+
+    if (typeof window !== 'undefined') {
+      safeStorageSet('bb_site_text', JSON.stringify(textToSave));
+      safeStorageSet('bb_site_images', JSON.stringify(siteImages));
+      safeStorageSet('bb_image_settings', JSON.stringify(imageSettings));
+      safeStorageSet('bb_lookbook_list', JSON.stringify(lookbookList));
+      safeStorageSet('bb_services_list', JSON.stringify(normalizedServices));
+      safeStorageSet('bb_categories_list', JSON.stringify(categoriesList));
+      safeStorageSet('bb_addons_list', JSON.stringify(addonsList));
+      safeStorageSet('bb_staff_schedules', JSON.stringify(staffSchedules));
+      safeStorageSet('bb_allow_double_booking', allowDoubleBooking ? 'true' : 'false');
+      safeStorageSet('bb_clients_list', JSON.stringify(clientsList));
+      safeStorageSet('bb_deposit_policy', depositPolicy);
+      safeStorageSet('bb_last_updated', nowIso);
+
+      window.dispatchEvent(new Event('bb_sitetext_updated'));
+      window.dispatchEvent(new Event('bb_siteimages_updated'));
+      window.dispatchEvent(new Event('bb_image_settings_updated'));
+      window.dispatchEvent(new Event('bb_lookbook_updated'));
+      window.dispatchEvent(new Event('bb_services_updated'));
+      window.dispatchEvent(new Event('bb_categories_updated'));
+      window.dispatchEvent(new Event('bb_addons_updated'));
+      window.dispatchEvent(new Event('bb_staff_schedules_updated'));
+      window.dispatchEvent(new Event('bb_double_booking_updated'));
+      window.dispatchEvent(new Event('bb_clients_updated'));
+    }
+
+    try {
+      const res = await fetch('/api/site-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: textToSave,
+          images: siteImages,
+          imageSettings,
+          lookbook: lookbookList,
+          services: normalizedServices,
+          categories: categoriesList,
+          addons: addonsList,
+          staffSchedules,
+          doubleBooking: allowDoubleBooking,
+          clients: clientsList,
+          depositPolicy,
+          lastUpdated: nowIso,
+        }),
+      });
+
+      if (res.ok) {
+        setHasUnsavedChanges(false);
+        setLastSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+        setSaveSuccessNotice(true);
+        setTimeout(() => setSaveSuccessNotice(false), 5000);
+      }
+    } catch (err) {
+      console.error('[Admin Portal] Error saving all site changes:', err);
+    } finally {
+      setIsSavingAll(false);
+    }
+  };
+
+  // 1-Click Complete Site Backup Export (.json)
+  const handleDownloadBackup = () => {
+    const backupData = {
+      app: 'Braid Bar NJ',
+      version: '2.0.0',
+      exportDate: new Date().toISOString(),
+      exportedBy: userRole === 'owner' ? 'Sharon French (Owner)' : 'Abigail Charles (Assistant)',
+      text: siteText,
+      images: siteImages,
+      imageSettings,
+      lookbook: lookbookList,
+      services: normalizeServiceDeposits(servicesList),
+      categories: categoriesList,
+      addons: addonsList,
+      staffSchedules,
+      doubleBooking: allowDoubleBooking,
+      clients: clientsList,
+      depositPolicy,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const dateStr = new Date().toISOString().split('T')[0];
+    link.href = url;
+    link.download = `braid-bar-site-backup-${dateStr}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // 1-Click Complete Site Backup Import & Restore (.json)
+  const handleRestoreBackupFile = (file: File) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const text = e.target?.result as string;
+        const parsed = JSON.parse(text);
+        if (!parsed || typeof parsed !== 'object') {
+          alert('Invalid backup file. Please provide a valid JSON file.');
+          return;
+        }
+
+        if (parsed.text) setSiteText(parsed.text);
+        if (parsed.images) setSiteImages(parsed.images);
+        if (parsed.imageSettings) setImageSettings(parsed.imageSettings);
+        if (Array.isArray(parsed.lookbook)) setLookbookList(parsed.lookbook);
+        if (Array.isArray(parsed.services)) {
+          const norm = normalizeServiceDeposits(parsed.services);
+          setServicesList(norm);
+        }
+        if (Array.isArray(parsed.categories)) setCategoriesList(parsed.categories);
+        if (Array.isArray(parsed.addons)) setAddonsList(parsed.addons);
+        if (Array.isArray(parsed.staffSchedules)) setStaffSchedules(parsed.staffSchedules);
+        if (parsed.doubleBooking !== undefined) setAllowDoubleBooking(Boolean(parsed.doubleBooking));
+        if (Array.isArray(parsed.clients)) setClientsList(parsed.clients);
+        if (parsed.depositPolicy) setDepositPolicy(parsed.depositPolicy);
+
+        const nowIso = new Date().toISOString();
+        if (typeof window !== 'undefined') {
+          if (parsed.text) safeStorageSet('bb_site_text', JSON.stringify(parsed.text));
+          if (parsed.images) safeStorageSet('bb_site_images', JSON.stringify(parsed.images));
+          if (parsed.imageSettings) safeStorageSet('bb_image_settings', JSON.stringify(parsed.imageSettings));
+          if (parsed.lookbook) safeStorageSet('bb_lookbook_list', JSON.stringify(parsed.lookbook));
+          if (parsed.services) safeStorageSet('bb_services_list', JSON.stringify(normalizeServiceDeposits(parsed.services)));
+          if (parsed.categories) safeStorageSet('bb_categories_list', JSON.stringify(parsed.categories));
+          if (parsed.addons) safeStorageSet('bb_addons_list', JSON.stringify(parsed.addons));
+          if (parsed.staffSchedules) safeStorageSet('bb_staff_schedules', JSON.stringify(parsed.staffSchedules));
+          if (parsed.doubleBooking !== undefined) safeStorageSet('bb_allow_double_booking', parsed.doubleBooking ? 'true' : 'false');
+          if (parsed.clients) safeStorageSet('bb_clients_list', JSON.stringify(parsed.clients));
+          if (parsed.depositPolicy) safeStorageSet('bb_deposit_policy', parsed.depositPolicy);
+          safeStorageSet('bb_last_updated', nowIso);
+
+          window.dispatchEvent(new Event('bb_sitetext_updated'));
+          window.dispatchEvent(new Event('bb_siteimages_updated'));
+          window.dispatchEvent(new Event('bb_image_settings_updated'));
+          window.dispatchEvent(new Event('bb_lookbook_updated'));
+          window.dispatchEvent(new Event('bb_services_updated'));
+          window.dispatchEvent(new Event('bb_categories_updated'));
+          window.dispatchEvent(new Event('bb_addons_updated'));
+          window.dispatchEvent(new Event('bb_staff_schedules_updated'));
+          window.dispatchEvent(new Event('bb_double_booking_updated'));
+          window.dispatchEvent(new Event('bb_clients_updated'));
+        }
+
+        // Push directly to server
+        await fetch('/api/site-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...parsed,
+            services: Array.isArray(parsed.services) ? normalizeServiceDeposits(parsed.services) : undefined,
+            lastUpdated: nowIso,
+          }),
+        });
+
+        setLastSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+        setHasUnsavedChanges(false);
+        setSaveSuccessNotice(true);
+        setTimeout(() => setSaveSuccessNotice(false), 5000);
+        alert('🎉 Site successfully restored from backup! All services, pricing, add-ons, schedules, and photos are now live.');
+      } catch (err) {
+        console.error('[Admin Portal] Error parsing backup file:', err);
+        alert('Failed to restore backup: File is not valid JSON.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   // Self-Healing Initial Hydration & Auto-Reconciliation from Server (/api/site-content)
   React.useEffect(() => {
     const hydrateAndSelfHeal = async () => {
@@ -1046,6 +1225,34 @@ export default function AdminPage() {
           const json = await res.json();
           const serverData = json.data;
           if (!serverData) return;
+
+          const clientLastUpdated = typeof window !== 'undefined' ? localStorage.getItem('bb_last_updated') : null;
+          const serverLastUpdated = serverData.lastUpdated;
+
+          // If client has newer local edits (e.g. server lambda restarted with older git defaults),
+          // DO NOT wipe the client's changes! Instead, preserve client state and heal the server cache!
+          if (clientLastUpdated && serverLastUpdated && new Date(clientLastUpdated).getTime() > new Date(serverLastUpdated).getTime()) {
+            console.log('[Admin Portal] Client local storage is newer than server. Protecting client state and healing server.');
+            fetch('/api/site-content', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                text: siteText,
+                images: siteImages,
+                imageSettings,
+                lookbook: lookbookList,
+                services: normalizeServiceDeposits(servicesList),
+                categories: categoriesList,
+                addons: addonsList,
+                staffSchedules,
+                doubleBooking: allowDoubleBooking,
+                clients: clientsList,
+                depositPolicy,
+                lastUpdated: clientLastUpdated,
+              }),
+            }).catch(() => {});
+            return;
+          }
 
           if (serverData.text) {
             setSiteText((prev) => ({ ...prev, ...serverData.text }));
@@ -1084,6 +1291,11 @@ export default function AdminPage() {
             safeStorageSet('bb_categories_list', JSON.stringify(serverData.categories));
           }
 
+          if (Array.isArray(serverData.addons) && serverData.addons.length > 0) {
+            setAddonsList(serverData.addons);
+            safeStorageSet('bb_addons_list', JSON.stringify(serverData.addons));
+          }
+
           if (Array.isArray(serverData.staffSchedules) && serverData.staffSchedules.length > 0) {
             setStaffSchedules(serverData.staffSchedules);
             safeStorageSet('bb_staff_schedules', JSON.stringify(serverData.staffSchedules));
@@ -1097,6 +1309,18 @@ export default function AdminPage() {
           if (Array.isArray(serverData.clients) && serverData.clients.length > 0) {
             setClientsList(serverData.clients);
             safeStorageSet('bb_clients_list', JSON.stringify(serverData.clients));
+          }
+
+          if (serverData.depositPolicy) {
+            setDepositPolicy(serverData.depositPolicy);
+            safeStorageSet('bb_deposit_policy', serverData.depositPolicy);
+          }
+
+          if (serverData.lastUpdated) {
+            safeStorageSet('bb_last_updated', serverData.lastUpdated);
+            try {
+              setLastSavedAt(new Date(serverData.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+            } catch (e) {}
           }
         }
       } catch (err) {
@@ -1224,45 +1448,103 @@ export default function AdminPage() {
       {/* Main Content Area */}
       <main className="flex-1 p-6 md:p-10 overflow-y-auto">
         {/* Top Header Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 mb-8 border-b border-espresso/10">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-8 mb-8 border-b border-espresso/10">
           <div>
             <div className="inline-flex items-center gap-2 bg-terracotta/10 text-terracotta px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-2">
-              <ShieldCheck className="w-3.5 h-3.5" /> Braid Bar NJ Owner Portal
+              <ShieldCheck className="w-3.5 h-3.5" /> Braid Bar NJ {userRole === 'owner' ? 'Owner Portal' : 'Staff Portal'}
             </div>
             <h1 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-espresso">
               {activeTab === 'overview' && 'Dashboard Overview'}
               {activeTab === 'appointments' && 'Client Appointments'}
               {activeTab === 'services' && 'Service Catalog & Pricing'}
+              {activeTab === 'content' && 'Site Text, Images & Lookbook'}
+              {activeTab === 'clients' && 'Client Directory CRM'}
+              {activeTab === 'reports' && 'Revenue & Monthly Reports'}
+              {activeTab === 'deployment' && 'Site Deployment & Hosting'}
+              {activeTab === 'infrastructure' && 'Data & Subscriptions'}
               {activeTab === 'shop' && 'Shop Care & Accessories Inventory'}
               {activeTab === 'applications' && 'Pop-Up Vendor Applications'}
+              {activeTab === 'manual' && 'Owner Manual'}
               {activeTab === 'settings' && 'Salon Settings & Location'}
             </h1>
             <p className="text-xs text-espresso/60 font-light mt-1">
-              Welcome back, Sharon! Manage appointments, pricing, inventory, and vendor requests.
+              Welcome back, {userRole === 'owner' ? 'Sharon' : 'Abigail'}! All changes save simultaneously to local storage and the live cloud.
             </p>
           </div>
 
-          {/* Quick Actions & Live Link */}
-          <div className="flex items-center gap-3">
-            <a
-              href={getWhatsAppLink({
-                serviceName: 'General Inquiry / Direct Owner Contact',
-                date: 'Today',
-                time: 'Now',
-                customerName: 'Sharon French (Owner)',
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm"
+          {/* Quick Actions, Global Simultaneous Save & Live Link */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Live Sync Status Indicator */}
+            {isSavingAll ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+                <RefreshCw className="w-3 h-3 animate-spin text-amber-700" />
+                Saving All Changes...
+              </span>
+            ) : saveSuccessNotice ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-xs animate-pulse">
+                <Check className="w-3.5 h-3.5 text-emerald-700" />
+                All Saved Simultaneously!
+              </span>
+            ) : hasUnsavedChanges ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-900 border border-amber-300">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                Unsaved Changes Pending
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold bg-cream/70 text-espresso/70 border border-espresso/15">
+                <Check className="w-3 h-3 text-emerald-600" />
+                Synced {lastSavedAt ? `at ${lastSavedAt}` : 'Live'}
+              </span>
+            )}
+
+            {/* Master Simultaneous Save Button */}
+            <button
+              onClick={() => handleSaveAllSiteChanges()}
+              disabled={isSavingAll}
+              title="Saves all services, pricing, add-ons, staff hours, text, lookbook, and images simultaneously to both local storage and cloud database"
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer ${
+                hasUnsavedChanges
+                  ? 'bg-terracotta hover:bg-terracotta/90 text-cream ring-2 ring-terracotta/40 animate-pulse'
+                  : 'bg-espresso hover:bg-terracotta text-cream'
+              }`}
             >
-              <MessageSquare className="w-3.5 h-3.5" /> WhatsApp Dispatch
-            </a>
+              {isSavingAll ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+              {isSavingAll ? 'Saving All...' : 'Save All Changes (Simultaneous)'}
+            </button>
+
+            {/* 1-Click Backup Export */}
+            <button
+              onClick={handleDownloadBackup}
+              title="Download a complete JSON backup of the entire site to your device"
+              className="inline-flex items-center gap-1.5 bg-white hover:bg-cream/40 border border-espresso/15 text-espresso px-3.5 py-2.5 rounded-full text-xs font-semibold transition-all shadow-xs cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-terracotta" /> Backup Site (.json)
+            </button>
+
+            {/* 1-Click Backup Restore */}
+            <label
+              title="Restore site from a previously downloaded JSON backup"
+              className="inline-flex items-center gap-1.5 bg-white hover:bg-cream/40 border border-espresso/15 text-espresso px-3.5 py-2.5 rounded-full text-xs font-semibold transition-all shadow-xs cursor-pointer"
+            >
+              <Upload className="w-3.5 h-3.5 text-terracotta" /> Restore Backup
+              <input
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleRestoreBackupFile(file);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+
             <Link
               href="/?preview=true"
               target="_blank"
-              className="inline-flex items-center gap-2 bg-espresso hover:bg-terracotta text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm"
+              className="inline-flex items-center gap-2 bg-cream/70 hover:bg-cream text-espresso border border-espresso/15 px-3.5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-xs"
             >
-              <ExternalLink className="w-3.5 h-3.5" /> Preview Full Site (Owner View)
+              <ExternalLink className="w-3.5 h-3.5" /> Preview Site
             </Link>
           </div>
         </div>
@@ -2125,12 +2407,23 @@ export default function AdminPage() {
                   <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso">Services &amp; Pricing Catalog</h3>
                   <p className="text-xs text-espresso/60 font-light">Edit hair service prices, durations, photos, and calendar destinations</p>
                 </div>
-                <button
-                  onClick={handleOpenAddService}
-                  className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" /> Add Service
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleSaveAllSiteChanges()}
+                    disabled={isSavingAll}
+                    title="Saves all services, pricing, deposits, and add-ons simultaneously"
+                    className="inline-flex items-center gap-2 bg-espresso hover:bg-terracotta text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                  >
+                    {isSavingAll ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    Save Catalog Changes
+                  </button>
+                  <button
+                    onClick={handleOpenAddService}
+                    className="inline-flex items-center gap-2 bg-terracotta hover:bg-espresso text-cream px-4 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" /> Add Service
+                  </button>
+                </div>
               </div>
 
               {/* Standard Deposit Policy Action Banner */}
@@ -4211,13 +4504,63 @@ export default function AdminPage() {
                 <div className="pt-4">
                   <button
                     onClick={() => {
-                      safeStorageSet('bb_deposit_policy', depositPolicy || 'standard-50');
-                      alert('Salon settings saved successfully!');
+                      handleSaveAllSiteChanges();
+                      alert('Salon settings & deposit policy saved globally across the entire site!');
                     }}
-                    className="bg-terracotta hover:bg-espresso text-cream font-semibold px-6 py-3 rounded-full text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
+                    disabled={isSavingAll}
+                    className="bg-terracotta hover:bg-espresso text-cream font-semibold px-6 py-3 rounded-full text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer flex items-center gap-2"
                   >
-                    Save Salon Settings
+                    {isSavingAll ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    Save Salon Settings &amp; All Changes
                   </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Full Site Backup & Data Restoration Center */}
+            <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-4">
+              <div className="border-b border-espresso/10 pb-4">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-terracotta bg-terracotta/10 px-2.5 py-1 rounded-full">
+                  Zero Data Loss Safety Net
+                </span>
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso mt-1">
+                  Full Site Backup &amp; Instant Restoration
+                </h3>
+                <p className="text-xs text-espresso/60 font-light">
+                  Save a permanent snapshot of every service, price, deposit, add-on, staff working hours, and photo directly to your computer or phone. You can restore this file at any time in 1 click.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                <button
+                  onClick={handleDownloadBackup}
+                  className="flex-1 py-3 px-4 bg-espresso hover:bg-terracotta text-cream rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Download className="w-4 h-4 text-terracotta" /> Download Full Site Backup (.json)
+                </button>
+
+                <label className="flex-1 py-3 px-4 bg-cream/50 hover:bg-cream text-espresso border border-espresso/20 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer">
+                  <Upload className="w-4 h-4 text-terracotta" /> Restore Site from Backup (.json)
+                  <input
+                    type="file"
+                    accept=".json"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleRestoreBackupFile(file);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+
+              <div className="p-4 bg-amber-50/70 border border-amber-200 rounded-xl text-xs text-amber-950 flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold">Simultaneous Multi-Admin Protection Active</p>
+                  <p className="text-[11px] text-amber-900/80 mt-0.5">
+                    Whenever Sharon or Abigail clicks &ldquo;Save All Changes&rdquo;, all 11 site collections (services, categories, add-ons, staff schedules, text, and images) are simultaneously synchronized to the browser and the cloud API. Timestamp arbitration protects your work from being overwritten by older serverless restarts.
+                  </p>
                 </div>
               </div>
             </div>

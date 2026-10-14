@@ -61,7 +61,13 @@ export function ServiceList() {
       fetch('/api/site-content')
         .then((res) => (res.ok ? res.json() : null))
         .then((json) => {
-          if (json?.data?.services && Array.isArray(json.data.services) && json.data.services.length > 0) {
+          if (!json?.data) return;
+          const clientTime = localStorage.getItem('bb_last_updated');
+          const serverTime = json.data.lastUpdated;
+          if (clientTime && serverTime && new Date(clientTime).getTime() > new Date(serverTime).getTime()) {
+            return;
+          }
+          if (Array.isArray(json.data.services) && json.data.services.length > 0) {
             const norm = normalizeServiceDeposits(json.data.services);
             setServicesList(norm);
             localStorage.setItem('bb_services_list', JSON.stringify(norm));

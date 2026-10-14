@@ -109,10 +109,21 @@ export function BookingFlow() {
       fetch('/api/site-content')
         .then((res) => (res.ok ? res.json() : null))
         .then((json) => {
-          if (json?.data?.services && Array.isArray(json.data.services) && json.data.services.length > 0) {
+          if (!json?.data) return;
+          const clientTime = localStorage.getItem('bb_last_updated');
+          const serverTime = json.data.lastUpdated;
+          // Protect client state if client is newer than server
+          if (clientTime && serverTime && new Date(clientTime).getTime() > new Date(serverTime).getTime()) {
+            return;
+          }
+          if (Array.isArray(json.data.services) && json.data.services.length > 0) {
             const norm = normalizeServiceDeposits(json.data.services);
             setServicesList(norm);
             localStorage.setItem('bb_services_list', JSON.stringify(norm));
+          }
+          if (Array.isArray(json.data.addons) && json.data.addons.length > 0) {
+            setAddonsList(json.data.addons);
+            localStorage.setItem('bb_addons_list', JSON.stringify(json.data.addons));
           }
         })
         .catch(() => {});

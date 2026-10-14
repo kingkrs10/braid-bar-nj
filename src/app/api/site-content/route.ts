@@ -111,6 +111,7 @@ const defaultSiteContent = {
     salonArchHeight: 'standard',
   },
   clients: [] as any[],
+  depositPolicy: 'standard-50',
   lastUpdated: new Date().toISOString(),
 };
 
@@ -212,8 +213,9 @@ export async function POST(request: Request) {
     if (body.doubleBooking !== undefined) cachedData.doubleBooking = Boolean(body.doubleBooking);
     if (body.imageSettings) cachedData.imageSettings = { ...cachedData.imageSettings, ...body.imageSettings };
     if (body.clients && Array.isArray(body.clients)) cachedData.clients = body.clients;
+    if (body.depositPolicy) cachedData.depositPolicy = body.depositPolicy;
 
-    cachedData.lastUpdated = new Date().toISOString();
+    cachedData.lastUpdated = body.lastUpdated || new Date().toISOString();
 
     // Persist to disk so restarts never lose data
     saveToDisk(cachedData);

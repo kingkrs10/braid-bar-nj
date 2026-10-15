@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import AdminAiCopilot from '@/components/admin/AdminAiCopilot';
 import { services as initialServices, products as initialProducts, normalizeServiceDeposits } from '@/lib/data';
 import { 
   CLIENT_CHOSEN_AMAZON_PRODUCTS, 
@@ -1467,6 +1468,7 @@ export default function AdminPage() {
               {activeTab === 'infrastructure' && 'Data & Subscriptions'}
               {activeTab === 'shop' && 'Shop Care & Accessories Inventory'}
               {activeTab === 'applications' && 'Pop-Up Vendor Applications'}
+              {activeTab === 'ai-assistant' && 'AI Salon Operations Copilot'}
               {activeTab === 'manual' && 'Owner Manual'}
               {activeTab === 'settings' && 'Salon Settings & Location'}
             </h1>
@@ -1758,6 +1760,9 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+
+        {/* TAB: AI SALON OPERATIONS & TECH COPILOT */}
+        {activeTab === 'ai-assistant' && <AdminAiCopilot />}
 
         {/* TAB: OWNER OPERATING MANUAL & FIELD GUIDE */}
         {activeTab === 'manual' && (

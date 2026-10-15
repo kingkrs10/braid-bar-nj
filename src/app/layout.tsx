@@ -51,6 +51,8 @@ export const metadata: Metadata = {
   },
 };
 
+import ClientConciergeWidget from '@/components/ai/ClientConciergeWidget';
+
 export default function RootLayout({
   children,
 }: {
@@ -62,6 +64,7 @@ export default function RootLayout({
         <SmoothScroll>
           {children}
         </SmoothScroll>
+        <ClientConciergeWidget />
       </body>
     </html>
   );

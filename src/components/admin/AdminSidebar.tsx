@@ -18,7 +18,8 @@ import {
   Database,
   BookOpen,
   Users,
-  TrendingUp
+  TrendingUp,
+  Bot
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -39,6 +40,7 @@ export default function AdminSidebar({
 }: AdminSidebarProps) {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'ai-assistant', label: 'AI Salon Copilot', icon: Bot, badge: 'AI' },
     { id: 'manual', label: 'Owner Manual', icon: BookOpen },
     { id: 'appointments', label: 'Appointments', icon: Calendar, badge: upcomingBookingsCount },
     { id: 'clients', label: 'Client Directory', icon: Users },
@@ -98,7 +100,7 @@ export default function AdminSidebar({
                 <Icon className={cn('w-4 h-4', isActive ? 'text-cream' : 'text-cream/50')} />
                 <span>{item.label}</span>
               </div>
-              {item.badge !== undefined && item.badge > 0 && (
+              {item.badge !== undefined && (typeof item.badge === 'number' ? item.badge > 0 : Boolean(item.badge)) && (
                 <span
                   className={cn(
                     'text-[10px] font-bold px-2 py-0.5 rounded-full',

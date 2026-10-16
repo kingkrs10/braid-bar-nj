@@ -56,7 +56,10 @@ import {
   Download,
   Tag,
   Sliders,
-  Check
+  Check,
+  Tablet,
+  QrCode,
+  Copy
 } from 'lucide-react';
 import { formatPrice, formatDuration, getWhatsAppLink } from '@/lib/utils';
 import { uploadImageFile, safeStorageSet, safeStorageGet, handleImageFallback } from '@/lib/image-optimizer';
@@ -92,6 +95,7 @@ const initialApplications: Array<{
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [copiedIpadLink, setCopiedIpadLink] = useState(false);
 
   // Live state collections
   const [bookings, setBookings] = useState(initialBookings);
@@ -1588,6 +1592,15 @@ export default function AdminPage() {
             >
               <ExternalLink className="w-3.5 h-3.5" /> Preview Site
             </Link>
+
+            <Link
+              href="/tablet"
+              target="_blank"
+              className="inline-flex items-center gap-2 bg-espresso hover:bg-terracotta text-cream px-3.5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-xs"
+              title="Open the Braid Bar iPad / Tablet Kiosk Station for in-salon browsing"
+            >
+              <Tablet className="w-3.5 h-3.5 text-clay-rose" /> iPad / Tablet Mode
+            </Link>
           </div>
         </div>
 
@@ -1646,6 +1659,64 @@ export default function AdminPage() {
                     </>
                   )}
                 </button>
+              </div>
+            </div>
+
+            {/* Salon iPad & Tablet Kiosk Station Card */}
+            <div className="bg-gradient-to-br from-white via-cream/30 to-[#FAF6F2] p-6 rounded-3xl border border-espresso/15 shadow-sm flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-espresso text-cream flex items-center justify-center shrink-0 shadow-xs">
+                  <Tablet className="w-6 h-6 text-clay-rose" />
+                </div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-terracotta/15 text-terracotta border border-terracotta/30">
+                      📱 Salon Kiosk Station
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11px] text-emerald-800 font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                      Live at /tablet & /ipad
+                    </span>
+                  </div>
+                  <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-espresso">
+                    In-Salon iPad Tablet Experience
+                  </h3>
+                  <p className="text-xs text-espresso/70 max-w-2xl leading-relaxed">
+                    Dedicated touch-optimized station for clients in the chair or reception lounge. Browse all 50+ styles, lookbook photos, add-on bar, and salon amenities with auto-inactivity reset and fullscreen mode.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons & iPad Link */}
+              <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-end">
+                <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-espresso/15 text-xs font-mono text-espresso/80">
+                  <span>/tablet</span>
+                  <button
+                    onClick={() => {
+                      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                        const origin = typeof window !== 'undefined' ? window.location.origin : 'https://braidbarnj.com';
+                        navigator.clipboard.writeText(`${origin}/tablet`);
+                        setCopiedIpadLink(true);
+                        setTimeout(() => setCopiedIpadLink(false), 2500);
+                      }
+                    }}
+                    className="p-1 rounded-md hover:bg-cream text-espresso/60 hover:text-espresso transition-colors cursor-pointer"
+                    title="Copy iPad Station URL"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                  {copiedIpadLink && (
+                    <span className="text-[10px] font-bold text-emerald-700 animate-pulse">Copied!</span>
+                  )}
+                </div>
+
+                <Link
+                  href="/tablet"
+                  target="_blank"
+                  className="px-5 py-2.5 rounded-xl bg-espresso hover:bg-terracotta text-cream text-xs font-bold uppercase tracking-wider transition-all shadow-xs flex items-center gap-2 cursor-pointer"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-clay-rose" /> Open iPad Station
+                </Link>
               </div>
             </div>
 

@@ -74,6 +74,7 @@ export default function Footer() {
               { name: 'Home', href: '/' },
               { name: 'Salon Hair Services', href: '/#services' },
               { name: 'Lookbook Gallery', href: '/#lookbook' },
+              { name: 'Salon iPad Station', href: '/tablet' },
               { name: 'Membership', href: '/#membership' },
               { name: 'Events & Contact', href: '/#events' },
               { name: 'Owner Portal (Admin)', href: '/admin' },

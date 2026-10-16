@@ -250,6 +250,7 @@ export default function AdminPage() {
     navLogo: '/images/branding/logo-monogram-bb.png',
     heroLogo: '/images/branding/logo-braidbar-stacked.png',
     galleryPattern: '/images/branding/pattern-waves-tan.png',
+    lookbookFeature: '/images/braids-fulani.jpg',
   };
   const [siteImages, setSiteImages] = useState<Record<string, string>>(() => {
     if (typeof window !== 'undefined') {
@@ -3184,6 +3185,7 @@ export default function AdminPage() {
                   { key: 'salonArch', title: 'Salon Sanctuary Half-Circle Arch Photo', note: 'Displayed above main headline in Brand Mission section', img: siteImages.salonArch || '/images/salon-reception-arch.jpg' },
                   { key: 'heroBg', title: 'Hero Full-Bleed Background Photo', note: 'Main hero background photo at top of site', img: siteImages.heroBg || '/images/branding/hero-sitting.jpg' },
                   { key: 'portfolioOval', title: 'Style Portfolio Oval Frame Photo', note: 'Left photo in Style Portfolio menu section', img: siteImages.portfolioOval || '/images/braids-twists.jpg' },
+                  { key: 'lookbookFeature', title: 'Lookbook Vertical Showcase Photo', note: 'Large photo with the script "Lookbook" title overlay in Section 4', img: siteImages.lookbookFeature || '/images/braids-fulani.jpg' },
                   { key: 'sharonPhoto', title: 'Sharon French (Lead Stylist Portrait)', note: 'Lead Stylist profile picture in Team section', img: siteImages.sharonPhoto || '/images/branding/profile-sharon-lead.png' },
                   { key: 'abigailPhoto', title: 'Abigail Charles (Assistant Portrait)', note: 'Salon Assistant profile picture in Team section', img: siteImages.abigailPhoto || '/images/branding/profile-abigail-assistant.png' },
                   { key: 'navLogo', title: 'Top Navigation Monogram Logo', note: 'Small monogram logo in header navigation', img: siteImages.navLogo || '/images/branding/logo-monogram-bb.png' },

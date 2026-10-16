@@ -38,6 +38,7 @@ const defaultSiteContent = {
     abigailPhoto: '/images/branding/profile-abigail-assistant.png',
     navLogo: '/images/branding/logo-monogram-bb.png',
     heroLogo: '/images/branding/logo-braidbar-stacked.png',
+    lookbookFeature: '/images/braids-fulani.jpg',
   },
   addons: [
     { id: 'add-1', name: 'Luxury Shampoo & Scalp Detox Wash', price: 35, duration_min: 30, applicableTo: 'all', applicableServiceIds: [] },

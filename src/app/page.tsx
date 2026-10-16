@@ -68,10 +68,11 @@ export default function HomePage() {
     marqueeText: '✨ NOW BOOKING AUGUST & SEPTEMBER • 560 VALLEY ROAD, WEST ORANGE, NJ • VIP BRAID EXPERIENCES AVAILABLE',
   });
 
-  const [siteImages, setSiteImages] = useState({
+  const [siteImages, setSiteImages] = useState<Record<string, string>>({
     heroBg: '/images/branding/hero-sitting.jpg',
     salonArch: '/images/salon-reception-arch.jpg',
     portfolioOval: '/images/braids-twists.jpg',
+    lookbookFeature: '/images/braids-fulani.jpg',
     sharonPhoto: '/images/branding/profile-sharon-lead.png',
     abigailPhoto: '/images/branding/profile-abigail-assistant.png',
   });
@@ -448,7 +449,7 @@ export default function HomePage() {
           <div className="md:col-span-7 relative flex items-center justify-end">
             <div className="w-5/6 aspect-[3/4] rounded-2xl overflow-hidden border border-espresso/10 bg-cream-dark shadow-md">
               <img
-                src="/images/braids-fulani.jpg"
+                src={siteImages.lookbookFeature || "/images/braids-fulani.jpg"}
                 alt="Braid Bar lookbook style"
                 className="w-full h-full object-cover"
                 onError={(e) => handleImageFallback(e, "/images/braids-fulani.jpg")}

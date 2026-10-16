@@ -59,7 +59,11 @@ import {
   Check,
   Tablet,
   QrCode,
-  Copy
+  Copy,
+  Award,
+  Gift,
+  Star,
+  Crown
 } from 'lucide-react';
 import { formatPrice, formatDuration, getWhatsAppLink } from '@/lib/utils';
 import { uploadImageFile, safeStorageSet, safeStorageGet, handleImageFallback } from '@/lib/image-optimizer';
@@ -789,6 +793,46 @@ export default function AdminPage() {
     }
   };
 
+  // Salon Loyalty Rewards Catalog (Aligned with Public Site)
+  const SALON_LOYALTY_REWARDS = [
+    {
+      id: 'rew-100',
+      pts: 100,
+      tier: 'Bronze Tier',
+      title: 'Crown Hydration Prep',
+      desc: 'Warm herbal wash & therapeutic steam treatment before braid installation.',
+    },
+    {
+      id: 'rew-250',
+      pts: 250,
+      tier: 'Silver Tier',
+      title: 'Edge Care & Satin Set',
+      desc: 'Edge touch-up detailing session plus premium Braid Bar satin bonnet & oil pack.',
+    },
+    {
+      id: 'rew-500',
+      pts: 500,
+      tier: 'Gold VIP Tier',
+      title: 'VIP Suite Upgrade',
+      desc: 'Styling session in private VIP station + complimentary refreshments & 10% off knotless.',
+    },
+  ];
+
+  const getClientPoints = (client: any): number => {
+    if (typeof client?.points === 'number') return client.points;
+    return typeof client?.totalSpent === 'number' ? client.totalSpent : 0;
+  };
+
+  const getLoyaltyTier = (points: number) => {
+    if (points >= 500) {
+      return { name: 'Gold VIP', badgeClass: 'bg-amber-100 text-amber-900 border-amber-300', icon: '👑' };
+    }
+    if (points >= 200) {
+      return { name: 'Silver', badgeClass: 'bg-slate-100 text-slate-800 border-slate-300', icon: '🥈' };
+    }
+    return { name: 'Bronze', badgeClass: 'bg-rose-50 text-rose-900 border-rose-200', icon: '🥉' };
+  };
+
   // Clients Directory CRM State
   const initialClients = [
     {
@@ -799,6 +843,7 @@ export default function AdminPage() {
       tag: 'VIP Client',
       stylist: 'Sharon French',
       totalSpent: 850,
+      points: 850,
       visitsCount: 4,
       lastVisit: '2026-09-14',
       notes: 'Prefers tension-free Bohemian knotless with human hair curls. Scalp detox wash every visit.'
@@ -811,6 +856,7 @@ export default function AdminPage() {
       tag: 'Regular',
       stylist: 'Sharon French',
       totalSpent: 520,
+      points: 520,
       visitsCount: 2,
       lastVisit: '2026-09-02',
       notes: 'Fulani braids with gold cowrie beads. Prefers gentle comb out.'
@@ -823,6 +869,7 @@ export default function AdminPage() {
       tag: 'New Client',
       stylist: 'Abigail Charles',
       totalSpent: 120,
+      points: 120,
       visitsCount: 1,
       lastVisit: '2026-09-18',
       notes: 'Silk press blowout & scalp deep conditioning.'
@@ -835,6 +882,7 @@ export default function AdminPage() {
       tag: 'VIP Client',
       stylist: 'Sharon French',
       totalSpent: 1100,
+      points: 1100,
       visitsCount: 5,
       lastVisit: '2026-09-20',
       notes: 'VIP Luxury package client. Loves herbal tea during installation.'
@@ -856,6 +904,7 @@ export default function AdminPage() {
 
   const [clientSearchQuery, setClientSearchQuery] = useState('');
   const [clientTagFilter, setClientTagFilter] = useState('All');
+  const [clientLoyaltyFilter, setClientLoyaltyFilter] = useState<'All' | 'Gold VIP' | 'Silver' | 'Bronze'>('All');
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [clientFormData, setClientFormData] = useState({
     id: '',
@@ -865,10 +914,20 @@ export default function AdminPage() {
     tag: 'Regular',
     stylist: 'Sharon French',
     totalSpent: 250,
+    points: 250,
     visitsCount: 1,
     lastVisit: '2026-09-23',
     notes: '',
   });
+
+  // Points & Loyalty Management Modals State
+  const [selectedLoyaltyClient, setSelectedLoyaltyClient] = useState<any | null>(null);
+  const [isAwardPointsModalOpen, setIsAwardPointsModalOpen] = useState(false);
+  const [isRedeemRewardModalOpen, setIsRedeemRewardModalOpen] = useState(false);
+  const [awardPointsAmount, setAwardPointsAmount] = useState<number>(50);
+  const [awardPointsReason, setAwardPointsReason] = useState<string>('5-Star Google Review');
+  const [customPointsReason, setCustomPointsReason] = useState<string>('');
+  const [pointsSuccessNotification, setPointsSuccessNotification] = useState<string | null>(null);
 
   const handleOpenAddClient = () => {
     setClientFormData({
@@ -879,6 +938,7 @@ export default function AdminPage() {
       tag: 'New Client',
       stylist: 'Sharon French',
       totalSpent: 0,
+      points: 0,
       visitsCount: 0,
       lastVisit: new Date().toISOString().split('T')[0],
       notes: '',
@@ -887,8 +947,90 @@ export default function AdminPage() {
   };
 
   const handleOpenEditClient = (c: any) => {
-    setClientFormData({ ...c });
+    setClientFormData({
+      ...c,
+      points: getClientPoints(c),
+    });
     setIsClientModalOpen(true);
+  };
+
+  const handleOpenAwardPoints = (client: any) => {
+    setSelectedLoyaltyClient(client);
+    setAwardPointsAmount(50);
+    setAwardPointsReason('5-Star Google Review');
+    setCustomPointsReason('');
+    setIsAwardPointsModalOpen(true);
+  };
+
+  const handleOpenRedeemReward = (client: any) => {
+    setSelectedLoyaltyClient(client);
+    setIsRedeemRewardModalOpen(true);
+  };
+
+  const handleConfirmAwardPoints = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedLoyaltyClient) return;
+    const currentPts = getClientPoints(selectedLoyaltyClient);
+    const reason = awardPointsReason === 'Custom Reason' ? (customPointsReason || 'Bonus Points Awarded') : awardPointsReason;
+    const newPts = currentPts + awardPointsAmount;
+
+    const updated = clientsList.map((c) => {
+      if (c.id === selectedLoyaltyClient.id) {
+        return {
+          ...c,
+          points: newPts,
+          notes: `${c.notes ? c.notes + '\n' : ''}[${new Date().toLocaleDateString()}] Awarded +${awardPointsAmount} pts: ${reason}`,
+        };
+      }
+      return c;
+    });
+
+    setClientsList(updated);
+    setIsAwardPointsModalOpen(false);
+    setSelectedLoyaltyClient(null);
+    setPointsSuccessNotification(`Successfully awarded +${awardPointsAmount} points to ${selectedLoyaltyClient.name}!`);
+    setTimeout(() => setPointsSuccessNotification(null), 3500);
+
+    if (typeof window !== 'undefined') {
+      safeStorageSet('bb_clients_list', JSON.stringify(updated));
+      syncToApiServer({ clients: updated });
+    }
+  };
+
+  const handleConfirmRedeemReward = (reward: typeof SALON_LOYALTY_REWARDS[0]) => {
+    if (!selectedLoyaltyClient) return;
+    const currentPts = getClientPoints(selectedLoyaltyClient);
+    if (currentPts < reward.pts) {
+      alert(`Client only has ${currentPts} points. This reward requires ${reward.pts} points.`);
+      return;
+    }
+
+    if (!confirm(`Redeem "${reward.title}" for ${selectedLoyaltyClient.name}? This will deduct ${reward.pts} points from their balance.`)) {
+      return;
+    }
+
+    const newPts = currentPts - reward.pts;
+    const updated = clientsList.map((c) => {
+      if (c.id === selectedLoyaltyClient.id) {
+        return {
+          ...c,
+          points: newPts,
+          notes: `${c.notes ? c.notes + '\n' : ''}[${new Date().toLocaleDateString()}] Redeemed ${reward.pts} pts for: ${reward.title}`,
+        };
+      }
+      return c;
+    });
+
+    setClientsList(updated);
+    setIsRedeemRewardModalOpen(false);
+    setSelectedLoyaltyClient(null);
+    setPointsSuccessNotification(`Redeemed "${reward.title}" for ${selectedLoyaltyClient.name} (-${reward.pts} pts)!`);
+    setTimeout(() => setPointsSuccessNotification(null), 3500);
+
+    if (typeof window !== 'undefined') {
+      safeStorageSet('bb_clients_list', JSON.stringify(updated));
+      syncToApiServer({ clients: updated });
+    }
   };
 
   const handleSaveClientForm = (e: React.FormEvent) => {
@@ -919,18 +1061,24 @@ export default function AdminPage() {
   };
 
   const handleExportClientsCSV = () => {
-    const headers = ['Client Name', 'Phone', 'Email', 'Tag', 'Stylist', 'Total Spent ($)', 'Visits', 'Last Visit', 'Notes'];
-    const rows = clientsList.map((c) => [
-      `"${c.name}"`,
-      `"${c.phone}"`,
-      `"${c.email}"`,
-      `"${c.tag}"`,
-      `"${c.stylist}"`,
-      c.totalSpent,
-      c.visitsCount,
-      `"${c.lastVisit}"`,
-      `"${(c.notes || '').replace(/"/g, '""')}"`,
-    ]);
+    const headers = ['Client Name', 'Phone', 'Email', 'Tag', 'Loyalty Points', 'Loyalty Tier', 'Stylist', 'Total Spent ($)', 'Visits', 'Last Visit', 'Notes'];
+    const rows = clientsList.map((c) => {
+      const pts = getClientPoints(c);
+      const tier = getLoyaltyTier(pts);
+      return [
+        `"${c.name}"`,
+        `"${c.phone}"`,
+        `"${c.email}"`,
+        `"${c.tag}"`,
+        pts,
+        `"${tier.name}"`,
+        `"${c.stylist}"`,
+        c.totalSpent,
+        c.visitsCount,
+        `"${c.lastVisit}"`,
+        `"${(c.notes || '').replace(/"/g, '""')}"`,
+      ];
+    });
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
@@ -1759,18 +1907,25 @@ export default function AdminPage() {
               </div>
 
               {/* Active Loyalty Members */}
-              <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm flex flex-col justify-between">
+              <div
+                onClick={() => setActiveTab('clients')}
+                className="bg-white hover:bg-cream/20 cursor-pointer transition-all p-6 rounded-2xl border border-espresso/10 shadow-sm flex flex-col justify-between group"
+                title="Click to view and manage client loyalty points & rewards in Client Directory"
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-espresso/50">Loyalty Circle</span>
-                  <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700">
-                    <Users className="w-4 h-4" />
+                  <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 group-hover:bg-amber-100 transition-colors">
+                    <Star className="w-4 h-4 fill-amber-500 text-amber-600" />
                   </div>
                 </div>
                 <div className="mt-4">
                   <h3 className="text-3xl font-bold font-[family-name:var(--font-display)] text-espresso">
-                    {new Set(bookings.map(b => b.clientEmail)).size}
+                    {clientsList.length || new Set(bookings.map(b => b.clientEmail)).size}
                   </h3>
-                  <p className="text-[11px] text-amber-700 font-medium mt-1">Active client base</p>
+                  <p className="text-[11px] text-amber-700 font-medium mt-1 flex items-center justify-between">
+                    <span>Manage Client Points</span>
+                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                  </p>
                 </div>
               </div>
 
@@ -2211,9 +2366,101 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Search & Tag Filter Pills */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-espresso/10 shadow-sm">
-              <div className="relative flex-1">
+            {/* Success notification banner */}
+            {pointsSuccessNotification && (
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                <Check className="w-4 h-4 text-emerald-600" />
+                <span>{pointsSuccessNotification}</span>
+              </div>
+            )}
+
+            {/* Loyalty Circle & Points Overview KPI Bar */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-gradient-to-br from-amber-50/90 to-amber-100/50 p-5 rounded-2xl border border-amber-200/80 shadow-xs flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800/70 block">
+                    Total Points in Circulation
+                  </span>
+                  <span className="text-2xl font-black font-[family-name:var(--font-display)] text-amber-950 mt-1 block">
+                    {clientsList.reduce((sum, c) => sum + getClientPoints(c), 0).toLocaleString()} pts
+                  </span>
+                  <span className="text-[10px] text-amber-800 font-medium">1 point per $1 spent</span>
+                </div>
+                <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                  <Star className="w-5 h-5 fill-white" />
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-espresso/10 shadow-xs flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-espresso/50 block">
+                    Gold VIP Tier (500+ pts)
+                  </span>
+                  <span className="text-2xl font-black font-[family-name:var(--font-display)] text-espresso mt-1 block">
+                    {clientsList.filter((c) => getClientPoints(c) >= 500).length}
+                  </span>
+                  <span className="text-[10px] text-amber-700 font-semibold">Eligible for VIP Suite Upgrade</span>
+                </div>
+                <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                  <Crown className="w-5 h-5 text-amber-700" />
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-espresso/10 shadow-xs flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-espresso/50 block">
+                    Silver Tier (200–499 pts)
+                  </span>
+                  <span className="text-2xl font-black font-[family-name:var(--font-display)] text-espresso mt-1 block">
+                    {clientsList.filter((c) => {
+                      const pts = getClientPoints(c);
+                      return pts >= 200 && pts < 500;
+                    }).length}
+                  </span>
+                  <span className="text-[10px] text-slate-700 font-semibold">Eligible for Edge Care Set</span>
+                </div>
+                <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold">
+                  <Award className="w-5 h-5 text-slate-600" />
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-espresso/10 shadow-xs flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-espresso/50 block">
+                    Bronze Tier (&lt; 200 pts)
+                  </span>
+                  <span className="text-2xl font-black font-[family-name:var(--font-display)] text-espresso mt-1 block">
+                    {clientsList.filter((c) => getClientPoints(c) < 200).length}
+                  </span>
+                  <span className="text-[10px] text-terracotta font-semibold">Working towards 100 pt Steam Wash</span>
+                </div>
+                <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-800 flex items-center justify-center font-bold">
+                  <Gift className="w-5 h-5 text-terracotta" />
+                </div>
+              </div>
+            </div>
+
+            {/* Loyalty Rewards Program Banner */}
+            <div className="p-4 rounded-2xl bg-white border border-espresso/10 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-terracotta/10 text-terracotta flex items-center justify-center shrink-0">
+                  <Gift className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="font-bold text-espresso">Loyalty Redemption Rewards Catalog:</span>
+                  <p className="text-espresso/70 text-[11px]">
+                    <strong>100 pts:</strong> Crown Hydration Prep (Herbal wash &amp; steam) • <strong>250 pts:</strong> Edge Care &amp; Satin Bonnet Set • <strong>500 pts:</strong> VIP Suite Upgrade (+ 10% off knotless)
+                  </p>
+                </div>
+              </div>
+              <span className="text-[11px] font-bold text-terracotta px-3 py-1 bg-cream rounded-full shrink-0 border border-espresso/10">
+                1 pt per $1 spent
+              </span>
+            </div>
+
+            {/* Search, Tag Filter, & Loyalty Tier Filter Toolbar */}
+            <div className="flex flex-col gap-3 bg-white p-4 rounded-2xl border border-espresso/10 shadow-sm">
+              <div className="relative w-full">
                 <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-espresso/40" />
                 <input
                   type="text"
@@ -2224,24 +2471,52 @@ export default function AdminPage() {
                 />
               </div>
 
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-                {['All', 'VIP Client', 'Regular', 'New Client'].map((tag) => {
-                  const isSelected = clientTagFilter === tag;
-                  const count = tag === 'All' ? clientsList.length : clientsList.filter((c) => c.tag === tag).length;
-                  return (
-                    <button
-                      key={tag}
-                      onClick={() => setClientTagFilter(tag)}
-                      className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap border ${
-                        isSelected
-                          ? 'bg-espresso text-cream border-espresso'
-                          : 'bg-white hover:bg-cream text-espresso/70 border-espresso/10'
-                      }`}
-                    >
-                      {tag} ({count})
-                    </button>
-                  );
-                })}
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-espresso/5">
+                {/* Client Category Tags */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-espresso/40 mr-1">Status:</span>
+                  {['All', 'VIP Client', 'Regular', 'New Client'].map((tag) => {
+                    const isSelected = clientTagFilter === tag;
+                    const count = tag === 'All' ? clientsList.length : clientsList.filter((c) => c.tag === tag).length;
+                    return (
+                      <button
+                        key={tag}
+                        onClick={() => setClientTagFilter(tag)}
+                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap border ${
+                          isSelected
+                            ? 'bg-espresso text-cream border-espresso'
+                            : 'bg-white hover:bg-cream text-espresso/70 border-espresso/10'
+                        }`}
+                      >
+                        {tag} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Loyalty Tier Filter Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-espresso/40 mr-1">Loyalty Tier:</span>
+                  {(['All', 'Gold VIP', 'Silver', 'Bronze'] as const).map((tier) => {
+                    const isSelected = clientLoyaltyFilter === tier;
+                    const count = tier === 'All'
+                      ? clientsList.length
+                      : clientsList.filter((c) => getLoyaltyTier(getClientPoints(c)).name === tier).length;
+                    return (
+                      <button
+                        key={tier}
+                        onClick={() => setClientLoyaltyFilter(tier)}
+                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap border ${
+                          isSelected
+                            ? 'bg-amber-600 text-white border-amber-600'
+                            : 'bg-white hover:bg-cream text-espresso/70 border-espresso/10'
+                        }`}
+                      >
+                        {tier} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -2253,6 +2528,7 @@ export default function AdminPage() {
                     <tr className="bg-cream/40 border-b border-espresso/10 text-[10px] uppercase font-bold text-espresso/60 tracking-wider">
                       <th className="py-3 px-4">Client Details</th>
                       <th className="py-3 px-4">Category Tag</th>
+                      <th className="py-3 px-4">Loyalty Tier &amp; Points</th>
                       <th className="py-3 px-4">Preferred Stylist</th>
                       <th className="py-3 px-4">Visits &amp; Spend</th>
                       <th className="py-3 px-4">Last Visit</th>
@@ -2264,74 +2540,108 @@ export default function AdminPage() {
                     {clientsList
                       .filter((c) => {
                         const matchesTag = clientTagFilter === 'All' || c.tag === clientTagFilter;
+                        const pts = getClientPoints(c);
+                        const tier = getLoyaltyTier(pts);
+                        const matchesLoyalty = clientLoyaltyFilter === 'All' || tier.name === clientLoyaltyFilter;
                         const q = clientSearchQuery.toLowerCase();
                         const matchesQuery = !q || c.name.toLowerCase().includes(q) || c.phone.includes(q) || c.email.toLowerCase().includes(q);
-                        return matchesTag && matchesQuery;
+                        return matchesTag && matchesLoyalty && matchesQuery;
                       })
-                      .map((c) => (
-                        <tr key={c.id} className="hover:bg-cream/15 transition-colors">
-                          <td className="py-4 px-4">
-                            <span className="font-bold text-espresso text-sm block">{c.name}</span>
-                            <div className="flex items-center gap-3 text-[11px] text-espresso/60 mt-0.5">
-                              <span>{c.phone}</span>
-                              <span>•</span>
-                              <span>{c.email}</span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-4">
-                            <span
-                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                                c.tag === 'VIP Client'
-                                  ? 'bg-amber-100 text-amber-900 border border-amber-200'
-                                  : c.tag === 'Regular'
-                                  ? 'bg-emerald-100 text-emerald-900 border border-emerald-200'
-                                  : 'bg-blue-100 text-blue-900 border border-blue-200'
-                              }`}
-                            >
-                              {c.tag}
-                            </span>
-                          </td>
-                          <td className="py-4 px-4 font-semibold text-espresso">
-                            {c.stylist}
-                          </td>
-                          <td className="py-4 px-4">
-                            <span className="font-bold text-terracotta block">{formatPrice(c.totalSpent)}</span>
-                            <span className="text-[10px] text-espresso/50 font-normal">{c.visitsCount} appointment{c.visitsCount === 1 ? '' : 's'}</span>
-                          </td>
-                          <td className="py-4 px-4 text-espresso/70">
-                            {c.lastVisit}
-                          </td>
-                          <td className="py-4 px-4 max-w-xs">
-                            <p className="text-[11px] text-espresso/70 italic line-clamp-2">
-                              {c.notes || 'No notes added'}
-                            </p>
-                          </td>
-                          <td className="py-4 px-4 text-right space-x-2">
-                            <button
-                              onClick={() => handleOpenEditClient(c)}
-                              className="p-1.5 text-espresso/70 hover:text-terracotta hover:bg-cream/40 rounded-lg transition-colors cursor-pointer"
-                              title="Edit Client"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClient(c.id)}
-                              className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                              title="Delete Client"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                            <a
-                              href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-[10px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-full font-medium"
-                            >
-                              <MessageSquare className="w-3 h-3" /> WhatsApp
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                      .map((c) => {
+                        const pts = getClientPoints(c);
+                        const tier = getLoyaltyTier(pts);
+                        return (
+                          <tr key={c.id} className="hover:bg-cream/15 transition-colors">
+                            <td className="py-4 px-4">
+                              <span className="font-bold text-espresso text-sm block">{c.name}</span>
+                              <div className="flex items-center gap-3 text-[11px] text-espresso/60 mt-0.5">
+                                <span>{c.phone}</span>
+                                <span>•</span>
+                                <span>{c.email}</span>
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              <span
+                                className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                  c.tag === 'VIP Client'
+                                    ? 'bg-amber-100 text-amber-900 border border-amber-200'
+                                    : c.tag === 'Regular'
+                                    ? 'bg-emerald-100 text-emerald-900 border border-emerald-200'
+                                    : 'bg-blue-100 text-blue-900 border border-blue-200'
+                                }`}
+                              >
+                                {c.tag}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4">
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-sm text-espresso font-[family-name:var(--font-display)] flex items-center gap-1">
+                                  <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                                  {pts} pts
+                                </span>
+                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${tier.badgeClass}`}>
+                                  {tier.name}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1.5 mt-1.5">
+                                <button
+                                  onClick={() => handleOpenAwardPoints(c)}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold cursor-pointer transition-colors"
+                                  title="Award bonus loyalty points for reviews, referrals, or birthday"
+                                >
+                                  <Award className="w-3 h-3 text-amber-600" /> + Award
+                                </button>
+                                <button
+                                  onClick={() => handleOpenRedeemReward(c)}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-300 text-[10px] font-bold cursor-pointer transition-colors"
+                                  title="Redeem points for salon rewards"
+                                >
+                                  <Gift className="w-3 h-3 text-purple-600" /> Redeem
+                                </button>
+                              </div>
+                            </td>
+                            <td className="py-4 px-4 font-semibold text-espresso">
+                              {c.stylist}
+                            </td>
+                            <td className="py-4 px-4">
+                              <span className="font-bold text-terracotta block">{formatPrice(c.totalSpent)}</span>
+                              <span className="text-[10px] text-espresso/50 font-normal">{c.visitsCount} appointment{c.visitsCount === 1 ? '' : 's'}</span>
+                            </td>
+                            <td className="py-4 px-4 text-espresso/70">
+                              {c.lastVisit}
+                            </td>
+                            <td className="py-4 px-4 max-w-xs">
+                              <p className="text-[11px] text-espresso/70 italic line-clamp-2">
+                                {c.notes || 'No notes added'}
+                              </p>
+                            </td>
+                            <td className="py-4 px-4 text-right space-x-2">
+                              <button
+                                onClick={() => handleOpenEditClient(c)}
+                                className="p-1.5 text-espresso/70 hover:text-terracotta hover:bg-cream/40 rounded-lg transition-colors cursor-pointer"
+                                title="Edit Client"
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClient(c.id)}
+                                className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                title="Delete Client"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                              <a
+                                href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[10px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-full font-medium"
+                              >
+                                <MessageSquare className="w-3 h-3" /> WhatsApp
+                              </a>
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
@@ -5338,7 +5648,7 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <label className="block text-espresso/80 font-bold mb-1">Preferred Stylist</label>
                   <select
@@ -5371,6 +5681,16 @@ export default function AdminPage() {
                     className="w-full px-3 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
                   />
                 </div>
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Loyalty Points</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={clientFormData.points ?? clientFormData.totalSpent}
+                    onChange={(e) => setClientFormData({ ...clientFormData, points: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
               </div>
 
               <div>
@@ -5400,6 +5720,240 @@ export default function AdminPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Award Loyalty Points Modal */}
+      {isAwardPointsModalOpen && selectedLoyaltyClient && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-espresso/10 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
+                  <Award className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso">
+                    Award Loyalty Points
+                  </h3>
+                  <p className="text-xs text-espresso/60">
+                    Client: <strong>{selectedLoyaltyClient.name}</strong>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setIsAwardPointsModalOpen(false);
+                  setSelectedLoyaltyClient(null);
+                }}
+                className="text-espresso/40 hover:text-espresso p-1 rounded-full text-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Current Balance & Projected Balance */}
+            <div className="p-4 rounded-2xl bg-[#FAF6F2] border border-espresso/10 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] uppercase font-bold text-espresso/50 block">Current Balance</span>
+                <span className="font-extrabold text-lg text-espresso flex items-center gap-1">
+                  <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  {getClientPoints(selectedLoyaltyClient)} pts
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] uppercase font-bold text-emerald-700 block">New Balance</span>
+                <span className="font-extrabold text-lg text-emerald-800">
+                  {getClientPoints(selectedLoyaltyClient) + awardPointsAmount} pts
+                </span>
+              </div>
+            </div>
+
+            <form onSubmit={handleConfirmAwardPoints} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Reason for Awarding</label>
+                <select
+                  value={awardPointsReason}
+                  onChange={(e) => setAwardPointsReason(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                >
+                  <option value="5-Star Google Review">5-Star Google Review (+50 pts)</option>
+                  <option value="Client Friend Referral">Client Friend Referral (+100 pts)</option>
+                  <option value="Birthday Celebration Bonus">Birthday Celebration Bonus (+50 pts)</option>
+                  <option value="Social Media Tag / Story Mention">Social Media Tag / Story Mention (+25 pts)</option>
+                  <option value="VIP Courtesy Gift">VIP Courtesy Gift (+50 pts)</option>
+                  <option value="Custom Reason">Custom Reason...</option>
+                </select>
+              </div>
+
+              {awardPointsReason === 'Custom Reason' && (
+                <div>
+                  <label className="block text-espresso/80 font-bold mb-1">Custom Note / Reason</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Special anniversary promotion"
+                    value={customPointsReason}
+                    onChange={(e) => setCustomPointsReason(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-espresso/80 font-bold mb-1">Points to Award</label>
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  {[25, 50, 100, 200].map((amt) => (
+                    <button
+                      key={amt}
+                      type="button"
+                      onClick={() => setAwardPointsAmount(amt)}
+                      className={`py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                        awardPointsAmount === amt
+                          ? 'bg-espresso text-cream border-espresso'
+                          : 'bg-white hover:bg-cream text-espresso/80 border-espresso/15'
+                      }`}
+                    >
+                      +{amt}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="number"
+                  min={1}
+                  required
+                  value={awardPointsAmount}
+                  onChange={(e) => setAwardPointsAmount(parseInt(e.target.value) || 0)}
+                  className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/15 rounded-xl font-medium text-espresso focus:outline-none focus:border-terracotta"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3 border-t border-espresso/10">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAwardPointsModalOpen(false);
+                    setSelectedLoyaltyClient(null);
+                  }}
+                  className="px-4 py-2.5 bg-cream/50 hover:bg-cream text-espresso font-semibold rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1.5"
+                >
+                  <Award className="w-3.5 h-3.5" /> Award +{awardPointsAmount} Points
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Redeem Loyalty Reward Modal */}
+      {isRedeemRewardModalOpen && selectedLoyaltyClient && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-lg w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-espresso/15 space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-espresso/10 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold">
+                  <Gift className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso">
+                    Redeem Loyalty Reward
+                  </h3>
+                  <p className="text-xs text-espresso/60">
+                    Client: <strong>{selectedLoyaltyClient.name}</strong> • Tier: <span className="font-bold text-terracotta">{getLoyaltyTier(getClientPoints(selectedLoyaltyClient)).name}</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setIsRedeemRewardModalOpen(false);
+                  setSelectedLoyaltyClient(null);
+                }}
+                className="text-espresso/40 hover:text-espresso p-1 rounded-full text-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Current Available Points */}
+            <div className="p-4 rounded-2xl bg-[#FAF6F2] border border-espresso/10 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] uppercase font-bold text-espresso/50 block">Available Points to Spend</span>
+                <span className="font-extrabold text-xl text-espresso flex items-center gap-1.5 font-[family-name:var(--font-display)]">
+                  <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  {getClientPoints(selectedLoyaltyClient)} pts
+                </span>
+              </div>
+              <div className="text-right text-xs text-espresso/60">
+                <span>1 pt per $1 spent</span>
+              </div>
+            </div>
+
+            {/* Reward Options List */}
+            <div className="space-y-3">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-espresso/60 block">
+                Official Salon Loyalty Rewards
+              </span>
+              {SALON_LOYALTY_REWARDS.map((rew) => {
+                const clientPts = getClientPoints(selectedLoyaltyClient);
+                const isEligible = clientPts >= rew.pts;
+                return (
+                  <div
+                    key={rew.id}
+                    className={`p-4 rounded-2xl border transition-all flex items-start justify-between gap-3 ${
+                      isEligible
+                        ? 'bg-white border-purple-200 shadow-xs'
+                        : 'bg-cream/20 border-espresso/5 opacity-60'
+                    }`}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-cream text-espresso border border-espresso/10">
+                          {rew.tier}
+                        </span>
+                        <span className="font-bold text-espresso text-sm">{rew.title}</span>
+                      </div>
+                      <p className="text-xs text-espresso/70 leading-relaxed">{rew.desc}</p>
+                      <span className="text-[11px] font-bold text-terracotta block">
+                        Requires {rew.pts} points
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={!isEligible}
+                      onClick={() => handleConfirmRedeemReward(rew)}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider shrink-0 transition-all cursor-pointer ${
+                        isEligible
+                          ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-xs'
+                          : 'bg-espresso/10 text-espresso/40 cursor-not-allowed'
+                      }`}
+                    >
+                      {isEligible ? 'Redeem' : 'Locked'}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-2 flex justify-end border-t border-espresso/10">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRedeemRewardModalOpen(false);
+                  setSelectedLoyaltyClient(null);
+                }}
+                className="px-5 py-2.5 bg-cream/50 hover:bg-cream text-espresso font-semibold rounded-xl text-xs cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

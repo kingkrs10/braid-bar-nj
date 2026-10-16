@@ -182,25 +182,38 @@ export default function AdminPage() {
     heroBadge: '560 Valley Road, West Orange, NJ',
     heroHeadline: 'Crafted Braids, Elevated Care.',
     heroSubtitle: 'Elevated protective styling crafted for longevity, neatness, and scalp health. Knotless braids, custom cornrows, and private VIP experiences designed around you.',
-    missionTitle: 'All good ideas start somewhere and have a headline.',
-    missionBody: 'Here — you can add copy about you or your brand mission. Our space in West Orange, New Jersey is structured around VIP client comfort, neat and clean grid partings, and meticulous tension-free braid installations that nurture your natural hair growth.',
+    missionTitle: 'Crafted Braids. Elevated Care. Everyday Luxury.',
+    missionBody: 'We believe styling protective crowns should be a therapeutic, beautiful ritual. Our space in West Orange, New Jersey is structured around VIP client comfort, neat and clean grid partings, and meticulous tension-free braid installations that nurture your natural hair growth.',
     sharonTitle: 'Founder & Lead Stylist',
     sharonBio: 'Sharon French is a self-taught braider with over 20 years of experience. At Braid Bar NJ, she blends precision parting with weightless protective length, ensuring your natural hair is shielded, neat, and styled beautifully.',
     sharonBadge: '📍 560 Valley Road, West Orange • 20+ Years Exp',
     abigailTitle: 'Salon Assistant & Stylist',
     abigailBio: 'Abigail Charles supports natural hair preps, wash-station washes, and braid removals, ensuring every client enjoys a relaxing, VIP prep experience while continuing to develop natural styling techniques.',
     abigailBadge: '📍 560 Valley Road, West Orange • Client Care Specialist',
-    marqueeText: '✨ NOW BOOKING AUGUST & SEPTEMBER • 560 VALLEY ROAD, WEST ORANGE, NJ • VIP BRAID EXPERIENCES AVAILABLE',
+    marqueeText: '✨ NOW BOOKING • 560 VALLEY ROAD, WEST ORANGE, NJ • VIP BRAID EXPERIENCES AVAILABLE • KNOTLESS BRAIDS • FULANI DESIGNS • LOC MAINTENANCE',
   };
 
-  const [siteText, setSiteText] = useState(defaultSiteText);
+  const [siteText, setSiteText] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('bb_site_text');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return { ...defaultSiteText, ...parsed };
+        }
+      } catch (e) {}
+    }
+    return defaultSiteText;
+  });
+
+  const [siteTextSavedNotice, setSiteTextSavedNotice] = useState(false);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('bb_site_text');
       if (saved) {
         try {
-          setSiteText((prev) => ({ ...prev, ...JSON.parse(saved) }));
+          setSiteText((prev: typeof defaultSiteText) => ({ ...prev, ...JSON.parse(saved) }));
         } catch (e) {
           console.error(e);
         }
@@ -210,10 +223,14 @@ export default function AdminPage() {
 
   const handleSaveSiteText = (updatedText: typeof defaultSiteText) => {
     setSiteText(updatedText);
+    const nowIso = new Date().toISOString();
     if (typeof window !== 'undefined') {
       safeStorageSet('bb_site_text', JSON.stringify(updatedText));
+      safeStorageSet('bb_last_updated', nowIso);
       window.dispatchEvent(new Event('bb_sitetext_updated'));
-      syncToApiServer({ text: updatedText });
+      syncToApiServer({ text: updatedText, lastUpdated: nowIso });
+      setSiteTextSavedNotice(true);
+      setTimeout(() => setSiteTextSavedNotice(false), 3000);
     }
   };
 
@@ -392,13 +409,17 @@ export default function AdminPage() {
   const [staffCalendarFilter, setStaffCalendarFilter] = useState('All Staff');
   const [autoSaveNotice, setAutoSaveNotice] = useState(false);
 
-  // Sync to backend server API
+  // Sync to backend server API with timestamp reconciliation
   const syncToApiServer = async (payload: any) => {
     try {
+      const nowIso = payload.lastUpdated || new Date().toISOString();
+      if (typeof window !== 'undefined') {
+        safeStorageSet('bb_last_updated', nowIso);
+      }
       await fetch('/api/site-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, lastUpdated: nowIso }),
       });
       setAutoSaveNotice(true);
       setTimeout(() => setAutoSaveNotice(false), 2500);
@@ -484,7 +505,7 @@ export default function AdminPage() {
     setIsAddonModalOpen(false);
     // ✅ Save the computed updatedAddons (not stale addonsList state)
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_addons_list', JSON.stringify(updatedAddons));
+      safeStorageSet('bb_addons_list', JSON.stringify(updatedAddons));
       window.dispatchEvent(new Event('bb_addons_updated'));
       syncToApiServer({ addons: updatedAddons });
     }
@@ -495,7 +516,7 @@ export default function AdminPage() {
       const updated = addonsList.filter((a) => a.id !== id);
       setAddonsList(updated);
       if (typeof window !== 'undefined') {
-        localStorage.setItem('bb_addons_list', JSON.stringify(updated));
+        safeStorageSet('bb_addons_list', JSON.stringify(updated));
         window.dispatchEvent(new Event('bb_addons_updated'));
         syncToApiServer({ addons: updated });
       }
@@ -693,7 +714,7 @@ export default function AdminPage() {
   const handleToggleDoubleBooking = (allowed: boolean) => {
     setAllowDoubleBooking(allowed);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_allow_double_booking', allowed ? 'true' : 'false');
+      safeStorageSet('bb_allow_double_booking', allowed ? 'true' : 'false');
       window.dispatchEvent(new Event('bb_double_booking_updated'));
       syncToApiServer({ doubleBooking: allowed });
     }
@@ -727,7 +748,7 @@ export default function AdminPage() {
     setStaffSchedules(updated);
     setIsStaffScheduleModalOpen(false);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_staff_schedules', JSON.stringify(updated));
+      safeStorageSet('bb_staff_schedules', JSON.stringify(updated));
       window.dispatchEvent(new Event('bb_staff_schedules_updated'));
       syncToApiServer({ staffSchedules: updated });
     }
@@ -757,7 +778,7 @@ export default function AdminPage() {
     const updated = { ...imageSettings, ...newSettings };
     setImageSettings(updated);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_image_settings', JSON.stringify(updated));
+      safeStorageSet('bb_image_settings', JSON.stringify(updated));
       window.dispatchEvent(new Event('bb_image_settings_updated'));
       syncToApiServer({ imageSettings: updated });
     }
@@ -877,7 +898,7 @@ export default function AdminPage() {
     setClientsList(updated);
     setIsClientModalOpen(false);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_clients_list', JSON.stringify(updated));
+      safeStorageSet('bb_clients_list', JSON.stringify(updated));
       syncToApiServer({ clients: updated });
     }
   };
@@ -887,7 +908,7 @@ export default function AdminPage() {
     const updated = clientsList.filter((c) => c.id !== id);
     setClientsList(updated);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bb_clients_list', JSON.stringify(updated));
+      safeStorageSet('bb_clients_list', JSON.stringify(updated));
       syncToApiServer({ clients: updated });
     }
   };
@@ -1224,7 +1245,7 @@ export default function AdminPage() {
   React.useEffect(() => {
     const hydrateAndSelfHeal = async () => {
       try {
-        const res = await fetch('/api/site-content');
+        const res = await fetch('/api/site-content', { cache: 'no-store' });
         if (res.ok) {
           const json = await res.json();
           const serverData = json.data;
@@ -1233,33 +1254,48 @@ export default function AdminPage() {
           const clientLastUpdated = typeof window !== 'undefined' ? localStorage.getItem('bb_last_updated') : null;
           const serverLastUpdated = serverData.lastUpdated;
 
-          // If client has newer local edits (e.g. server lambda restarted with older git defaults),
-          // DO NOT wipe the client's changes! Instead, preserve client state and heal the server cache!
+          // If client has newer local edits, preserve client state and heal server with real local storage data
           if (clientLastUpdated && serverLastUpdated && new Date(clientLastUpdated).getTime() > new Date(serverLastUpdated).getTime()) {
             console.log('[Admin Portal] Client local storage is newer than server. Protecting client state and healing server.');
-            fetch('/api/site-content', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                text: siteText,
-                images: siteImages,
-                imageSettings,
-                lookbook: lookbookList,
-                services: normalizeServiceDeposits(servicesList),
-                categories: categoriesList,
-                addons: addonsList,
-                staffSchedules,
-                doubleBooking: allowDoubleBooking,
-                clients: clientsList,
-                depositPolicy,
-                lastUpdated: clientLastUpdated,
-              }),
-            }).catch(() => {});
+            try {
+              const freshText = localStorage.getItem('bb_site_text');
+              const freshImages = localStorage.getItem('bb_site_images');
+              const freshImageSettings = localStorage.getItem('bb_image_settings');
+              const freshServices = localStorage.getItem('bb_services_list');
+              const freshCategories = localStorage.getItem('bb_categories_list');
+              const freshLookbook = localStorage.getItem('bb_lookbook_list');
+              const freshAddons = localStorage.getItem('bb_addons_list');
+              const freshStaff = localStorage.getItem('bb_staff_schedules');
+              const freshDoubleBooking = localStorage.getItem('bb_allow_double_booking');
+              const freshClients = localStorage.getItem('bb_clients_list');
+              const freshPolicy = localStorage.getItem('bb_deposit_policy');
+
+              fetch('/api/site-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  text: freshText ? JSON.parse(freshText) : serverData.text,
+                  images: freshImages ? JSON.parse(freshImages) : serverData.images,
+                  imageSettings: freshImageSettings ? JSON.parse(freshImageSettings) : serverData.imageSettings,
+                  services: freshServices ? JSON.parse(freshServices) : serverData.services,
+                  categories: freshCategories ? JSON.parse(freshCategories) : serverData.categories,
+                  lookbook: freshLookbook ? JSON.parse(freshLookbook) : serverData.lookbook,
+                  addons: freshAddons ? JSON.parse(freshAddons) : serverData.addons,
+                  staffSchedules: freshStaff ? JSON.parse(freshStaff) : serverData.staffSchedules,
+                  doubleBooking: freshDoubleBooking !== null ? freshDoubleBooking === 'true' : serverData.doubleBooking,
+                  clients: freshClients ? JSON.parse(freshClients) : serverData.clients,
+                  depositPolicy: freshPolicy || serverData.depositPolicy,
+                  lastUpdated: clientLastUpdated,
+                }),
+              }).catch(() => {});
+            } catch (healErr) {
+              console.error('Self-heal parse error:', healErr);
+            }
             return;
           }
 
           if (serverData.text) {
-            setSiteText((prev) => ({ ...prev, ...serverData.text }));
+            setSiteText((prev: typeof defaultSiteText) => ({ ...prev, ...serverData.text }));
             safeStorageSet('bb_site_text', JSON.stringify(serverData.text));
           }
 
@@ -2710,9 +2746,28 @@ export default function AdminPage() {
 
             {/* Section A: Hero & Announcement Text */}
             <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
-              <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso border-b border-espresso/10 pb-3 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-terracotta" /> 1. Hero Banner &amp; Announcement Bar Text
-              </h4>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-espresso/10 pb-3 gap-3">
+                <div>
+                  <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-terracotta" /> 1. Hero Banner &amp; Announcement Bar Text
+                  </h4>
+                  <p className="text-xs text-espresso/60 font-light">Updates the top announcement bar, scrolling marquee, address badge, and hero headline</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleSaveSiteText(siteText)}
+                  className="self-start sm:self-auto inline-flex items-center gap-1.5 px-4 py-2 bg-espresso hover:bg-terracotta text-cream rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-xs cursor-pointer"
+                >
+                  <Save className="w-3.5 h-3.5" /> Save Hero &amp; Announcement
+                </button>
+              </div>
+
+              {siteTextSavedNotice && (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl text-xs font-semibold flex items-center gap-2 animate-fade-in">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  Hero &amp; Announcement text saved successfully to live website!
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div>
@@ -2720,9 +2775,14 @@ export default function AdminPage() {
                   <input
                     type="text"
                     value={siteText.marqueeText}
-                    onChange={(e) => setSiteText({ ...siteText, marqueeText: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...siteText, marqueeText: e.target.value };
+                      setSiteText(updated);
+                      safeStorageSet('bb_site_text', JSON.stringify(updated));
+                    }}
                     className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs focus:outline-none focus:border-terracotta"
                   />
+                  <p className="text-[10px] text-espresso/50 mt-1">Displays on the top announcement bar and scrolling ticker marquee</p>
                 </div>
 
                 <div>
@@ -2730,9 +2790,14 @@ export default function AdminPage() {
                   <input
                     type="text"
                     value={siteText.heroBadge}
-                    onChange={(e) => setSiteText({ ...siteText, heroBadge: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...siteText, heroBadge: e.target.value };
+                      setSiteText(updated);
+                      safeStorageSet('bb_site_text', JSON.stringify(updated));
+                    }}
                     className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs focus:outline-none focus:border-terracotta"
                   />
+                  <p className="text-[10px] text-espresso/50 mt-1">Displays in the pill badge above the hero banner</p>
                 </div>
 
                 <div className="md:col-span-2">
@@ -2740,9 +2805,14 @@ export default function AdminPage() {
                   <input
                     type="text"
                     value={siteText.heroHeadline}
-                    onChange={(e) => setSiteText({ ...siteText, heroHeadline: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...siteText, heroHeadline: e.target.value };
+                      setSiteText(updated);
+                      safeStorageSet('bb_site_text', JSON.stringify(updated));
+                    }}
                     className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs font-bold text-espresso focus:outline-none focus:border-terracotta"
                   />
+                  <p className="text-[10px] text-espresso/50 mt-1">Main large headline displayed in the hero section</p>
                 </div>
 
                 <div className="md:col-span-2">
@@ -2750,7 +2820,11 @@ export default function AdminPage() {
                   <textarea
                     rows={2}
                     value={siteText.heroSubtitle}
-                    onChange={(e) => setSiteText({ ...siteText, heroSubtitle: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...siteText, heroSubtitle: e.target.value };
+                      setSiteText(updated);
+                      safeStorageSet('bb_site_text', JSON.stringify(updated));
+                    }}
                     className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs focus:outline-none focus:border-terracotta leading-relaxed"
                   />
                 </div>
@@ -2759,9 +2833,18 @@ export default function AdminPage() {
 
             {/* Section B: Brand Mission & Story */}
             <div className="bg-white p-6 rounded-2xl border border-espresso/10 shadow-sm space-y-6">
-              <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso border-b border-espresso/10 pb-3 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-terracotta" /> 2. Brand Mission &amp; Story Headline
-              </h4>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-espresso/10 pb-3 gap-3">
+                <h4 className="font-[family-name:var(--font-display)] text-lg font-bold text-espresso flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-terracotta" /> 2. Brand Mission &amp; Story Headline
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => handleSaveSiteText(siteText)}
+                  className="self-start sm:self-auto inline-flex items-center gap-1.5 px-4 py-2 bg-espresso hover:bg-terracotta text-cream rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-xs cursor-pointer"
+                >
+                  <Save className="w-3.5 h-3.5" /> Save Brand Mission
+                </button>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div className="md:col-span-2">
@@ -2769,7 +2852,11 @@ export default function AdminPage() {
                   <input
                     type="text"
                     value={siteText.missionTitle}
-                    onChange={(e) => setSiteText({ ...siteText, missionTitle: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...siteText, missionTitle: e.target.value };
+                      setSiteText(updated);
+                      safeStorageSet('bb_site_text', JSON.stringify(updated));
+                    }}
                     className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs font-bold text-espresso focus:outline-none focus:border-terracotta"
                   />
                 </div>
@@ -2779,7 +2866,11 @@ export default function AdminPage() {
                   <textarea
                     rows={3}
                     value={siteText.missionBody}
-                    onChange={(e) => setSiteText({ ...siteText, missionBody: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...siteText, missionBody: e.target.value };
+                      setSiteText(updated);
+                      safeStorageSet('bb_site_text', JSON.stringify(updated));
+                    }}
                     className="w-full px-4 py-2.5 bg-cream/30 border border-espresso/10 rounded-xl text-xs focus:outline-none focus:border-terracotta leading-relaxed"
                   />
                 </div>
@@ -2959,7 +3050,11 @@ export default function AdminPage() {
                     <input
                       type="text"
                       value={siteText.sharonTitle}
-                      onChange={(e) => setSiteText({ ...siteText, sharonTitle: e.target.value })}
+                      onChange={(e) => {
+                        const updated = { ...siteText, sharonTitle: e.target.value };
+                        setSiteText(updated);
+                        safeStorageSet('bb_site_text', JSON.stringify(updated));
+                      }}
                       className="w-full px-3.5 py-2 bg-white border border-espresso/10 rounded-lg text-xs"
                     />
                   </div>
@@ -2969,7 +3064,11 @@ export default function AdminPage() {
                     <textarea
                       rows={4}
                       value={siteText.sharonBio}
-                      onChange={(e) => setSiteText({ ...siteText, sharonBio: e.target.value })}
+                      onChange={(e) => {
+                        const updated = { ...siteText, sharonBio: e.target.value };
+                        setSiteText(updated);
+                        safeStorageSet('bb_site_text', JSON.stringify(updated));
+                      }}
                       className="w-full px-3.5 py-2 bg-white border border-espresso/10 rounded-lg text-xs leading-relaxed"
                     />
                   </div>
@@ -3035,7 +3134,11 @@ export default function AdminPage() {
                     <input
                       type="text"
                       value={siteText.abigailTitle}
-                      onChange={(e) => setSiteText({ ...siteText, abigailTitle: e.target.value })}
+                      onChange={(e) => {
+                        const updated = { ...siteText, abigailTitle: e.target.value };
+                        setSiteText(updated);
+                        safeStorageSet('bb_site_text', JSON.stringify(updated));
+                      }}
                       className="w-full px-3.5 py-2 bg-white border border-espresso/10 rounded-lg text-xs"
                     />
                   </div>
@@ -3045,11 +3148,25 @@ export default function AdminPage() {
                     <textarea
                       rows={4}
                       value={siteText.abigailBio}
-                      onChange={(e) => setSiteText({ ...siteText, abigailBio: e.target.value })}
+                      onChange={(e) => {
+                        const updated = { ...siteText, abigailBio: e.target.value };
+                        setSiteText(updated);
+                        safeStorageSet('bb_site_text', JSON.stringify(updated));
+                      }}
                       className="w-full px-3.5 py-2 bg-white border border-espresso/10 rounded-lg text-xs leading-relaxed"
                     />
                   </div>
                 </div>
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => handleSaveSiteText(siteText)}
+                  className="inline-flex items-center gap-1.5 px-5 py-2 bg-espresso hover:bg-terracotta text-cream rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-xs cursor-pointer"
+                >
+                  <Save className="w-3.5 h-3.5" /> Save Team Bios
+                </button>
               </div>
             </div>
 

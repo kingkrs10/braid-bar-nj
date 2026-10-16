@@ -10,7 +10,7 @@
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, useInView } from 'motion/react';
-import { Scissors, ArrowRight, Star, MapPin, Instagram, Heart } from 'lucide-react';
+import { Scissors, ArrowRight, Star, MapPin, Instagram, Heart, Sparkles } from 'lucide-react';
 import Navigation from '@/components/ui/Navigation';
 import Footer from '@/components/ui/Footer';
 import CartDrawer from '@/components/shop/CartDrawer';
@@ -101,21 +101,7 @@ export default function HomePage() {
       setIsCheckingLiveMode(false);
 
       const loadSiteData = async () => {
-        // First try server API for cross-device persistence
-        try {
-          const res = await fetch('/api/site-content');
-          if (res.ok) {
-            const data = await res.json();
-            if (data.data?.text) setSiteText((prev) => ({ ...prev, ...data.data.text }));
-            if (data.data?.images) setSiteImages((prev) => ({ ...prev, ...data.data.images }));
-            if (data.data?.imageSettings) setImageSettings((prev) => ({ ...prev, ...data.data.imageSettings }));
-            if (data.data?.lookbook && Array.isArray(data.data.lookbook)) setLookbookList(data.data.lookbook);
-          }
-        } catch (err) {
-          console.warn('Fallback to local storage for site content');
-        }
-
-        // Local storage backup
+        // 1. Immediately apply local storage for instant zero-lag rendering
         const savedText = localStorage.getItem('bb_site_text');
         if (savedText) {
           try {
@@ -148,6 +134,56 @@ export default function HomePage() {
           } catch (e) {
             console.error(e);
           }
+        }
+
+        // 2. Fetch server API to reconcile across devices
+        try {
+          const res = await fetch('/api/site-content', { cache: 'no-store' });
+          if (res.ok) {
+            const json = await res.json();
+            const serverData = json.data;
+            if (!serverData) return;
+
+            const clientTime = localStorage.getItem('bb_last_updated');
+            const serverTime = serverData.lastUpdated;
+
+            // Only apply server data if server has a newer timestamp than client
+            const isServerNewer = !clientTime || (serverTime && new Date(serverTime).getTime() > new Date(clientTime).getTime());
+
+            if (isServerNewer) {
+              if (serverData.text) {
+                setSiteText((prev) => ({ ...prev, ...serverData.text }));
+                localStorage.setItem('bb_site_text', JSON.stringify(serverData.text));
+              }
+              if (serverData.images) {
+                setSiteImages((prev) => ({ ...prev, ...serverData.images }));
+                localStorage.setItem('bb_site_images', JSON.stringify(serverData.images));
+              }
+              if (serverData.imageSettings) {
+                setImageSettings((prev) => ({ ...prev, ...serverData.imageSettings }));
+                localStorage.setItem('bb_image_settings', JSON.stringify(serverData.imageSettings));
+              }
+              if (serverData.lookbook && Array.isArray(serverData.lookbook)) {
+                setLookbookList(serverData.lookbook);
+                localStorage.setItem('bb_lookbook_list', JSON.stringify(serverData.lookbook));
+              }
+            } else if (clientTime && serverTime && new Date(clientTime).getTime() > new Date(serverTime).getTime()) {
+              // Local is newer: heal server in background
+              fetch('/api/site-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  text: savedText ? JSON.parse(savedText) : undefined,
+                  images: savedImages ? JSON.parse(savedImages) : undefined,
+                  imageSettings: savedImageSettings ? JSON.parse(savedImageSettings) : undefined,
+                  lookbook: savedLookbook ? JSON.parse(savedLookbook) : undefined,
+                  lastUpdated: clientTime,
+                }),
+              }).catch(() => {});
+            }
+          }
+        } catch (err) {
+          console.warn('Server sync notice:', err);
         }
       };
 
@@ -192,6 +228,16 @@ export default function HomePage() {
       {/* Splash Intro Screen */}
       <SplashPage />
 
+      {/* Top Announcement Bar */}
+      {siteText.marqueeText && (
+        <aside aria-label="Announcement Bar" className="relative w-full bg-espresso text-cream py-2 px-4 z-40 select-none text-center border-b border-gold/30 shadow-xs">
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-[10px] sm:text-xs font-semibold tracking-widest uppercase">
+            <Sparkles className="w-3.5 h-3.5 text-accent-gold shrink-0 animate-pulse" />
+            <span className="truncate">{siteText.marqueeText}</span>
+          </div>
+        </aside>
+      )}
+
       {/* Navigation & Cart */}
       <Navigation />
       <CartDrawer />
@@ -234,7 +280,7 @@ export default function HomePage() {
               </span>
             </div>
 
-            {/* Logo Wordmark Image instead of plain text */}
+            {/* Logo Wordmark Image */}
             <div className="relative w-fit select-none">
               <img 
                 src="/images/branding/logo-braidbar-stacked.png" 
@@ -243,6 +289,13 @@ export default function HomePage() {
                 onError={(e) => handleImageFallback(e, '/images/branding/logo-braidbar-stacked.png')}
               />
             </div>
+
+            {/* Hero Primary Headline */}
+            {siteText.heroHeadline && (
+              <h1 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight drop-shadow-lg">
+                {siteText.heroHeadline}
+              </h1>
+            )}
 
             <p className="text-white/95 text-base md:text-lg font-light leading-relaxed max-w-xl font-[family-name:var(--font-body)] drop-shadow-sm">
               {siteText.heroSubtitle}

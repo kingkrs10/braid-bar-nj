@@ -4,9 +4,15 @@ import path from 'path';
 import os from 'os';
 import { services as defaultCatalogServices, normalizeServiceDeposits } from '@/lib/data';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Primary and fallback storage paths
 const PRIMARY_PATH = path.join(process.cwd(), 'src/data/site-content.json');
 const TMP_PATH = path.join(os.tmpdir(), 'bb_site_content.json');
+
+// Fixed baseline epoch timestamp for default data (so any real client edit with a current date always wins!)
+const BASELINE_TIMESTAMP = '2024-01-01T00:00:00.000Z';
 
 // Default fallback data if files are unreadable
 const defaultSiteContent = {
@@ -109,52 +115,66 @@ const defaultSiteContent = {
   },
   clients: [] as any[],
   depositPolicy: 'standard-50',
-  lastUpdated: new Date().toISOString(),
+  lastUpdated: BASELINE_TIMESTAMP,
 };
 
-// In-memory cache for ultra-fast response
-let cachedData: typeof defaultSiteContent | null = null;
+// Global memory cache surviving requests within process lifecycle
+declare global {
+  // eslint-disable-next-line no-var
+  var __bb_site_content: typeof defaultSiteContent | undefined;
+}
 
 function loadFromDisk(): typeof defaultSiteContent {
-  let content = defaultSiteContent;
+  // 1. Check persistent global memory
+  if (globalThis.__bb_site_content && globalThis.__bb_site_content.lastUpdated !== BASELINE_TIMESTAMP) {
+    return globalThis.__bb_site_content;
+  }
 
-  // 1. Try primary repo file
+  let content = { ...defaultSiteContent };
+
+  // 2. Try primary repo file
   try {
     if (fs.existsSync(PRIMARY_PATH)) {
       const raw = fs.readFileSync(PRIMARY_PATH, 'utf-8');
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') {
-        content = { ...defaultSiteContent, ...parsed };
-      }
-    }
-  } catch (err) {
-    console.warn('[Site Content API] Could not read primary disk file:', err);
-  }
-
-  // 2. Try temp file
-  try {
-    if (fs.existsSync(TMP_PATH)) {
-      const raw = fs.readFileSync(TMP_PATH, 'utf-8');
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
         content = { ...content, ...parsed };
       }
     }
   } catch (err) {
-    console.warn('[Site Content API] Could not read temp disk file:', err);
+    console.warn('[Site Content API] Primary disk read note:', err);
   }
 
-  // Auto-heal & enforce deposit policy ($50 standard across-the-board, $100-$150 VIP)
+  // 3. Try temp file (if temp file has newer timestamp than primary)
+  try {
+    if (fs.existsSync(TMP_PATH)) {
+      const raw = fs.readFileSync(TMP_PATH, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        const tmpTime = new Date(parsed.lastUpdated || BASELINE_TIMESTAMP).getTime();
+        const contentTime = new Date(content.lastUpdated || BASELINE_TIMESTAMP).getTime();
+        if (tmpTime >= contentTime) {
+          content = { ...content, ...parsed };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('[Site Content API] Temp disk read note:', err);
+  }
+
+  // Auto-heal & enforce deposit policy
   if (Array.isArray(content.services) && content.services.length > 0) {
     content.services = normalizeServiceDeposits(content.services);
   } else {
     content.services = normalizeServiceDeposits(defaultCatalogServices);
   }
 
+  globalThis.__bb_site_content = content;
   return content;
 }
 
 function saveToDisk(data: typeof defaultSiteContent) {
+  globalThis.__bb_site_content = data;
   const serialized = JSON.stringify(data, null, 2);
 
   // 1. Try to save to primary file
@@ -165,68 +185,76 @@ function saveToDisk(data: typeof defaultSiteContent) {
     }
     fs.writeFileSync(PRIMARY_PATH, serialized, 'utf-8');
   } catch (err) {
-    // Expected on read-only serverless lambdas
-    console.warn('[Site Content API] Notice: Primary disk write not allowed (serverless read-only):', err);
+    // Normal on serverless read-only filesystem
   }
 
-  // 2. Try to save to temp directory (almost always writable on serverless)
+  // 2. Try to save to temp directory (writable on serverless)
   try {
     fs.writeFileSync(TMP_PATH, serialized, 'utf-8');
   } catch (err) {
-    console.warn('[Site Content API] Temp disk write failed:', err);
+    console.warn('[Site Content API] Temp disk write error:', err);
   }
 }
 
-export async function GET() {
-  if (!cachedData) {
-    cachedData = loadFromDisk();
-  }
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+  'Pragma': 'no-cache',
+  'Expires': '0',
+};
 
-  return NextResponse.json({
-    success: true,
-    data: cachedData,
-  });
+export async function GET() {
+  const content = loadFromDisk();
+
+  return NextResponse.json(
+    {
+      success: true,
+      data: content,
+    },
+    { headers: NO_CACHE_HEADERS }
+  );
 }
 
 export async function POST(request: Request) {
   try {
-    if (!cachedData) {
-      cachedData = loadFromDisk();
-    }
-
+    const current = loadFromDisk();
     const body = await request.json();
 
     // Deep merge incoming updates
-    if (body.text) cachedData.text = { ...cachedData.text, ...body.text };
-    if (body.images) cachedData.images = { ...cachedData.images, ...body.images };
-    if (body.addons && Array.isArray(body.addons)) cachedData.addons = body.addons;
-    if (body.staffCalendars && Array.isArray(body.staffCalendars)) cachedData.staffCalendars = body.staffCalendars;
-    if (body.lookbook && Array.isArray(body.lookbook)) cachedData.lookbook = body.lookbook;
-    if (body.services && Array.isArray(body.services) && body.services.length > 0) {
-      cachedData.services = normalizeServiceDeposits(body.services);
-    }
-    if (body.categories && Array.isArray(body.categories)) cachedData.categories = body.categories;
-    if (body.staffSchedules && Array.isArray(body.staffSchedules)) cachedData.staffSchedules = body.staffSchedules;
-    if (body.doubleBooking !== undefined) cachedData.doubleBooking = Boolean(body.doubleBooking);
-    if (body.imageSettings) cachedData.imageSettings = { ...cachedData.imageSettings, ...body.imageSettings };
-    if (body.clients && Array.isArray(body.clients)) cachedData.clients = body.clients;
-    if (body.depositPolicy) cachedData.depositPolicy = body.depositPolicy;
+    const updated: typeof defaultSiteContent = {
+      ...current,
+      text: { ...current.text, ...(body.text || {}) },
+      images: { ...current.images, ...(body.images || {}) },
+      imageSettings: { ...current.imageSettings, ...(body.imageSettings || {}) },
+      addons: Array.isArray(body.addons) ? body.addons : current.addons,
+      staffCalendars: Array.isArray(body.staffCalendars) ? body.staffCalendars : current.staffCalendars,
+      lookbook: Array.isArray(body.lookbook) ? body.lookbook : current.lookbook,
+      services: Array.isArray(body.services) && body.services.length > 0 
+        ? normalizeServiceDeposits(body.services) 
+        : current.services,
+      categories: Array.isArray(body.categories) ? body.categories : current.categories,
+      staffSchedules: Array.isArray(body.staffSchedules) ? body.staffSchedules : current.staffSchedules,
+      doubleBooking: body.doubleBooking !== undefined ? Boolean(body.doubleBooking) : current.doubleBooking,
+      clients: Array.isArray(body.clients) ? body.clients : current.clients,
+      depositPolicy: body.depositPolicy || current.depositPolicy,
+      lastUpdated: body.lastUpdated || new Date().toISOString(),
+    };
 
-    cachedData.lastUpdated = body.lastUpdated || new Date().toISOString();
+    // Persist to global memory and disk
+    saveToDisk(updated);
 
-    // Persist to disk so restarts never lose data
-    saveToDisk(cachedData);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Site content persisted and saved globally across restarts!',
-      data: cachedData,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Site content persisted and saved globally across restarts!',
+        data: updated,
+      },
+      { headers: NO_CACHE_HEADERS }
+    );
   } catch (error) {
     console.error('[Site Content API] Failed to update site content:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update site content' },
-      { status: 500 }
+      { status: 500, headers: NO_CACHE_HEADERS }
     );
   }
 }
